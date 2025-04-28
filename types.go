@@ -2162,6 +2162,7 @@ type ListModelsResponse struct {
 	Models []*Model `json:"models,omitempty"`
 }
 
+// Configuration for updating a tuned model.
 type UpdateModelConfig struct {
 	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
@@ -2171,6 +2172,7 @@ type UpdateModelConfig struct {
 	Description string `json:"description,omitempty"`
 }
 
+// Configuration for deleting a tuned model.
 type DeleteModelConfig struct {
 	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
