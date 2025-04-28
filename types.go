@@ -549,7 +549,8 @@ type FileData struct {
 
 // A function call.
 type FunctionCall struct {
-	// The unique ID of the function call. If populated, the client to execute the
+	// Optional. The unique ID of the function call. If populated, the client to execute
+	// the
 	// `function_call` and return the response with the matching `id`.
 	ID string `json:"id,omitempty"`
 	// Optional. Required. The function parameters and values in JSON object format. See
@@ -561,7 +562,7 @@ type FunctionCall struct {
 
 // A function response.
 type FunctionResponse struct {
-	// The ID of the function call this response is for. Populated by the client
+	// Optional. The ID of the function call this response is for. Populated by the client
 	// to match the corresponding function call `id`.
 	ID string `json:"id,omitempty"`
 	// Required. The name of the function to call. Matches [FunctionDeclaration.name] and
@@ -586,9 +587,9 @@ type Blob struct {
 // of content being conveyed. Using multiple fields within the same `Part`
 // instance is considered invalid.
 type Part struct {
-	// Metadata for a given video.
+	// Optional. Metadata for a given video.
 	VideoMetadata *VideoMetadata `json:"videoMetadata,omitempty"`
-	// Indicates if the part is thought from the model.
+	// Optional. Indicates if the part is thought from the model.
 	Thought bool `json:"thought,omitempty"`
 	// Optional. Result of executing the [ExecutableCode].
 	CodeExecutionResult *CodeExecutionResult `json:"codeExecutionResult,omitempty"`
@@ -678,7 +679,7 @@ func NewPartFromCodeExecutionResult(outcome Outcome, output string) *Part {
 
 // Contains the multi-part content of a message.
 type Content struct {
-	// List of parts that constitute a single message. Each part may have
+	// Optional. List of parts that constitute a single message. Each part may have
 	// a different IANA MIME type.
 	Parts []*Part `json:"parts,omitempty"`
 	// Optional. The producer of the content. Must be either 'user' or
@@ -789,13 +790,14 @@ func NewContentFromCodeExecutionResult(outcome Outcome, output string, role Role
 
 // HTTP options to be used in each of the requests.
 type HTTPOptions struct {
-	// BaseURL specifies the base URL for the API endpoint. If empty, defaults to "https://generativelanguage.googleapis.com/"
-	// for the Gemini API backend, and location-specific Vertex AI endpoint (e.g., "https://us-central1-aiplatform.googleapis.com/
+	// Optional. BaseURL specifies the base URL for the API endpoint. If empty, defaults
+	// to "https://generativelanguage.googleapis.com/" for the Gemini API backend, and location-specific
+	// Vertex AI endpoint (e.g., "https://us-central1-aiplatform.googleapis.com/
 	BaseURL string `json:"baseUrl,omitempty"`
-	// APIVersion specifies the version of the API to use. If empty, defaults to "v1beta"
-	// for Gemini API and "v1beta1" for Vertex AI.
+	// Optional. APIVersion specifies the version of the API to use. If empty, defaults
+	// to "v1beta" for Gemini API and "v1beta1" for Vertex AI.
 	APIVersion string `json:"apiVersion,omitempty"`
-	// Additional HTTP headers to be sent with the request.
+	// Optional. Additional HTTP headers to be sent with the request.
 	Headers http.Header `json:"headers,omitempty"`
 }
 
@@ -961,13 +963,13 @@ func (s *Schema) MarshalJSON() ([]byte, error) {
 
 // Config for model selection.
 type ModelSelectionConfig struct {
-	// Options for feature selection preference.
+	// Optional. Options for feature selection preference.
 	FeatureSelectionPreference FeatureSelectionPreference `json:"featureSelectionPreference,omitempty"`
 }
 
 // Safety settings.
 type SafetySetting struct {
-	// Determines if the harm block method uses probability or probability
+	// Optional. Determines if the harm block method uses probability or probability
 	// and severity scores.
 	Method HarmBlockMethod `json:"method,omitempty"`
 	// Required. Harm category.
@@ -980,7 +982,7 @@ type SafetySetting struct {
 // The inputs are based on `OpenAPI 3.0 specifications
 // <https://spec.openapis.org/oas/v3.0.3>`_.
 type FunctionDeclaration struct {
-	// Describes the output from the function in the OpenAPI JSON Schema
+	// Optional. Describes the output from the function in the OpenAPI JSON Schema
 	// Object format.
 	Response *Schema `json:"response,omitempty"`
 	// Optional. Description and purpose of the function. Model uses it to decide how and
@@ -1007,7 +1009,7 @@ type GoogleSearch struct {
 
 // Describes the options to customize dynamic retrieval.
 type DynamicRetrievalConfig struct {
-	// The mode of the predictor to be used in dynamic retrieval.
+	// Optional. The mode of the predictor to be used in dynamic retrieval.
 	Mode DynamicRetrievalConfigMode `json:"mode,omitempty"`
 	// Optional. The threshold to be used in dynamic retrieval. If empty, a system default
 	// value is used.
@@ -1016,7 +1018,7 @@ type DynamicRetrievalConfig struct {
 
 // Tool to retrieve public web data for grounding, powered by Google.
 type GoogleSearchRetrieval struct {
-	// Specifies the dynamic retrieval configuration for the given source.
+	// Optional. Specifies the dynamic retrieval configuration for the given source.
 	DynamicRetrievalConfig *DynamicRetrievalConfig `json:"dynamicRetrievalConfig,omitempty"`
 }
 
@@ -1125,7 +1127,7 @@ type ToolCodeExecution struct {
 
 // Tool details of a tool that the model may use to generate a response.
 type Tool struct {
-	// List of function declarations that the tool supports.
+	// Optional. List of function declarations that the tool supports.
 	FunctionDeclarations []*FunctionDeclaration `json:"functionDeclarations,omitempty"`
 	// Optional. Retrieval tool type. System will always execute the provided retrieval
 	// tool(s) to get external knowledge to answer the prompt. Retrieval results are presented
@@ -1161,7 +1163,7 @@ type ToolConfig struct {
 
 // The configuration for the prebuilt speaker to use.
 type PrebuiltVoiceConfig struct {
-	// The name of the prebuilt voice to use.
+	// Optional. The name of the prebuilt voice to use.
 	VoiceName string `json:"voiceName,omitempty"`
 }
 
@@ -1182,10 +1184,10 @@ type SpeechConfig struct {
 
 // The thinking features configuration.
 type ThinkingConfig struct {
-	// Indicates whether to include thoughts in the response. If true, thoughts are returned
-	// only if the model supports thought and thoughts are available.
+	// Optional. Indicates whether to include thoughts in the response. If true, thoughts
+	// are returned only if the model supports thought and thoughts are available.
 	IncludeThoughts bool `json:"includeThoughts,omitempty"`
-	// Indicates the thinking budget in tokens.
+	// Optional. Indicates the thinking budget in tokens.
 	ThinkingBudget *int32 `json:"thinkingBudget,omitempty"`
 }
 
@@ -1214,86 +1216,86 @@ type GenerationConfigRoutingConfig struct {
 // For more information, see `Content generation parameters
 // <https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/content-generation-parameters>`_.
 type GenerateContentConfig struct {
-	// Used to override HTTP request options.
+	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
-	// Instructions for the model to steer it toward better performance.
+	// Optional. Instructions for the model to steer it toward better performance.
 	// For example, "Answer as concisely as possible" or "Don't use technical
 	// terms in your response".
 	SystemInstruction *Content `json:"systemInstruction,omitempty"`
-	// Value that controls the degree of randomness in token selection.
+	// Optional. Value that controls the degree of randomness in token selection.
 	// Lower temperatures are good for prompts that require a less open-ended or
 	// creative response, while higher temperatures can lead to more diverse or
 	// creative results.
 	Temperature *float32 `json:"temperature,omitempty"`
-	// Tokens are selected from the most to least probable until the sum
+	// Optional. Tokens are selected from the most to least probable until the sum
 	// of their probabilities equals this value. Use a lower value for less
 	// random responses and a higher value for more random responses.
 	TopP *float32 `json:"topP,omitempty"`
-	// For each token selection step, the ``top_k`` tokens with the
+	// Optional. For each token selection step, the ``top_k`` tokens with the
 	// highest probabilities are sampled. Then tokens are further filtered based
 	// on ``top_p`` with the final token selected using temperature sampling. Use
 	// a lower number for less random responses and a higher number for more
 	// random responses.
 	TopK *float32 `json:"topK,omitempty"`
-	// Number of response variations to return.
+	// Optional. Number of response variations to return.
 	// If empty, the system will choose a default value (currently 1).
 	CandidateCount int32 `json:"candidateCount,omitempty"`
-	// Maximum number of tokens that can be generated in the response.
+	// Optional. Maximum number of tokens that can be generated in the response.
 	// If empty, API will use a default value. The default value varies by model.
 	MaxOutputTokens int32 `json:"maxOutputTokens,omitempty"`
-	// List of strings that tells the model to stop generating text if one
+	// Optional. List of strings that tells the model to stop generating text if one
 	// of the strings is encountered in the response.
 	StopSequences []string `json:"stopSequences,omitempty"`
-	// Whether to return the log probabilities of the tokens that were
+	// Optional. Whether to return the log probabilities of the tokens that were
 	// chosen by the model at each step.
 	ResponseLogprobs bool `json:"responseLogprobs,omitempty"`
-	// Number of top candidate tokens to return the log probabilities for
+	// Optional. Number of top candidate tokens to return the log probabilities for
 	// at each generation step.
 	Logprobs *int32 `json:"logprobs,omitempty"`
-	// Positive values penalize tokens that already appear in the
+	// Optional. Positive values penalize tokens that already appear in the
 	// generated text, increasing the probability of generating more diverse
 	// content.
 	PresencePenalty *float32 `json:"presencePenalty,omitempty"`
-	// Positive values penalize tokens that repeatedly appear in the
+	// Optional. Positive values penalize tokens that repeatedly appear in the
 	// generated text, increasing the probability of generating more diverse
 	// content.
 	FrequencyPenalty *float32 `json:"frequencyPenalty,omitempty"`
-	// When ``seed`` is fixed to a specific number, the model makes a best
+	// Optional. When ``seed`` is fixed to a specific number, the model makes a best
 	// effort to provide the same response for repeated requests. By default, a
 	// random number is used.
 	Seed *int32 `json:"seed,omitempty"`
-	// Output response media type of the generated candidate text.
+	// Optional. Output response media type of the generated candidate text.
 	ResponseMIMEType string `json:"responseMimeType,omitempty"`
-	// Schema that the generated candidate text must adhere to.
+	// Optional. Schema that the generated candidate text must adhere to.
 	ResponseSchema *Schema `json:"responseSchema,omitempty"`
-	// Configuration for model router requests.
+	// Optional. Configuration for model router requests.
 	RoutingConfig *GenerationConfigRoutingConfig `json:"routingConfig,omitempty"`
-	// Configuration for model selection.
+	// Optional. Configuration for model selection.
 	ModelSelectionConfig *ModelSelectionConfig `json:"modelSelectionConfig,omitempty"`
-	// Safety settings in the request to block unsafe content in the
+	// Optional. Safety settings in the request to block unsafe content in the
 	// response.
 	SafetySettings []*SafetySetting `json:"safetySettings,omitempty"`
-	// Code that enables the system to interact with external systems to
+	// Optional. Code that enables the system to interact with external systems to
 	// perform an action outside of the knowledge and scope of the model.
 	Tools []*Tool `json:"tools,omitempty"`
-	// Associates model output to a specific function call.
+	// Optional. Associates model output to a specific function call.
 	ToolConfig *ToolConfig `json:"toolConfig,omitempty"`
-	// Labels with user-defined metadata to break down billed charges.
+	// Optional. Labels with user-defined metadata to break down billed charges.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Resource name of a context cache that can be used in subsequent
+	// Optional. Resource name of a context cache that can be used in subsequent
 	// requests.
 	CachedContent string `json:"cachedContent,omitempty"`
-	// The requested modalities of the response. Represents the set of
+	// Optional. The requested modalities of the response. Represents the set of
 	// modalities that the model can return.
 	ResponseModalities []string `json:"responseModalities,omitempty"`
-	// If specified, the media resolution specified will be used.
+	// Optional. If specified, the media resolution specified will be used.
 	MediaResolution MediaResolution `json:"mediaResolution,omitempty"`
-	// The speech generation configuration.
+	// Optional. The speech generation configuration.
 	SpeechConfig *SpeechConfig `json:"speechConfig,omitempty"`
-	// If enabled, audio timestamp will be included in the request to the
+	// Optional. If enabled, audio timestamp will be included in the request to the
 	// model.
 	AudioTimestamp bool `json:"audioTimestamp,omitempty"`
-	// The thinking features configuration.
+	// Optional. The thinking features configuration.
 	ThinkingConfig *ThinkingConfig `json:"thinkingConfig,omitempty"`
 }
 
@@ -1364,7 +1366,7 @@ func (c *Citation) MarshalJSON() ([]byte, error) {
 
 // Citation information when the model quotes another source.
 type CitationMetadata struct {
-	// Contains citation information when the model directly quotes, at
+	// Optional. Contains citation information when the model directly quotes, at
 	// length, from another source. Can include traditional websites and code
 	// repositories.
 	Citations []*Citation `json:"citations,omitempty"`
@@ -1502,16 +1504,16 @@ type SafetyRating struct {
 
 // A response candidate generated from the model.
 type Candidate struct {
-	// Contains the multi-part content of the response.
+	// Optional. Contains the multi-part content of the response.
 	Content *Content `json:"content,omitempty"`
-	// Source attribution of the generated content.
+	// Optional. Source attribution of the generated content.
 	CitationMetadata *CitationMetadata `json:"citationMetadata,omitempty"`
-	// Describes the reason the model stopped generating tokens.
+	// Optional. Describes the reason the model stopped generating tokens.
 	FinishMessage string `json:"finishMessage,omitempty"`
-	// Number of tokens for this candidate.
+	// Optional. Number of tokens for this candidate.
 	// This field is only available in the Gemini API.
 	TokenCount int32 `json:"tokenCount,omitempty"`
-	// The reason why the model stopped generating tokens.
+	// Optional. The reason why the model stopped generating tokens.
 	// If empty, the model has not stopped generating the tokens.
 	FinishReason FinishReason `json:"finishReason,omitempty"`
 	// Output only. Average log probability score of the candidate.
@@ -1539,7 +1541,7 @@ type GenerateContentResponsePromptFeedback struct {
 
 // Represents token counting info for a single modality.
 type ModalityTokenCount struct {
-	// The modality associated with this token count.
+	// Optional. The modality associated with this token count.
 	Modality MediaModality `json:"modality,omitempty"`
 	// Number of tokens.
 	TokenCount int32 `json:"tokenCount,omitempty"`
@@ -1722,7 +1724,7 @@ func (c *GenerateContentResponse) MarshalJSON() ([]byte, error) {
 
 // Optional parameters for the EmbedContent method.
 type EmbedContentConfig struct {
-	// Used to override HTTP request options.
+	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
 	// Type of task for which the embedding will be used.
 	TaskType string `json:"taskType,omitempty"`
@@ -1780,56 +1782,56 @@ type EmbedContentResponse struct {
 // details at VertexAI: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/imagen-api.
 // GeminiAPI: https://ai.google.dev/gemini-api/docs/imagen#imagen-model
 type GenerateImagesConfig struct {
-	// Used to override HTTP request options.
+	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
-	// Cloud Storage URI used to store the generated images.
+	// Optional. Cloud Storage URI used to store the generated images.
 	OutputGCSURI string `json:"outputGcsUri,omitempty"`
-	// Description of what to discourage in the generated images.
+	// Optional. Description of what to discourage in the generated images.
 	NegativePrompt string `json:"negativePrompt,omitempty"`
-	// Number of images to generate.
+	// Optional. Number of images to generate.
 	// If empty, the system will choose a default value (currently 4).
 	NumberOfImages int32 `json:"numberOfImages,omitempty"`
-	// Aspect ratio of the generated images.
+	// Optional. Aspect ratio of the generated images.
 	AspectRatio string `json:"aspectRatio,omitempty"`
-	// Controls how much the model adheres to the text prompt. Large
+	// Optional. Controls how much the model adheres to the text prompt. Large
 	// values increase output and prompt alignment, but may compromise image
 	// quality.
 	GuidanceScale *float32 `json:"guidanceScale,omitempty"`
-	// Random seed for image generation. This is not available when
+	// Optional. Random seed for image generation. This is not available when
 	// ``add_watermark`` is set to true.
 	Seed *int32 `json:"seed,omitempty"`
-	// Filter level for safety filtering.
+	// Optional. Filter level for safety filtering.
 	SafetyFilterLevel SafetyFilterLevel `json:"safetyFilterLevel,omitempty"`
-	// Allows generation of people by the model.
+	// Optional. Allows generation of people by the model.
 	PersonGeneration PersonGeneration `json:"personGeneration,omitempty"`
-	// Whether to report the safety scores of each generated image and
+	// Optional. Whether to report the safety scores of each generated image and
 	// the positive prompt in the response.
 	IncludeSafetyAttributes bool `json:"includeSafetyAttributes,omitempty"`
-	// Whether to include the Responsible AI filter reason if the image
+	// Optional. Whether to include the Responsible AI filter reason if the image
 	// is filtered out of the response.
 	IncludeRAIReason bool `json:"includeRaiReason,omitempty"`
-	// Language of the text in the prompt.
+	// Optional. Language of the text in the prompt.
 	Language ImagePromptLanguage `json:"language,omitempty"`
-	// MIME type of the generated image.
+	// Optional. MIME type of the generated image.
 	OutputMIMEType string `json:"outputMimeType,omitempty"`
-	// Compression quality of the generated image (for ``image/jpeg``
+	// Optional. Compression quality of the generated image (for ``image/jpeg``
 	// only).
 	OutputCompressionQuality *int32 `json:"outputCompressionQuality,omitempty"`
-	// Whether to add a watermark to the generated images.
+	// Optional. Whether to add a watermark to the generated images.
 	AddWatermark bool `json:"addWatermark,omitempty"`
-	// Whether to use the prompt rewriting logic.
+	// Optional. Whether to use the prompt rewriting logic.
 	EnhancePrompt bool `json:"enhancePrompt,omitempty"`
 }
 
 // An image.
 type Image struct {
-	// The Cloud Storage URI of the image. ``Image`` can contain a value
+	// Optional. The Cloud Storage URI of the image. ``Image`` can contain a value
 	// for this field or the ``image_bytes`` field but not both.
 	GCSURI string `json:"gcsUri,omitempty"`
-	// The image bytes data. ``Image`` can contain a value for this field
+	// Optional. The image bytes data. ``Image`` can contain a value for this field
 	// or the ``gcs_uri`` field but not both.
 	ImageBytes []byte `json:"imageBytes,omitempty"`
-	// The MIME type of the image.
+	// Optional. The MIME type of the image.
 	MIMEType string `json:"mimeType,omitempty"`
 }
 
@@ -1839,7 +1841,7 @@ type SafetyAttributes struct {
 	Categories []string `json:"categories,omitempty"`
 	// List of scores of each categories.
 	Scores []float32 `json:"scores,omitempty"`
-	// Internal use only.
+	// Optional. Internal use only.
 	ContentType string `json:"contentType,omitempty"`
 }
 
@@ -1847,13 +1849,13 @@ type SafetyAttributes struct {
 type GeneratedImage struct {
 	// The output image data.
 	Image *Image `json:"image,omitempty"`
-	// Responsible AI filter reason if the image is filtered out of the
+	// Optional. Responsible AI filter reason if the image is filtered out of the
 	// response.
 	RAIFilteredReason string `json:"raiFilteredReason,omitempty"`
-	// Safety attributes of the image. Lists of RAI categories and their
+	// Optional. Safety attributes of the image. Lists of RAI categories and their
 	// scores of each content.
 	SafetyAttributes *SafetyAttributes `json:"safetyAttributes,omitempty"`
-	// The rewritten prompt used for the image generation if the prompt
+	// Optional. The rewritten prompt used for the image generation if the prompt
 	// enhancer is enabled.
 	EnhancedPrompt string `json:"enhancedPrompt,omitempty"`
 }
@@ -1862,29 +1864,29 @@ type GeneratedImage struct {
 type GenerateImagesResponse struct {
 	// List of generated images.
 	GeneratedImages []*GeneratedImage `json:"generatedImages,omitempty"`
-	// Safety attributes of the positive prompt. Only populated if
+	// Optional. Safety attributes of the positive prompt. Only populated if
 	// ``include_safety_attributes`` is set to True.
 	PositivePromptSafetyAttributes *SafetyAttributes `json:"positivePromptSafetyAttributes,omitempty"`
 }
 
 // Configuration for a Mask reference image.
 type MaskReferenceConfig struct {
-	// Prompts the model to generate a mask instead of you needing to
+	// Optional. Prompts the model to generate a mask instead of you needing to
 	// provide one (unless MASK_MODE_USER_PROVIDED is used).
 	MaskMode MaskReferenceMode `json:"maskMode,omitempty"`
-	// A list of up to 5 class IDs to use for semantic segmentation.
+	// Optional. A list of up to 5 class IDs to use for semantic segmentation.
 	// Automatically creates an image mask based on specific objects.
 	SegmentationClasses []int32 `json:"segmentationClasses,omitempty"`
-	// Dilation percentage of the mask provided.
+	// Optional. Dilation percentage of the mask provided.
 	// Float between 0 and 1.
 	MaskDilation *float32 `json:"maskDilation,omitempty"`
 }
 
 // Configuration for a Control reference image.
 type ControlReferenceConfig struct {
-	// The type of control reference image to use.
+	// Optional. The type of control reference image to use.
 	ControlType ControlReferenceType `json:"controlType,omitempty"`
-	// Defaults to False. When set to True, the control image will be
+	// Optional. Defaults to False. When set to True, the control image will be
 	// computed by the model based on the control type. When set to False,
 	// the control image must be provided by the user.
 	EnableControlImageComputation bool `json:"enableControlImageComputation,omitempty"`
@@ -1892,33 +1894,33 @@ type ControlReferenceConfig struct {
 
 // Configuration for a Style reference image.
 type StyleReferenceConfig struct {
-	// A text description of the style to use for the generated image.
+	// Optional. A text description of the style to use for the generated image.
 	StyleDescription string `json:"styleDescription,omitempty"`
 }
 
 // Configuration for a Subject reference image.
 type SubjectReferenceConfig struct {
-	// The subject type of a subject reference image.
+	// Optional. The subject type of a subject reference image.
 	SubjectType SubjectReferenceType `json:"subjectType,omitempty"`
-	// Subject description for the image.
+	// Optional. Subject description for the image.
 	SubjectDescription string `json:"subjectDescription,omitempty"`
 }
 
 // referenceImageAPI represents a Reference image that is sent to API.
 type referenceImageAPI struct {
-	// The reference image for the editing operation.
+	// Optional. The reference image for the editing operation.
 	ReferenceImage *Image `json:"referenceImage,omitempty"`
-	// The ID of the reference image.
+	// Optional. The ID of the reference image.
 	ReferenceID int32 `json:"referenceId,omitempty"`
-	// The type of the reference image. Only set by the SDK.
+	// Optional. The type of the reference image. Only set by the SDK.
 	ReferenceType string `json:"referenceType,omitempty"`
-	// Configuration for the mask reference image.
+	// Optional. Configuration for the mask reference image.
 	MaskImageConfig *MaskReferenceConfig `json:"maskImageConfig,omitempty"`
-	// Configuration for the control reference image.
+	// Optional. Configuration for the control reference image.
 	ControlImageConfig *ControlReferenceConfig `json:"controlImageConfig,omitempty"`
-	// Configuration for the style reference image.
+	// Optional. Configuration for the style reference image.
 	StyleImageConfig *StyleReferenceConfig `json:"styleImageConfig,omitempty"`
-	// Configuration for the subject reference image.
+	// Optional. Configuration for the subject reference image.
 	SubjectImageConfig *SubjectReferenceConfig `json:"subjectImageConfig,omitempty"`
 }
 
@@ -1991,44 +1993,44 @@ func NewSubjectReferenceImage(referenceImage *Image, referenceID int32, config *
 
 // Configuration for editing an image.
 type EditImageConfig struct {
-	// Used to override HTTP request options.
+	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
-	// Cloud Storage URI used to store the generated images.
+	// Optional. Cloud Storage URI used to store the generated images.
 	OutputGCSURI string `json:"outputGcsUri,omitempty"`
-	// Description of what to discourage in the generated images.
+	// Optional. Description of what to discourage in the generated images.
 	NegativePrompt string `json:"negativePrompt,omitempty"`
-	// Number of images to generate.
+	// Optional. Number of images to generate.
 	// If empty, the system will choose a default value (currently 4).
 	NumberOfImages int32 `json:"numberOfImages,omitempty"`
-	// Aspect ratio of the generated images.
+	// Optional. Aspect ratio of the generated images.
 	AspectRatio string `json:"aspectRatio,omitempty"`
-	// Controls how much the model adheres to the text prompt. Large
+	// Optional. Controls how much the model adheres to the text prompt. Large
 	// values increase output and prompt alignment, but may compromise image
 	// quality.
 	GuidanceScale *float32 `json:"guidanceScale,omitempty"`
-	// Random seed for image generation. This is not available when
+	// Optional. Random seed for image generation. This is not available when
 	// ``add_watermark`` is set to true.
 	Seed *int32 `json:"seed,omitempty"`
-	// Filter level for safety filtering.
+	// Optional. Filter level for safety filtering.
 	SafetyFilterLevel SafetyFilterLevel `json:"safetyFilterLevel,omitempty"`
-	// Allows generation of people by the model.
+	// Optional. Allows generation of people by the model.
 	PersonGeneration PersonGeneration `json:"personGeneration,omitempty"`
-	// Whether to report the safety scores of each generated image and
+	// Optional. Whether to report the safety scores of each generated image and
 	// the positive prompt in the response.
 	IncludeSafetyAttributes bool `json:"includeSafetyAttributes,omitempty"`
-	// Whether to include the Responsible AI filter reason if the image
+	// Optional. Whether to include the Responsible AI filter reason if the image
 	// is filtered out of the response.
 	IncludeRAIReason bool `json:"includeRaiReason,omitempty"`
-	// Language of the text in the prompt.
+	// Optional. Language of the text in the prompt.
 	Language ImagePromptLanguage `json:"language,omitempty"`
-	// MIME type of the generated image.
+	// Optional. MIME type of the generated image.
 	OutputMIMEType string `json:"outputMimeType,omitempty"`
-	// Compression quality of the generated image (for ``image/jpeg``
+	// Optional. Compression quality of the generated image (for ``image/jpeg``
 	// only).
 	OutputCompressionQuality *int32 `json:"outputCompressionQuality,omitempty"`
-	// Describes the editing mode for the request.
+	// Optional. Describes the editing mode for the request.
 	EditMode EditMode `json:"editMode,omitempty"`
-	// The number of sampling steps. A higher value has better image
+	// Optional. The number of sampling steps. A higher value has better image
 	// quality, while a lower value has better latency.
 	BaseSteps *int32 `json:"baseSteps,omitempty"`
 }
@@ -2043,19 +2045,19 @@ type EditImageResponse struct {
 // These fields require default values sent to the API which are not intended
 // to be modifiable or exposed to users in the SDK method.
 type upscaleImageAPIConfig struct {
-	// Used to override HTTP request options.
+	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
-	// Whether to include a reason for filtered-out images in the
+	// Optional. Whether to include a reason for filtered-out images in the
 	// response.
 	IncludeRAIReason bool `json:"includeRaiReason,omitempty"`
-	// The image format that the output should be saved as.
+	// Optional. The image format that the output should be saved as.
 	OutputMIMEType string `json:"outputMimeType,omitempty"`
-	// The level of compression if the ``output_mime_type`` is
+	// Optional. The level of compression if the ``output_mime_type`` is
 	// ``image/jpeg``.
 	OutputCompressionQuality *int32 `json:"outputCompressionQuality,omitempty"`
-
+	// Optional.
 	NumberOfImages int32 `json:"numberOfImages,omitempty"`
-
+	// Optional.
 	Mode string `json:"mode,omitempty"`
 }
 
@@ -2066,25 +2068,25 @@ type UpscaleImageResponse struct {
 
 // Optional parameters for models.get method.
 type GetModelConfig struct {
-	// Used to override HTTP request options.
+	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
 }
 
 // An endpoint where models are deployed.
 type Endpoint struct {
-	// Resource name of the endpoint.
+	// Optional. Resource name of the endpoint.
 	Name string `json:"name,omitempty"`
-	// ID of the model that's deployed to the endpoint.
+	// Optional. ID of the model that's deployed to the endpoint.
 	DeployedModelID string `json:"deployedModelId,omitempty"`
 }
 
 // A tuned machine learning model.
 type TunedModelInfo struct {
-	// ID of the base model that you want to tune.
+	// Optional. ID of the base model that you want to tune.
 	BaseModel string `json:"baseModel,omitempty"`
-	// Date and time when the base model was created.
+	// Optional. Date and time when the base model was created.
 	CreateTime time.Time `json:"createTime,omitempty"`
-	// Date and time when the base model was last updated.
+	// Optional. Date and time when the base model was last updated.
 	UpdateTime time.Time `json:"updateTime,omitempty"`
 }
 
@@ -2110,46 +2112,47 @@ func (c *TunedModelInfo) MarshalJSON() ([]byte, error) {
 
 // A trained machine learning model.
 type Model struct {
-	// Resource name of the model.
+	// Optional. Resource name of the model.
 	Name string `json:"name,omitempty"`
-	// Display name of the model.
+	// Optional. Display name of the model.
 	DisplayName string `json:"displayName,omitempty"`
-	// Description of the model.
+	// Optional. Description of the model.
 	Description string `json:"description,omitempty"`
-	// Version ID of the model. A new version is committed when a new
+	// Optional. Version ID of the model. A new version is committed when a new
 	// model version is uploaded or trained under an existing model ID. The
 	// version ID is an auto-incrementing decimal number in string
 	// representation.
 	Version string `json:"version,omitempty"`
-	// List of deployed models created from this base model. Note that a
+	// Optional. List of deployed models created from this base model. Note that a
 	// model could have been deployed to endpoints in different locations.
 	Endpoints []*Endpoint `json:"endpoints,omitempty"`
-	// Labels with user-defined metadata to organize your models.
+	// Optional. Labels with user-defined metadata to organize your models.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Information about the tuned model from the base model.
+	// Optional. Information about the tuned model from the base model.
 	TunedModelInfo *TunedModelInfo `json:"tunedModelInfo,omitempty"`
-	// The maximum number of input tokens that the model can handle.
+	// Optional. The maximum number of input tokens that the model can handle.
 	InputTokenLimit int32 `json:"inputTokenLimit,omitempty"`
-	// The maximum number of output tokens that the model can generate.
+	// Optional. The maximum number of output tokens that the model can generate.
 	OutputTokenLimit int32 `json:"outputTokenLimit,omitempty"`
-	// List of actions that are supported by the model.
+	// Optional. List of actions that are supported by the model.
 	SupportedActions []string `json:"supportedActions,omitempty"`
 }
 
 type ListModelsConfig struct {
-	// Used to override HTTP request options.
+	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
-	// PageSize specifies the maximum number of cached contents to return per API call.
-	// If zero, the server will use a default value.
+	// Optional. PageSize specifies the maximum number of cached contents to return per
+	// API call. If zero, the server will use a default value.
 	PageSize int32 `json:"pageSize,omitempty"`
-	// PageToken represents a token used for pagination in API responses. It's an opaque
-	// string that should be passed to subsequent requests to retrieve the next page of
-	// results. An empty PageToken typically indicates that there are no further pages available.
+	// Optional. PageToken represents a token used for pagination in API responses. It's
+	// an opaque string that should be passed to subsequent requests to retrieve the next
+	// page of results. An empty PageToken typically indicates that there are no further
+	// pages available.
 	PageToken string `json:"pageToken,omitempty"`
-
+	// Optional.
 	Filter string `json:"filter,omitempty"`
-	// QueryBase is a boolean flag to control whether to query base models or tuned models.
-	// If nil, then SDK will use the default value Ptr(true).
+	// Optional. QueryBase is a boolean flag to control whether to query base models or
+	// tuned models. If nil, then SDK will use the default value Ptr(true).
 	QueryBase *bool `json:"queryBase,omitempty"`
 }
 
@@ -2160,16 +2163,16 @@ type ListModelsResponse struct {
 }
 
 type UpdateModelConfig struct {
-	// Used to override HTTP request options.
+	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
-
+	// Optional.
 	DisplayName string `json:"displayName,omitempty"`
-
+	// Optional.
 	Description string `json:"description,omitempty"`
 }
 
 type DeleteModelConfig struct {
-	// Used to override HTTP request options.
+	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
 }
 
@@ -2224,14 +2227,14 @@ type GenerationConfig struct {
 
 // Config for the count_tokens method.
 type CountTokensConfig struct {
-	// Used to override HTTP request options.
+	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
-	// Instructions for the model to steer it toward better performance.
+	// Optional. Instructions for the model to steer it toward better performance.
 	SystemInstruction *Content `json:"systemInstruction,omitempty"`
-	// Code that enables the system to interact with external systems to
+	// Optional. Code that enables the system to interact with external systems to
 	// perform an action outside of the knowledge and scope of the model.
 	Tools []*Tool `json:"tools,omitempty"`
-	// Configuration that the model uses to generate the response. Not
+	// Optional. Configuration that the model uses to generate the response. Not
 	// supported by the Gemini Developer API.
 	GenerationConfig *GenerationConfig `json:"generationConfig,omitempty"`
 }
@@ -2247,7 +2250,7 @@ type CountTokensResponse struct {
 
 // Optional parameters for computing tokens.
 type ComputeTokensConfig struct {
-	// Used to override HTTP request options.
+	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
 }
 
@@ -2316,44 +2319,44 @@ type ComputeTokensResponse struct {
 
 // You can find API default values and more details at VertexAI: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/veo-video-generation.
 type GenerateVideosConfig struct {
-	// Used to override HTTP request options.
+	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
-	// Number of output videos. If empty, the system will choose a default value.
+	// Optional. Number of output videos. If empty, the system will choose a default value.
 	NumberOfVideos int32 `json:"numberOfVideos,omitempty"`
-	// The GCS bucket where to save the generated videos.
+	// Optional. The GCS bucket where to save the generated videos.
 	OutputGCSURI string `json:"outputGcsUri,omitempty"`
-	// Frames per second for video generation.
+	// Optional. Frames per second for video generation.
 	FPS *int32 `json:"fps,omitempty"`
-	// Duration of the clip for video generation in seconds.
+	// Optional. Duration of the clip for video generation in seconds.
 	DurationSeconds *int32 `json:"durationSeconds,omitempty"`
-	// The RNG seed. If RNG seed is exactly same for each request with unchanged inputs,
-	// the prediction results will be consistent. Otherwise, a random RNG seed will be used
-	// each time to produce a different result.
+	// Optional. The RNG seed. If RNG seed is exactly same for each request with unchanged
+	// inputs, the prediction results will be consistent. Otherwise, a random RNG seed will
+	// be used each time to produce a different result.
 	Seed *int32 `json:"seed,omitempty"`
-	// The aspect ratio for the generated video. 16:9 (landscape) and 9:16 (portrait) are
-	// supported.
+	// Optional. The aspect ratio for the generated video. 16:9 (landscape) and 9:16 (portrait)
+	// are supported.
 	AspectRatio string `json:"aspectRatio,omitempty"`
-	// The resolution for the generated video. 1280x720, 1920x1080 are supported.
+	// Optional. The resolution for the generated video. 1280x720, 1920x1080 are supported.
 	Resolution string `json:"resolution,omitempty"`
-	// Whether allow to generate person videos, and restrict to specific ages. Supported
-	// values are: dont_allow, allow_adult.
+	// Optional. Whether allow to generate person videos, and restrict to specific ages.
+	// Supported values are: dont_allow, allow_adult.
 	PersonGeneration string `json:"personGeneration,omitempty"`
-	// The pubsub topic where to publish the video generation progress.
+	// Optional. The pubsub topic where to publish the video generation progress.
 	PubsubTopic string `json:"pubsubTopic,omitempty"`
-	// Optional field in addition to the text content. Negative prompts can be explicitly
-	// stated here to help generate the video.
+	// Optional. Optional field in addition to the text content. Negative prompts can be
+	// explicitly stated here to help generate the video.
 	NegativePrompt string `json:"negativePrompt,omitempty"`
-	// Whether to use the prompt rewriting logic.
+	// Optional. Whether to use the prompt rewriting logic.
 	EnhancePrompt bool `json:"enhancePrompt,omitempty"`
 }
 
 // A generated video.
 type Video struct {
-	// Path to another storage.
+	// Optional. Path to another storage.
 	URI string `json:"uri,omitempty"`
-	// Video bytes.
+	// Optional. Video bytes.
 	VideoBytes []byte `json:"videoBytes,omitempty"`
-	// Video encoding, for example "video/mp4".
+	// Optional. Video encoding, for example "video/mp4".
 	MIMEType string `json:"mimeType,omitempty"`
 }
 
@@ -2368,7 +2371,7 @@ func (v *Video) setVideoBytes(b []byte) bool {
 
 // A generated video.
 type GeneratedVideo struct {
-	// The output video
+	// Optional. The output video
 	Video *Video `json:"video,omitempty"`
 }
 
@@ -2397,37 +2400,37 @@ type GenerateVideosOperation struct {
 	// returns it. If you use the default HTTP mapping, the `name` should be a resource
 	// name ending with `operations/{unique_id}`.
 	Name string `json:"name,omitempty"`
-	// Service-specific metadata associated with the operation. It typically contains progress
-	// information and common metadata such as create time. Some services might not provide
-	// such metadata. Any method that returns a long-running operation should document the
-	// metadata type, if any.
+	// Optional. Service-specific metadata associated with the operation. It typically contains
+	// progress information and common metadata such as create time. Some services might
+	// not provide such metadata. Any method that returns a long-running operation should
+	// document the metadata type, if any.
 	Metadata map[string]any `json:"metadata,omitempty"`
 	// If the value is `false`, it means the operation is still in progress. If `true`,
 	// the operation is completed, and either `error` or `response` is available.
 	Done bool `json:"done,omitempty"`
-	// The error result of the operation in case of failure or cancellation.
+	// Optional. The error result of the operation in case of failure or cancellation.
 	Error map[string]any `json:"error,omitempty"`
-	// The generated videos.
+	// Optional. The generated videos.
 	Response *GenerateVideosResponse `json:"response,omitempty"`
 }
 
 // Optional configuration for cached content creation.
 type CreateCachedContentConfig struct {
-	// Used to override HTTP request options.
+	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
-	// The TTL for this resource. The expiration time is computed: now + TTL.
+	// Optional. The TTL for this resource. The expiration time is computed: now + TTL.
 	TTL time.Duration `json:"ttl,omitempty"`
-	// Timestamp of when this resource is considered expired.
+	// Optional. Timestamp of when this resource is considered expired.
 	ExpireTime time.Time `json:"expireTime,omitempty"`
-	// The user-generated meaningful display name of the cached content.
+	// Optional. The user-generated meaningful display name of the cached content.
 	DisplayName string `json:"displayName,omitempty"`
-	// The content to cache.
+	// Optional. The content to cache.
 	Contents []*Content `json:"contents,omitempty"`
-	// Developer set system instruction.
+	// Optional. Developer set system instruction.
 	SystemInstruction *Content `json:"systemInstruction,omitempty"`
-	// A list of `Tools` the model may use to generate the next response.
+	// Optional. A list of `Tools` the model may use to generate the next response.
 	Tools []*Tool `json:"tools,omitempty"`
-	// Configuration for the tools to use. This config is shared for all tools.
+	// Optional. Configuration for the tools to use. This config is shared for all tools.
 	ToolConfig *ToolConfig `json:"toolConfig,omitempty"`
 }
 
@@ -2491,19 +2494,19 @@ type CachedContentUsageMetadata struct {
 
 // A resource used in LLM queries for users to explicitly specify what to cache.
 type CachedContent struct {
-	// The server-generated resource name of the cached content.
+	// Optional. The server-generated resource name of the cached content.
 	Name string `json:"name,omitempty"`
-	// The user-generated meaningful display name of the cached content.
+	// Optional. The user-generated meaningful display name of the cached content.
 	DisplayName string `json:"displayName,omitempty"`
-	// The name of the publisher model to use for cached content.
+	// Optional. The name of the publisher model to use for cached content.
 	Model string `json:"model,omitempty"`
-	// Creation time of the cache entry.
+	// Optional. Creation time of the cache entry.
 	CreateTime time.Time `json:"createTime,omitempty"`
-	// When the cache entry was last updated in UTC time.
+	// Optional. When the cache entry was last updated in UTC time.
 	UpdateTime time.Time `json:"updateTime,omitempty"`
-	// Expiration time of the cached content.
+	// Optional. Expiration time of the cached content.
 	ExpireTime time.Time `json:"expireTime,omitempty"`
-	// Metadata on the usage of the cached content.
+	// Optional. Metadata on the usage of the cached content.
 	UsageMetadata *CachedContentUsageMetadata `json:"usageMetadata,omitempty"`
 }
 
@@ -2533,13 +2536,13 @@ func (c *CachedContent) MarshalJSON() ([]byte, error) {
 
 // Optional parameters for caches.get method.
 type GetCachedContentConfig struct {
-	// Used to override HTTP request options.
+	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
 }
 
 // Optional parameters for caches.delete method.
 type DeleteCachedContentConfig struct {
-	// Used to override HTTP request options.
+	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
 }
 
@@ -2549,11 +2552,11 @@ type DeleteCachedContentResponse struct {
 
 // Optional parameters for caches.update method.
 type UpdateCachedContentConfig struct {
-	// Used to override HTTP request options.
+	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
-	// The TTL for this resource. The expiration time is computed: now + TTL.
+	// Optional. The TTL for this resource. The expiration time is computed: now + TTL.
 	TTL time.Duration `json:"ttl,omitempty"`
-	// Timestamp of when this resource is considered expired.
+	// Optional. Timestamp of when this resource is considered expired.
 	ExpireTime time.Time `json:"expireTime,omitempty"`
 }
 
@@ -2603,14 +2606,15 @@ func (c *UpdateCachedContentConfig) UnmarshalJSON(data []byte) error {
 
 // Config for caches.list method.
 type ListCachedContentsConfig struct {
-	// Used to override HTTP request options.
+	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
-	// PageSize specifies the maximum number of cached contents to return per API call.
-	// If zero, the server will use a default value.
+	// Optional. PageSize specifies the maximum number of cached contents to return per
+	// API call. If zero, the server will use a default value.
 	PageSize int32 `json:"pageSize,omitempty"`
-	// PageToken represents a token used for pagination in API responses. It's an opaque
-	// string that should be passed to subsequent requests to retrieve the next page of
-	// results. An empty PageToken typically indicates that there are no further pages available.
+	// Optional. PageToken represents a token used for pagination in API responses. It's
+	// an opaque string that should be passed to subsequent requests to retrieve the next
+	// page of results. An empty PageToken typically indicates that there are no further
+	// pages available.
 	PageToken string `json:"pageToken,omitempty"`
 }
 
@@ -2622,64 +2626,66 @@ type ListCachedContentsResponse struct {
 
 // Used to override the default configuration.
 type ListFilesConfig struct {
-	// Used to override HTTP request options.
+	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
-	// PageSize specifies the maximum number of cached contents to return per API call.
-	// If zero, the server will use a default value.
+	// Optional. PageSize specifies the maximum number of cached contents to return per
+	// API call. If zero, the server will use a default value.
 	PageSize int32 `json:"pageSize,omitempty"`
-	// PageToken represents a token used for pagination in API responses. It's an opaque
-	// string that should be passed to subsequent requests to retrieve the next page of
-	// results. An empty PageToken typically indicates that there are no further pages available.
+	// Optional. PageToken represents a token used for pagination in API responses. It's
+	// an opaque string that should be passed to subsequent requests to retrieve the next
+	// page of results. An empty PageToken typically indicates that there are no further
+	// pages available.
 	PageToken string `json:"pageToken,omitempty"`
 }
 
 // Status of a File that uses a common error model.
 type FileStatus struct {
-	// A list of messages that carry the error details. There is a common set of message
-	// types for APIs to use.
+	// Optional. A list of messages that carry the error details. There is a common set
+	// of message types for APIs to use.
 	Details []map[string]any `json:"details,omitempty"`
-	// A list of messages that carry the error details. There is a common set of message
-	// types for APIs to use.
+	// Optional. A list of messages that carry the error details. There is a common set
+	// of message types for APIs to use.
 	Message string `json:"message,omitempty"`
-	// The status code. 0 for OK, 1 for CANCELLED
+	// Optional. The status code. 0 for OK, 1 for CANCELLED
 	Code *int32 `json:"code,omitempty"`
 }
 
 // A file uploaded to the API.
 type File struct {
-	// The `File` resource name. The ID (name excluding the "files/" prefix) can contain
-	// up to 40 characters that are lowercase alphanumeric or dashes (-). The ID cannot
-	// start or end with a dash. If the name is empty on create, a unique name will be generated.
-	// Example: `files/123-456`
+	// Optional. The `File` resource name. The ID (name excluding the "files/" prefix) can
+	// contain up to 40 characters that are lowercase alphanumeric or dashes (-). The ID
+	// cannot start or end with a dash. If the name is empty on create, a unique name will
+	// be generated. Example: `files/123-456`
 	Name string `json:"name,omitempty"`
 	// Optional. The human-readable display name for the `File`. The display name must be
 	// no more than 512 characters in length, including spaces. Example: 'Welcome Image'
 	DisplayName string `json:"displayName,omitempty"`
-	// Output only. MIME type of the file.
+	// Optional. Output only. MIME type of the file.
 	MIMEType string `json:"mimeType,omitempty"`
-	// Output only. Size of the file in bytes.
+	// Optional. Output only. Size of the file in bytes.
 	SizeBytes *int64 `json:"sizeBytes,omitempty"`
-	// Output only. The timestamp of when the `File` was created.
+	// Optional. Output only. The timestamp of when the `File` was created.
 	CreateTime time.Time `json:"createTime,omitempty"`
-	// Output only. The timestamp of when the `File` will be deleted. Only set if the `File`
-	// is scheduled to expire.
+	// Optional. Output only. The timestamp of when the `File` will be deleted. Only set
+	// if the `File` is scheduled to expire.
 	ExpirationTime time.Time `json:"expirationTime,omitempty"`
-	// Output only. The timestamp of when the `File` was last updated.
+	// Optional. Output only. The timestamp of when the `File` was last updated.
 	UpdateTime time.Time `json:"updateTime,omitempty"`
-	// Output only. SHA-256 hash of the uploaded bytes. The hash value is encoded in base64
-	// format.
+	// Optional. Output only. SHA-256 hash of the uploaded bytes. The hash value is encoded
+	// in base64 format.
 	Sha256Hash string `json:"sha256Hash,omitempty"`
-	// Output only. The URI of the `File`.
+	// Optional. Output only. The URI of the `File`.
 	URI string `json:"uri,omitempty"`
-	// Output only. The URI of the `File`, only set for downloadable (generated) files.
+	// Optional. Output only. The URI of the `File`, only set for downloadable (generated)
+	// files.
 	DownloadURI string `json:"downloadUri,omitempty"`
-	// Output only. Processing state of the File.
+	// Optional. Output only. Processing state of the File.
 	State FileState `json:"state,omitempty"`
-	// Output only. The source of the `File`.
+	// Optional. Output only. The source of the `File`.
 	Source FileSource `json:"source,omitempty"`
-	// Output only. Metadata for a video.
+	// Optional. Output only. Metadata for a video.
 	VideoMetadata map[string]any `json:"videoMetadata,omitempty"`
-	// Output only. Error status if File processing failed.
+	// Optional. Output only. Error status if File processing failed.
 	Error *FileStatus `json:"error,omitempty"`
 }
 
@@ -2786,25 +2792,25 @@ type ListFilesResponse struct {
 
 // Used to override the default configuration.
 type CreateFileConfig struct {
-	// Used to override HTTP request options.
+	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
 }
 
 // Response for the create file method.
 type CreateFileResponse struct {
-	// Used to retain the HTTP headers in the request
+	// Optional. Used to retain the HTTP headers in the request
 	HTTPHeaders http.Header `json:"httpHeaders,omitempty"`
 }
 
 // Used to override the default configuration.
 type GetFileConfig struct {
-	// Used to override HTTP request options.
+	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
 }
 
 // Used to override the default configuration.
 type DeleteFileConfig struct {
-	// Used to override HTTP request options.
+	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
 }
 
@@ -2813,12 +2819,12 @@ type DeleteFileResponse struct {
 }
 
 type GetOperationConfig struct {
-	// Used to override HTTP request options.
+	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
 }
 
 type FetchPredictOperationConfig struct {
-	// Used to override HTTP request options.
+	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
 }
 
@@ -2827,22 +2833,22 @@ type testTableItem struct {
 	Name string `json:"name,omitempty"`
 	// The parameters to the test. Use pydantic models.
 	Parameters map[string]any `json:"parameters,omitempty"`
-	// Expects an exception for MLDev matching the string.
+	// Optional. Expects an exception for MLDev matching the string.
 	ExceptionIfMLDev string `json:"exceptionIfMldev,omitempty"`
-	// Expects an exception for Vertex matching the string.
+	// Optional. Expects an exception for Vertex matching the string.
 	ExceptionIfVertex string `json:"exceptionIfVertex,omitempty"`
-	// Use if you don't want to use the default replay ID which is derived from the test
-	// name.
+	// Optional. Use if you don't want to use the default replay ID which is derived from
+	// the test name.
 	OverrideReplayID string `json:"overrideReplayId,omitempty"`
-	// True if the parameters contain an unsupported union type. This test will be skipped
-	// for languages that do not support the union type.
+	// Optional. True if the parameters contain an unsupported union type. This test will
+	// be skipped for languages that do not support the union type.
 	HasUnion bool `json:"hasUnion,omitempty"`
-	// When set to a reason string, this test will be skipped in the API mode. Use this
-	// flag for tests that can not be reproduced with the real API. E.g. a test that deletes
-	// a resource.
+	// Optional. When set to a reason string, this test will be skipped in the API mode.
+	// Use this flag for tests that can not be reproduced with the real API. E.g. a test
+	// that deletes a resource.
 	SkipInAPIMode string `json:"skipInApiMode,omitempty"`
-	// Keys to ignore when comparing the request and response. This is useful for tests
-	// that are not deterministic.
+	// Optional. Keys to ignore when comparing the request and response. This is useful
+	// for tests that are not deterministic.
 	IgnoreKeys []string `json:"ignoreKeys,omitempty"`
 }
 
@@ -2894,21 +2900,21 @@ type replayFile struct {
 
 // Used to override the default configuration.
 type UploadFileConfig struct {
-	// Used to override HTTP request options.
+	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
-	// The name of the file in the destination (e.g., 'files/sample-image'. If not provided
-	// one will be generated.
+	// Optional. The name of the file in the destination (e.g., 'files/sample-image'. If
+	// not provided one will be generated.
 	Name string `json:"name,omitempty"`
-	// mime_type: The MIME type of the file. If not provided, it will be inferred from the
-	// file extension.
+	// Optional. mime_type: The MIME type of the file. If not provided, it will be inferred
+	// from the file extension.
 	MIMEType string `json:"mimeType,omitempty"`
-	// Optional display name of the file.
+	// Optional. Optional display name of the file.
 	DisplayName string `json:"displayName,omitempty"`
 }
 
 // Used to override the default configuration.
 type DownloadFileConfig struct {
-	// Used to override HTTP request options.
+	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
 }
 
@@ -2917,14 +2923,14 @@ type DownloadFileConfig struct {
 // the `Imagen API reference documentation
 // <https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/imagen-api>`_.
 type UpscaleImageConfig struct {
-	// Used to override HTTP request options.
+	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
-	// Whether to include a reason for filtered-out images in the
+	// Optional. Whether to include a reason for filtered-out images in the
 	// response.
 	IncludeRAIReason bool `json:"includeRaiReason,omitempty"`
-	// The image format that the output should be saved as.
+	// Optional. The image format that the output should be saved as.
 	OutputMIMEType string `json:"outputMimeType,omitempty"`
-	// The level of compression if the OutputMIMEType is image/jpeg.
+	// Optional. The level of compression if the OutputMIMEType is image/jpeg.
 	OutputCompressionQuality *int32 `json:"outputCompressionQuality,omitempty"`
 }
 
@@ -2933,11 +2939,11 @@ type UpscaleImageConfig struct {
 // It can optionally be provided in addition to a mask reference image or
 // a style reference image.
 type RawReferenceImage struct {
-	// The reference image for the editing operation.
+	// Optional. The reference image for the editing operation.
 	ReferenceImage *Image `json:"referenceImage,omitempty"`
-	// The ID of the reference image.
+	// Optional. The ID of the reference image.
 	ReferenceID int32 `json:"referenceId,omitempty"`
-	// The type of the reference image. Only set by the SDK.
+	// Optional. The type of the reference image. Only set by the SDK.
 	referenceType string
 }
 
@@ -2955,13 +2961,13 @@ func (r *RawReferenceImage) referenceImageAPI() *referenceImageAPI {
 // edit the base image. If the user provides a mask image, the mask must be in the same
 // dimensions as the raw image.
 type MaskReferenceImage struct {
-	// The reference image for the editing operation.
+	// Optional. The reference image for the editing operation.
 	ReferenceImage *Image `json:"referenceImage,omitempty"`
-	// The ID of the reference image.
+	// Optional. The ID of the reference image.
 	ReferenceID int32 `json:"referenceId,omitempty"`
-	// The type of the reference image. Only set by the SDK.
+	// Optional. The type of the reference image. Only set by the SDK.
 	referenceType string
-	// Configuration for the mask reference image.
+	// Optional. Configuration for the mask reference image.
 	Config *MaskReferenceConfig `json:"config,omitempty"`
 }
 
@@ -2980,13 +2986,13 @@ func (r *MaskReferenceImage) referenceImageAPI() *referenceImageAPI {
 // In the case of the latter, the EnableControlImageComputation field in the config
 // should be set to true.
 type ControlReferenceImage struct {
-	// The reference image for the editing operation.
+	// Optional. The reference image for the editing operation.
 	ReferenceImage *Image `json:"referenceImage,omitempty"`
-	// The ID of the reference image.
+	// Optional. The ID of the reference image.
 	ReferenceID int32 `json:"referenceId,omitempty"`
-	// The type of the reference image. Only set by the SDK.
+	// Optional. The type of the reference image. Only set by the SDK.
 	referenceType string
-	// Configuration for the control reference image.
+	// Optional. Configuration for the control reference image.
 	Config *ControlReferenceConfig `json:"config,omitempty"`
 }
 
@@ -3005,13 +3011,13 @@ func (r *ControlReferenceImage) referenceImageAPI() *referenceImageAPI {
 // A raw reference image can also be provided as a destination for the style to
 // be applied to.
 type StyleReferenceImage struct {
-	// The reference image for the editing operation.
+	// Optional. The reference image for the editing operation.
 	ReferenceImage *Image `json:"referenceImage,omitempty"`
-	// The ID of the reference image.
+	// Optional. The ID of the reference image.
 	ReferenceID int32 `json:"referenceId,omitempty"`
-	// The type of the reference image. Only set by the SDK.
+	// Optional. The type of the reference image. Only set by the SDK.
 	referenceType string
-	// Configuration for the style reference image.
+	// Optional. Configuration for the style reference image.
 	Config *StyleReferenceConfig `json:"config,omitempty"`
 }
 
@@ -3030,13 +3036,13 @@ func (r *StyleReferenceImage) referenceImageAPI() *referenceImageAPI {
 // A raw reference image can also be provided as a destination for the subject to
 // be applied to.
 type SubjectReferenceImage struct {
-	// The reference image for the editing operation.
+	// Optional. The reference image for the editing operation.
 	ReferenceImage *Image `json:"referenceImage,omitempty"`
-	// The ID of the reference image.
+	// Optional. The ID of the reference image.
 	ReferenceID int32 `json:"referenceId,omitempty"`
-	// The type of the reference image. Only set by the SDK.
+	// Optional. The type of the reference image. Only set by the SDK.
 	referenceType string
-	// Configuration for the subject reference image.
+	// Optional. Configuration for the subject reference image.
 	Config *SubjectReferenceConfig `json:"config,omitempty"`
 }
 
@@ -3055,9 +3061,9 @@ type LiveServerSetupComplete struct {
 
 // Audio transcription in Server Conent.
 type Transcription struct {
-	// Transcription text.
+	// Optional. Transcription text.
 	Text string `json:"text,omitempty"`
-	// The bool indicates the end of the transcription.
+	// Optional. The bool indicates the end of the transcription.
 	Finished bool `json:"finished,omitempty"`
 }
 
@@ -3065,18 +3071,18 @@ type Transcription struct {
 // Content is generated as quickly as possible, and not in real time. Clients
 // may choose to buffer and play it out in real time.
 type LiveServerContent struct {
-	// The content that the model has generated as part of the current conversation with
-	// the user.
+	// Optional. The content that the model has generated as part of the current conversation
+	// with the user.
 	ModelTurn *Content `json:"modelTurn,omitempty"`
-	// If true, indicates that the model is done generating. Generation will only start
-	// in response to additional client messages. Can be set alongside `content`, indicating
-	// that the `content` is the last in the turn.
+	// Optional. If true, indicates that the model is done generating. Generation will only
+	// start in response to additional client messages. Can be set alongside `content`,
+	// indicating that the `content` is the last in the turn.
 	TurnComplete bool `json:"turnComplete,omitempty"`
-	// If true, indicates that a client message has interrupted current model generation.
-	// If the client is playing out the content in realtime, this is a good signal to stop
-	// and empty the current queue.
+	// Optional. If true, indicates that a client message has interrupted current model
+	// generation. If the client is playing out the content in realtime, this is a good
+	// signal to stop and empty the current queue.
 	Interrupted bool `json:"interrupted,omitempty"`
-	// If true, indicates that the model is done generating. When model is
+	// Optional. If true, indicates that the model is done generating. When model is
 	// interrupted while generating there will be no generation_complete message
 	// in interrupted turn, it will go through interrupted > turn_complete.
 	// When model assumes realtime playback there will be delay between
@@ -3085,11 +3091,11 @@ type LiveServerContent struct {
 	// has finished generating all content. This is a signal to the client
 	// that it can stop sending messages.
 	GenerationComplete bool `json:"generationComplete,omitempty"`
-	// Input transcription. The transcription is independent to the model
+	// Optional. Input transcription. The transcription is independent to the model
 	// turn which means it doesn’t imply any ordering between transcription and
 	// model turn.
 	InputTranscription *Transcription `json:"inputTranscription,omitempty"`
-	// Output transcription. The transcription is independent to the model
+	// Optional. Output transcription. The transcription is independent to the model
 	// turn which means it doesn’t imply any ordering between transcription and
 	// model turn.
 	OutputTranscription *Transcription `json:"outputTranscription,omitempty"`
@@ -3098,7 +3104,7 @@ type LiveServerContent struct {
 // Request for the client to execute the `function_calls` and return the responses with
 // the matching `id`s.
 type LiveServerToolCall struct {
-	// The function call to be executed.
+	// Optional. The function call to be executed.
 	FunctionCalls []*FunctionCall `json:"functionCalls,omitempty"`
 }
 
@@ -3108,43 +3114,45 @@ type LiveServerToolCall struct {
 // the tool calls. This message occurs only in cases where the clients interrupt
 // server turns.
 type LiveServerToolCallCancellation struct {
-	// The IDs of the tool calls to be cancelled.
+	// Optional. The IDs of the tool calls to be cancelled.
 	IDs []string `json:"ids,omitempty"`
 }
 
 // Usage metadata about response(s).
 type UsageMetadata struct {
-	// Number of tokens in the prompt. When `cached_content` is set, this is still the total
-	// effective prompt size meaning this includes the number of tokens in the cached content.
+	// Optional. Number of tokens in the prompt. When `cached_content` is set, this is still
+	// the total effective prompt size meaning this includes the number of tokens in the
+	// cached content.
 	PromptTokenCount int32 `json:"promptTokenCount,omitempty"`
-	// Number of tokens in the cached part of the prompt (the cached content).
+	// Optional. Number of tokens in the cached part of the prompt (the cached content).
 	CachedContentTokenCount int32 `json:"cachedContentTokenCount,omitempty"`
-	// Total number of tokens across all the generated response candidates.
+	// Optional. Total number of tokens across all the generated response candidates.
 	ResponseTokenCount int32 `json:"responseTokenCount,omitempty"`
-	// Number of tokens present in tool-use prompt(s).
+	// Optional. Number of tokens present in tool-use prompt(s).
 	ToolUsePromptTokenCount int32 `json:"toolUsePromptTokenCount,omitempty"`
-	// Number of tokens of thoughts for thinking models.
+	// Optional. Number of tokens of thoughts for thinking models.
 	ThoughtsTokenCount int32 `json:"thoughtsTokenCount,omitempty"`
-	// Total token count for prompt, response candidates, and tool-use prompts(if present).
+	// Optional. Total token count for prompt, response candidates, and tool-use prompts(if
+	// present).
 	TotalTokenCount int32 `json:"totalTokenCount,omitempty"`
-	// List of modalities that were processed in the request input.
+	// Optional. List of modalities that were processed in the request input.
 	PromptTokensDetails []*ModalityTokenCount `json:"promptTokensDetails,omitempty"`
-	// List of modalities that were processed in the cache input.
+	// Optional. List of modalities that were processed in the cache input.
 	CacheTokensDetails []*ModalityTokenCount `json:"cacheTokensDetails,omitempty"`
-	// List of modalities that were returned in the response.
+	// Optional. List of modalities that were returned in the response.
 	ResponseTokensDetails []*ModalityTokenCount `json:"responseTokensDetails,omitempty"`
-	// List of modalities that were processed in the tool-use prompt.
+	// Optional. List of modalities that were processed in the tool-use prompt.
 	ToolUsePromptTokensDetails []*ModalityTokenCount `json:"toolUsePromptTokensDetails,omitempty"`
-	// Traffic type. This shows whether a request consumes Pay-As-You-Go
+	// Optional. Traffic type. This shows whether a request consumes Pay-As-You-Go
 	// or Provisioned Throughput quota.
 	TrafficType TrafficType `json:"trafficType,omitempty"`
 }
 
 // Server will not be able to service client soon.
 type LiveServerGoAway struct {
-	// The remaining time before the connection will be terminated as ABORTED. The minimal
-	// time returned here is specified differently together with the rate limits for a given
-	// model.
+	// Optional. The remaining time before the connection will be terminated as ABORTED.
+	// The minimal time returned here is specified differently together with the rate limits
+	// for a given model.
 	TimeLeft time.Duration `json:"timeLeft,omitempty"`
 }
 
@@ -3187,16 +3195,17 @@ func (c *LiveServerGoAway) UnmarshalJSON(data []byte) error {
 // Update of the session resumption state.
 // Only sent if `session_resumption` was set in the connection config.
 type LiveServerSessionResumptionUpdate struct {
-	// New handle that represents state that can be resumed. Empty if `resumable`=false.
+	// Optional. New handle that represents state that can be resumed. Empty if `resumable`=false.
 	NewHandle string `json:"newHandle,omitempty"`
-	// True if session can be resumed at this point. It might be not possible to resume
-	// session at some points. In that case we send update empty new_handle and resumable=false.
-	// Example of such case could be model executing function calls or just generating.
-	// Resuming session (using previous session token) in such state will result in some
-	// data loss.
+	// Optional. True if session can be resumed at this point. It might be not possible
+	// to resume session at some points. In that case we send update empty new_handle and
+	// resumable=false. Example of such case could be model executing function calls or
+	// just generating. Resuming session (using previous session token) in such state will
+	// result in some data loss.
 	Resumable bool `json:"resumable,omitempty"`
-	// Index of last message sent by client that is included in state represented by this
-	// SessionResumptionToken. Only sent when `SessionResumptionConfig.transparent` is set.
+	// Optional. Index of last message sent by client that is included in state represented
+	// by this SessionResumptionToken. Only sent when `SessionResumptionConfig.transparent`
+	// is set.
 	// Presence of this index allows users to transparently reconnect and avoid issue of
 	// losing some part of realtime audio input/video. If client wishes to temporarily disconnect
 	// (for example as result of receiving GoAway) they can do it without losing state by
@@ -3248,38 +3257,39 @@ func (s *LiveServerSessionResumptionUpdate) MarshalJSON() ([]byte, error) {
 
 // Response message for API call.
 type LiveServerMessage struct {
-	// Sent in response to a `LiveClientSetup` message from the client.
+	// Optional. Sent in response to a `LiveClientSetup` message from the client.
 	SetupComplete *LiveServerSetupComplete `json:"setupComplete,omitempty"`
-	// Content generated by the model in response to client messages.
+	// Optional. Content generated by the model in response to client messages.
 	ServerContent *LiveServerContent `json:"serverContent,omitempty"`
-	// Request for the client to execute the `function_calls` and return the responses with
-	// the matching `id`s.
+	// Optional. Request for the client to execute the `function_calls` and return the responses
+	// with the matching `id`s.
 	ToolCall *LiveServerToolCall `json:"toolCall,omitempty"`
-	// Notification for the client that a previously issued `ToolCallMessage` with the specified
-	// `id`s should have been not executed and should be cancelled.
+	// Optional. Notification for the client that a previously issued `ToolCallMessage`
+	// with the specified `id`s should have been not executed and should be cancelled.
 	ToolCallCancellation *LiveServerToolCallCancellation `json:"toolCallCancellation,omitempty"`
-	// Usage metadata about model response(s).
+	// Optional. Usage metadata about model response(s).
 	UsageMetadata *UsageMetadata `json:"usageMetadata,omitempty"`
-	// Server will disconnect soon.
+	// Optional. Server will disconnect soon.
 	GoAway *LiveServerGoAway `json:"goAway,omitempty"`
-	// Update of the session resumption state.
+	// Optional. Update of the session resumption state.
 	SessionResumptionUpdate *LiveServerSessionResumptionUpdate `json:"sessionResumptionUpdate,omitempty"`
 }
 
 // Configures automatic detection of activity.
 type AutomaticActivityDetection struct {
-	// If enabled, detected voice and text input count as activity. If disabled, the client
-	// must send activity signals.
+	// Optional. If enabled, detected voice and text input count as activity. If disabled,
+	// the client must send activity signals.
 	Disabled bool `json:"disabled,omitempty"`
-	// Determines how likely speech is to be detected.
+	// Optional. Determines how likely speech is to be detected.
 	StartOfSpeechSensitivity StartSensitivity `json:"startOfSpeechSensitivity,omitempty"`
-	// Determines how likely detected speech is ended.
+	// Optional. Determines how likely detected speech is ended.
 	EndOfSpeechSensitivity EndSensitivity `json:"endOfSpeechSensitivity,omitempty"`
-	// The required duration of detected speech before start-of-speech is committed. The
-	// lower this value the more sensitive the start-of-speech detection is and the shorter
-	// speech can be recognized. However, this also increases the probability of false positives.
+	// Optional. The required duration of detected speech before start-of-speech is committed.
+	// The lower this value the more sensitive the start-of-speech detection is and the
+	// shorter speech can be recognized. However, this also increases the probability of
+	// false positives.
 	PrefixPaddingMs *int32 `json:"prefixPaddingMs,omitempty"`
-	// The required duration of detected non-speech (e.g. silence) before end-of-speech
+	// Optional. The required duration of detected non-speech (e.g. silence) before end-of-speech
 	// is committed. The larger this value, the longer speech gaps can be without interrupting
 	// the user's activity but this will increase the model's latency.
 	SilenceDurationMs *int32 `json:"silenceDurationMs,omitempty"`
@@ -3289,12 +3299,12 @@ type AutomaticActivityDetection struct {
 // This can only be sent if automatic (i.e. server-side) activity detection is
 // disabled.
 type RealtimeInputConfig struct {
-	// If not set, automatic activity detection is enabled by default. If automatic voice
-	// detection is disabled, the client must send activity signals.
+	// Optional. If not set, automatic activity detection is enabled by default. If automatic
+	// voice detection is disabled, the client must send activity signals.
 	AutomaticActivityDetection *AutomaticActivityDetection `json:"automaticActivityDetection,omitempty"`
-	// Defines what effect activity has.
+	// Optional. Defines what effect activity has.
 	ActivityHandling ActivityHandling `json:"activityHandling,omitempty"`
-	// Defines which input is included in the user's turn.
+	// Optional. Defines which input is included in the user's turn.
 	TurnCoverage TurnCoverage `json:"turnCoverage,omitempty"`
 }
 
@@ -3302,11 +3312,11 @@ type RealtimeInputConfig struct {
 // Included in `LiveConnectConfig.session_resumption`. If included server
 // will send `LiveServerSessionResumptionUpdate` messages.
 type SessionResumptionConfig struct {
-	// Session resumption handle of previous session (session to restore).
+	// Optional. Session resumption handle of previous session (session to restore).
 	// If not present new session will be started.
 	Handle string `json:"handle,omitempty"`
-	// If set the server will send `last_consumed_client_message_index` in the `session_resumption_update`
-	// messages to allow for transparent reconnections.
+	// Optional. If set the server will send `last_consumed_client_message_index` in the
+	// `session_resumption_update` messages to allow for transparent reconnections.
 	Transparent bool `json:"transparent,omitempty"`
 }
 
@@ -3316,9 +3326,9 @@ type SessionResumptionConfig struct {
 // subject to the sliding window mechanism, they will always stay at the
 // beginning of context window.
 type SlidingWindow struct {
-	// Session reduction target -- how many tokens we should keep. Window shortening operation
-	// has some latency costs, so we should avoid running it on every turn. Should be <
-	// trigger_tokens. If not set, trigger_tokens/2 is assumed.
+	// Optional. Session reduction target -- how many tokens we should keep. Window shortening
+	// operation has some latency costs, so we should avoid running it on every turn. Should
+	// be < trigger_tokens. If not set, trigger_tokens/2 is assumed.
 	TargetTokens *int64 `json:"targetTokens,omitempty"`
 }
 
@@ -3365,9 +3375,10 @@ func (s *SlidingWindow) MarshalJSON() ([]byte, error) {
 // Enables context window compression -- mechanism managing model context window so
 // it does not exceed given length.
 type ContextWindowCompressionConfig struct {
-	// Number of tokens (before running turn) that triggers context window compression mechanism.
+	// Optional. Number of tokens (before running turn) that triggers context window compression
+	// mechanism.
 	TriggerTokens *int64 `json:"triggerTokens,omitempty"`
-	// Sliding window compression mechanism.
+	// Optional. Sliding window compression mechanism.
 	SlidingWindow *SlidingWindow `json:"slidingWindow,omitempty"`
 }
 
@@ -3421,29 +3432,29 @@ type LiveClientSetup struct {
 	// The fully qualified name of the publisher model or tuned model endpoint to
 	// use.
 	Model string `json:"model,omitempty"`
-	// The generation configuration for the session.
+	// Optional. The generation configuration for the session.
 	// Note: only a subset of fields are supported.
 	GenerationConfig *GenerationConfig `json:"generationConfig,omitempty"`
-	// The user provided system instructions for the model.
+	// Optional. The user provided system instructions for the model.
 	// Note: only text should be used in parts and content in each part will be
 	// in a separate paragraph.
 	SystemInstruction *Content `json:"systemInstruction,omitempty"`
-	// A list of `Tools` the model may use to generate the next response.
+	// Optional. A list of `Tools` the model may use to generate the next response.
 	// A `Tool` is a piece of code that enables the system to interact with
 	// external systems to perform an action, or set of actions, outside of
 	// knowledge and scope of the model.
 	Tools []*Tool `json:"tools,omitempty"`
-	// Configures the realtime input behavior in BidiGenerateContent.
+	// Optional. Configures the realtime input behavior in BidiGenerateContent.
 	RealtimeInputConfig *RealtimeInputConfig `json:"realtimeInputConfig,omitempty"`
-	// Configures session resumption mechanism.
+	// Optional. Configures session resumption mechanism.
 	// If included server will send SessionResumptionUpdate messages.
 	SessionResumption *SessionResumptionConfig `json:"sessionResumption,omitempty"`
-	// Configures context window compression mechanism.
+	// Optional. Configures context window compression mechanism.
 	// If included, server will compress context window to fit into given length.
 	ContextWindowCompression *ContextWindowCompressionConfig `json:"contextWindowCompression,omitempty"`
-	// The transcription of the input aligns with the input audio language.
+	// Optional. The transcription of the input aligns with the input audio language.
 	InputAudioTranscription *AudioTranscriptionConfig `json:"inputAudioTranscription,omitempty"`
-	// The transcription of the output aligns with the language code
+	// Optional. The transcription of the output aligns with the language code
 	// specified for the output audio.
 	OutputAudioTranscription *AudioTranscriptionConfig `json:"outputAudioTranscription,omitempty"`
 }
@@ -3453,12 +3464,12 @@ type LiveClientSetup struct {
 // history and used as part of the prompt to the model to generate content.
 // A message here will interrupt any current model generation.
 type LiveClientContent struct {
-	// The content appended to the current conversation with the model.
+	// Optional. The content appended to the current conversation with the model.
 	// For single-turn queries, this is a single instance. For multi-turn
 	// queries, this is a repeated field that contains conversation history and
 	// latest request.
 	Turns []*Content `json:"turns,omitempty"`
-	// If true, indicates that the server content generation should start with
+	// Optional. If true, indicates that the server content generation should start with
 	// the currently accumulated prompt. Otherwise, the server will await
 	// additional messages before starting generation.
 	TurnComplete bool `json:"turnComplete,omitempty"`
@@ -3489,11 +3500,11 @@ type ActivityEnd struct {
 //   - Is always assumed to be the user's input (cannot be used to populate
 //     conversation history).
 type LiveClientRealtimeInput struct {
-	// Inlined bytes data for media input.
+	// Optional. Inlined bytes data for media input.
 	MediaChunks []*Blob `json:"mediaChunks,omitempty"`
-	// Marks the start of user activity.
+	// Optional. Marks the start of user activity.
 	ActivityStart *ActivityStart `json:"activityStart,omitempty"`
-	// Marks the end of user activity.
+	// Optional. Marks the end of user activity.
 	ActivityEnd *ActivityEnd `json:"activityEnd,omitempty"`
 }
 
@@ -3505,83 +3516,83 @@ type LiveClientRealtimeInput struct {
 // GenerateContent APIs function calling happens over this dedicated set of
 // messages.
 type LiveClientToolResponse struct {
-	// The response to the function calls.
+	// Optional. The response to the function calls.
 	FunctionResponses []*FunctionResponse `json:"functionResponses,omitempty"`
 }
 
 // Messages sent by the client in the API call.
 type LiveClientMessage struct {
-	// Message to be sent by the system when connecting to the API. SDK users should not
-	// send this message.
+	// Optional. Message to be sent by the system when connecting to the API. SDK users
+	// should not send this message.
 	Setup *LiveClientSetup `json:"setup,omitempty"`
-	// Incremental update of the current conversation delivered from the client.
+	// Optional. Incremental update of the current conversation delivered from the client.
 	ClientContent *LiveClientContent `json:"clientContent,omitempty"`
-	// User input that is sent in real time.
+	// Optional. User input that is sent in real time.
 	RealtimeInput *LiveClientRealtimeInput `json:"realtimeInput,omitempty"`
-	// Response to a `ToolCallMessage` received from the server.
+	// Optional. Response to a `ToolCallMessage` received from the server.
 	ToolResponse *LiveClientToolResponse `json:"toolResponse,omitempty"`
 }
 
 // Session config for the API connection.
 type LiveConnectConfig struct {
-	// The requested modalities of the response. Represents the set of
+	// Optional. The requested modalities of the response. Represents the set of
 	// modalities that the model can return. Defaults to AUDIO if not specified.
 	ResponseModalities []Modality `json:"responseModalities,omitempty"`
-	// Value that controls the degree of randomness in token selection.
+	// Optional. Value that controls the degree of randomness in token selection.
 	// Lower temperatures are good for prompts that require a less open-ended or
 	// creative response, while higher temperatures can lead to more diverse or
 	// creative results.
 	Temperature *float32 `json:"temperature,omitempty"`
-	// Tokens are selected from the most to least probable until the sum
+	// Optional. Tokens are selected from the most to least probable until the sum
 	// of their probabilities equals this value. Use a lower value for less
 	// random responses and a higher value for more random responses.
 	TopP *float32 `json:"topP,omitempty"`
-	// For each token selection step, the ``top_k`` tokens with the
+	// Optional. For each token selection step, the ``top_k`` tokens with the
 	// highest probabilities are sampled. Then tokens are further filtered based
 	// on ``top_p`` with the final token selected using temperature sampling. Use
 	// a lower number for less random responses and a higher number for more
 	// random responses.
 	TopK *float32 `json:"topK,omitempty"`
-	// Maximum number of tokens that can be generated in the response.
+	// Optional. Maximum number of tokens that can be generated in the response.
 	// If empty, API will use a default value. The default value varies by model.
 	MaxOutputTokens int32 `json:"maxOutputTokens,omitempty"`
-	// If specified, the media resolution specified will be used.
+	// Optional. If specified, the media resolution specified will be used.
 	MediaResolution MediaResolution `json:"mediaResolution,omitempty"`
-	// When ``seed`` is fixed to a specific number, the model makes a best
+	// Optional. When ``seed`` is fixed to a specific number, the model makes a best
 	// effort to provide the same response for repeated requests. By default, a
 	// random number is used.
 	Seed *int32 `json:"seed,omitempty"`
-	// The speech generation configuration.
+	// Optional. The speech generation configuration.
 	SpeechConfig *SpeechConfig `json:"speechConfig,omitempty"`
-	// The user provided system instructions for the model.
+	// Optional. The user provided system instructions for the model.
 	// Note: only text should be used in parts and content in each part will be
 	// in a separate paragraph.
 	SystemInstruction *Content `json:"systemInstruction,omitempty"`
-	// A list of `Tools` the model may use to generate the next response.
+	// Optional. A list of `Tools` the model may use to generate the next response.
 	// A `Tool` is a piece of code that enables the system to interact with
 	// external systems to perform an action, or set of actions, outside of
 	// knowledge and scope of the model.
 	Tools []*Tool `json:"tools,omitempty"`
-	// Configures session resumption mechanism.
+	// Optional. Configures session resumption mechanism.
 	// If included the server will send SessionResumptionUpdate messages.
 	SessionResumption *SessionResumptionConfig `json:"sessionResumption,omitempty"`
-	// The transcription of the input aligns with the input audio language.
+	// Optional. The transcription of the input aligns with the input audio language.
 	InputAudioTranscription *AudioTranscriptionConfig `json:"inputAudioTranscription,omitempty"`
-	// The transcription of the output aligns with the language code
+	// Optional. The transcription of the output aligns with the language code
 	// specified for the output audio.
 	OutputAudioTranscription *AudioTranscriptionConfig `json:"outputAudioTranscription,omitempty"`
-	// Configures the realtime input behavior in BidiGenerateContent.
+	// Optional. Configures the realtime input behavior in BidiGenerateContent.
 	RealtimeInputConfig *RealtimeInputConfig `json:"realtimeInputConfig,omitempty"`
-	// Configures context window compression mechanism.
+	// Optional. Configures context window compression mechanism.
 	// If included, server will compress context window to fit into given length.
 	ContextWindowCompression *ContextWindowCompressionConfig `json:"contextWindowCompression,omitempty"`
 }
 
 // Parameters for sending client content to the live API.
 type LiveSendClientContentParameters struct {
-	// Client content to send to the session.
+	// Optional. Client content to send to the session.
 	Turns []*Content `json:"turns,omitempty"`
-	// If true, indicates that the server content generation should start with
+	// Optional. If true, indicates that the server content generation should start with
 	// the currently accumulated prompt. Otherwise, the server will await
 	// additional messages before starting generation. If nil, then SDK will use the default
 	// value Ptr(true).
@@ -3599,23 +3610,24 @@ func (p LiveSendClientContentParameters) toLiveClientMessage() *LiveClientMessag
 
 // Parameters for sending realtime input to the live API.
 type LiveSendRealtimeInputParameters struct {
-	// Realtime input to send to the session.
+	// Optional. Realtime input to send to the session.
 	Media *Blob `json:"media,omitempty"`
-	// The realtime audio input stream.
+	// Optional. The realtime audio input stream.
 	Audio *Blob `json:"audio,omitempty"`
+	// Optional.
 	// Indicates that the audio stream has ended, e.g. because the microphone was
 	// turned off.
 	// This should only be sent when automatic activity detection is enabled
 	// (which is the default).
 	// The client can reopen the stream by sending an audio message.
 	AudioStreamEnd bool `json:"audioStreamEnd,omitempty"`
-	// The realtime video input stream.
+	// Optional. The realtime video input stream.
 	Video *Blob `json:"video,omitempty"`
-	// The realtime text input stream.
+	// Optional. The realtime text input stream.
 	Text string `json:"text,omitempty"`
-	// Marks the start of user activity.
+	// Optional. Marks the start of user activity.
 	ActivityStart *ActivityStart `json:"activityStart,omitempty"`
-	// Marks the end of user activity.
+	// Optional. Marks the end of user activity.
 	ActivityEnd *ActivityEnd `json:"activityEnd,omitempty"`
 }
 
