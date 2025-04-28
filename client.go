@@ -162,10 +162,10 @@ func NewClient(ctx context.Context, cc *ClientConfig) (*Client, error) {
 	envVars := cc.envVarProvider()
 
 	if cc.Project != "" && cc.APIKey != "" {
-		return nil, fmt.Errorf("project and API key are mutually exclusive in the client initializer. ClientConfig: %v", cc)
+		return nil, fmt.Errorf("project and API key are mutually exclusive in the client initializer. ClientConfig: %#v", cc)
 	}
 	if cc.Location != "" && cc.APIKey != "" {
-		return nil, fmt.Errorf("location and API key are mutually exclusive in the client initializer. ClientConfig: %v", cc)
+		return nil, fmt.Errorf("location and API key are mutually exclusive in the client initializer. ClientConfig: %#v", cc)
 	}
 
 	if cc.Backend == BackendUnspecified {
@@ -198,14 +198,14 @@ func NewClient(ctx context.Context, cc *ClientConfig) (*Client, error) {
 
 	if cc.Backend == BackendVertexAI {
 		if cc.Project == "" {
-			return nil, fmt.Errorf("project is required for Vertex AI backend. ClientConfig: %v", cc)
+			return nil, fmt.Errorf("project is required for Vertex AI backend. ClientConfig: %#v", cc)
 		}
 		if cc.Location == "" {
-			return nil, fmt.Errorf("location is required for Vertex AI backend. ClientConfig: %v", cc)
+			return nil, fmt.Errorf("location is required for Vertex AI backend. ClientConfig: %#v", cc)
 		}
 	} else {
 		if cc.APIKey == "" {
-			return nil, fmt.Errorf("api key is required for Google AI backend. ClientConfig: %v.\nYou can get the API key from https://ai.google.dev/gemini-api/docs/api-key", cc)
+			return nil, fmt.Errorf("api key is required for Google AI backend. ClientConfig: %#v.\nYou can get the API key from https://ai.google.dev/gemini-api/docs/api-key", cc)
 		}
 	}
 
