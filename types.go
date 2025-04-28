@@ -620,6 +620,16 @@ func NewPartFromURI(fileURI, mimeType string) *Part {
 	}
 }
 
+// NewPartFromFile builds a Part from a given [File].
+func NewPartFromFile(file File) *Part {
+	return &Part{
+		FileData: &FileData{
+			FileURI:  file.URI,
+			MIMEType: file.MIMEType,
+		},
+	}
+}
+
 // NewPartFromText builds a Part from a given text.
 func NewPartFromText(text string) *Part {
 	return &Part{
