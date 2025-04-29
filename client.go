@@ -73,18 +73,23 @@ func (t Backend) String() string {
 
 // ClientConfig is the configuration for the GenAI client.
 type ClientConfig struct {
-	// Optional. API Key for GenAI. Required for BackendGeminiAPI. Can also be set via the GOOGLE_API_KEY environment variable.
+	// Optional. API Key for GenAI. Required for BackendGeminiAPI.
+	// Can also be set via the GOOGLE_API_KEY environment variable.
+	// Get a Gemini API key: https://ai.google.dev/gemini-api/docs/api-key
 	APIKey string
 
 	// Optional. Backend for GenAI. See Backend constants. Defaults to BackendGeminiAPI unless explicitly set to BackendVertexAI,
 	// or the environment variable GOOGLE_GENAI_USE_VERTEXAI is set to "1" or "true".
 	Backend Backend
 
-	// Optional. GCP Project ID for Vertex AI. Required for BackendVertexAI. Can also be set via the GOOGLE_CLOUD_PROJECT environment variable.
+	// Optional. GCP Project ID for Vertex AI. Required for BackendVertexAI.
+	// Can also be set via the GOOGLE_CLOUD_PROJECT environment variable.
+	// Find your Project ID: https://cloud.google.com/resource-manager/docs/creating-managing-projects#identifying_projects
 	Project string
 
-	// Optional. GCP Location/Region for Vertex AI. Required for BackendVertexAI. See https://cloud.google.com/vertex-ai/docs/general/locations.
+	// Optional. GCP Location/Region for Vertex AI. Required for BackendVertexAI.
 	// Can also be set via the GOOGLE_CLOUD_LOCATION or GOOGLE_CLOUD_REGION environment variable.
+	// Generative AI locations: https://cloud.google.com/vertex-ai/generative-ai/docs/learn/locations.
 	Location string
 
 	// Optional. Google credentials.  If not specified, [Application Default Credentials] will be used.
