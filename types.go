@@ -52,26 +52,6 @@ const (
 	LanguagePython Language = "PYTHON"
 )
 
-// The type of the data.
-type Type string
-
-const (
-	// Not specified, should not be used.
-	TypeUnspecified Type = "TYPE_UNSPECIFIED"
-	// OpenAPI string type
-	TypeString Type = "STRING"
-	// OpenAPI number type
-	TypeNumber Type = "NUMBER"
-	// OpenAPI integer type
-	TypeInteger Type = "INTEGER"
-	// OpenAPI boolean type
-	TypeBoolean Type = "BOOLEAN"
-	// OpenAPI array type
-	TypeArray Type = "ARRAY"
-	// OpenAPI object type
-	TypeObject Type = "OBJECT"
-)
-
 // Harm category.
 type HarmCategory string
 
@@ -129,6 +109,26 @@ const (
 	ModeUnspecified Mode = "MODE_UNSPECIFIED"
 	// Run retrieval only when system decides it is necessary.
 	ModeDynamic Mode = "MODE_DYNAMIC"
+)
+
+// The type of the data.
+type Type string
+
+const (
+	// Not specified, should not be used.
+	TypeUnspecified Type = "TYPE_UNSPECIFIED"
+	// OpenAPI string type
+	TypeString Type = "STRING"
+	// OpenAPI number type
+	TypeNumber Type = "NUMBER"
+	// OpenAPI integer type
+	TypeInteger Type = "INTEGER"
+	// OpenAPI boolean type
+	TypeBoolean Type = "BOOLEAN"
+	// OpenAPI array type
+	TypeArray Type = "ARRAY"
+	// OpenAPI object type
+	TypeObject Type = "OBJECT"
 )
 
 // The reason why the model stopped generating tokens.
@@ -811,166 +811,6 @@ type HTTPOptions struct {
 	Headers http.Header `json:"headers,omitempty"`
 }
 
-// Schema that defines the format of input and output data.
-// Represents a select subset of an OpenAPI 3.0 schema object.
-// You can find more details and examples at https://spec.openapis.org/oas/v3.0.3.html#schema-object
-type Schema struct {
-	// Optional. Example of the object. Will only populated when the object is the root.
-	Example any `json:"example,omitempty"`
-	// Optional. Pattern of the Type.STRING to restrict a string to a regular expression.
-	Pattern string `json:"pattern,omitempty"`
-	// Optional. Maximum length of the Type.STRING
-	MaxLength *int64 `json:"maxLength,omitempty"`
-	// Optional. SCHEMA FIELDS FOR TYPE STRING Minimum length of the Type.STRING
-	MinLength *int64 `json:"minLength,omitempty"`
-	// Optional. Minimum number of the properties for Type.OBJECT.
-	MinProperties *int64 `json:"minProperties,omitempty"`
-	// Optional. Maximum number of the properties for Type.OBJECT.
-	MaxProperties *int64 `json:"maxProperties,omitempty"`
-	// Optional. The value should be validated against any (one or more) of the subschemas
-	// in the list.
-	AnyOf []*Schema `json:"anyOf,omitempty"`
-	// Optional. Default value of the data.
-	Default any `json:"default,omitempty"`
-	// Optional. The description of the data.
-	Description string `json:"description,omitempty"`
-	// Optional. Possible values of the element of primitive type with enum format. Examples:
-	// 1. We can define direction as : {type:STRING, format:enum, enum:["EAST", NORTH",
-	// "SOUTH", "WEST"]} 2. We can define apartment number as : {type:INTEGER, format:enum,
-	// enum:["101", "201", "301"]}
-	Enum []string `json:"enum,omitempty"`
-	// Optional. The format of the data. Supported formats: for NUMBER type: "float", "double"
-	// for INTEGER type: "int32", "int64" for STRING type: "email", "byte", etc
-	Format string `json:"format,omitempty"`
-	// Optional. SCHEMA FIELDS FOR TYPE ARRAY Schema of the elements of Type.ARRAY.
-	Items *Schema `json:"items,omitempty"`
-	// Optional. Maximum number of the elements for Type.ARRAY.
-	MaxItems *int64 `json:"maxItems,omitempty"`
-	// Optional. Maximum value of the Type.INTEGER and Type.NUMBER
-	Maximum *float64 `json:"maximum,omitempty"`
-	// Optional. Minimum number of the elements for Type.ARRAY.
-	MinItems *int64 `json:"minItems,omitempty"`
-	// Optional. Minimum value of the Type.INTEGER and Type.NUMBER.
-	Minimum *float64 `json:"minimum,omitempty"`
-	// Optional. Indicates if the value may be null.
-	Nullable *bool `json:"nullable,omitempty"`
-	// Optional. SCHEMA FIELDS FOR TYPE OBJECT Properties of Type.OBJECT.
-	Properties map[string]*Schema `json:"properties,omitempty"`
-	// Optional. The order of the properties. Not a standard field in open API spec. Only
-	// used to support the order of the properties.
-	PropertyOrdering []string `json:"propertyOrdering,omitempty"`
-	// Optional. Required properties of Type.OBJECT.
-	Required []string `json:"required,omitempty"`
-	// Optional. The title of the Schema.
-	Title string `json:"title,omitempty"`
-	// Optional. The type of the data.
-	Type Type `json:"type,omitempty"`
-}
-
-func (s *Schema) UnmarshalJSON(data []byte) error {
-	type Alias Schema
-	aux := &struct {
-		MaxLength     string `json:"maxLength,omitempty"`
-		MinLength     string `json:"minLength,omitempty"`
-		MinProperties string `json:"minProperties,omitempty"`
-		MaxProperties string `json:"maxProperties,omitempty"`
-		MaxItems      string `json:"maxItems,omitempty"`
-		MinItems      string `json:"minItems,omitempty"`
-		*Alias
-	}{
-		Alias: (*Alias)(s),
-	}
-
-	if err := json.Unmarshal(data, &aux); err != nil {
-		return err
-	}
-
-	if aux.MaxLength != "" {
-		maxLength, err := strconv.ParseInt(aux.MaxLength, 10, 64)
-		if err != nil {
-			return fmt.Errorf("error parsing MaxLength: %w", err)
-		}
-		s.MaxLength = &maxLength
-	}
-
-	if aux.MinLength != "" {
-		minLength, err := strconv.ParseInt(aux.MinLength, 10, 64)
-		if err != nil {
-			return fmt.Errorf("error parsing MinLength: %w", err)
-		}
-		s.MinLength = &minLength
-	}
-
-	if aux.MinProperties != "" {
-		minProperties, err := strconv.ParseInt(aux.MinProperties, 10, 64)
-		if err != nil {
-			return fmt.Errorf("error parsing MinProperties: %w", err)
-		}
-		s.MinProperties = &minProperties
-	}
-
-	if aux.MaxProperties != "" {
-		maxProperties, err := strconv.ParseInt(aux.MaxProperties, 10, 64)
-		if err != nil {
-			return fmt.Errorf("error parsing MaxProperties: %w", err)
-		}
-		s.MaxProperties = &maxProperties
-	}
-
-	if aux.MaxItems != "" {
-		maxItems, err := strconv.ParseInt(aux.MaxItems, 10, 64)
-		if err != nil {
-			return fmt.Errorf("error parsing MaxItems: %w", err)
-		}
-		s.MaxItems = &maxItems
-	}
-
-	if aux.MinItems != "" {
-		minItems, err := strconv.ParseInt(aux.MinItems, 10, 64)
-		if err != nil {
-			return fmt.Errorf("error parsing MinItems: %w", err)
-		}
-		s.MinItems = &minItems
-	}
-
-	return nil
-}
-
-func (s *Schema) MarshalJSON() ([]byte, error) {
-	type Alias Schema
-	aux := struct {
-		MaxLength     string `json:"maxLength,omitempty"`
-		MinLength     string `json:"minLength,omitempty"`
-		MinProperties string `json:"minProperties,omitempty"`
-		MaxProperties string `json:"maxProperties,omitempty"`
-		MaxItems      string `json:"maxItems,omitempty"`
-		MinItems      string `json:"minItems,omitempty"`
-		*Alias
-	}{
-		Alias: (*Alias)(s),
-	}
-
-	if s.MaxLength != nil {
-		aux.MaxLength = strconv.FormatInt(*s.MaxLength, 10)
-	}
-	if s.MinLength != nil {
-		aux.MinLength = strconv.FormatInt(*s.MinLength, 10)
-	}
-	if s.MinProperties != nil {
-		aux.MinProperties = strconv.FormatInt(*s.MinProperties, 10)
-	}
-	if s.MaxProperties != nil {
-		aux.MaxProperties = strconv.FormatInt(*s.MaxProperties, 10)
-	}
-	if s.MaxItems != nil {
-		aux.MaxItems = strconv.FormatInt(*s.MaxItems, 10)
-	}
-	if s.MinItems != nil {
-		aux.MinItems = strconv.FormatInt(*s.MinItems, 10)
-	}
-	return json.Marshal(aux)
-}
-
 // Config for model selection.
 type ModelSelectionConfig struct {
 	// Optional. Options for feature selection preference.
@@ -986,31 +826,6 @@ type SafetySetting struct {
 	Category HarmCategory `json:"category,omitempty"`
 	// Required. The harm block threshold.
 	Threshold HarmBlockThreshold `json:"threshold,omitempty"`
-}
-
-// Defines a function that the model can generate JSON inputs for.
-// The inputs are based on `OpenAPI 3.0 specifications
-// <https://spec.openapis.org/oas/v3.0.3>`_.
-type FunctionDeclaration struct {
-	// Optional. Describes the output from the function in the OpenAPI JSON Schema
-	// Object format.
-	Response *Schema `json:"response,omitempty"`
-	// Optional. Description and purpose of the function. Model uses it to decide how and
-	// whether to call the function.
-	Description string `json:"description,omitempty"`
-	// Required. The name of the function to call. Must start with a letter or an underscore.
-	// Must be a-z, A-Z, 0-9, or contain underscores, dots and dashes, with a maximum length
-	// of 64.
-	Name string `json:"name,omitempty"`
-	// Optional. Describes the parameters to this function in JSON Schema Object format.
-	// Reflects the Open API 3.03 Parameter Object. string Key: the name of the parameter.
-	// Parameter names are case sensitive. Schema Value: the Schema defining the type used
-	// for the parameter. For function with no parameters, this can be left unset. Parameter
-	// names must start with a letter or an underscore and must only contain chars a-z,
-	// A-Z, 0-9, or underscores with a maximum length of 64. Example with 1 required and
-	// 1 optional parameter: type: OBJECT properties: param1: type: STRING param2: type:
-	// INTEGER required: - param1
-	Parameters *Schema `json:"parameters,omitempty"`
 }
 
 // Tool to support Google Search in Model. Powered by Google.
@@ -1135,10 +950,197 @@ type Retrieval struct {
 type ToolCodeExecution struct {
 }
 
+// Schema is used to define the format of input/output data. Represents a select subset
+// of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema-object).
+// More fields may be added in the future as needed. You can find more details and examples
+// at https://spec.openapis.org/oas/v3.0.3.html#schema-object
+type Schema struct {
+	// Optional. The value should be validated against any (one or more) of the subschemas
+	// in the list.
+	AnyOf []*Schema `json:"anyOf,omitempty"`
+	// Optional. Default value of the data.
+	Default any `json:"default,omitempty"`
+	// Optional. The description of the data.
+	Description string `json:"description,omitempty"`
+	// Optional. Possible values of the element of primitive type with enum format. Examples:
+	// 1. We can define direction as : {type:STRING, format:enum, enum:["EAST", NORTH",
+	// "SOUTH", "WEST"]} 2. We can define apartment number as : {type:INTEGER, format:enum,
+	// enum:["101", "201", "301"]}
+	Enum []string `json:"enum,omitempty"`
+	// Optional. Example of the object. Will only populated when the object is the root.
+	Example any `json:"example,omitempty"`
+	// Optional. The format of the data. Supported formats: for NUMBER type: "float", "double"
+	// for INTEGER type: "int32", "int64" for STRING type: "email", "byte", etc
+	Format string `json:"format,omitempty"`
+	// Optional. SCHEMA FIELDS FOR TYPE ARRAY Schema of the elements of Type.ARRAY.
+	Items *Schema `json:"items,omitempty"`
+	// Optional. Maximum number of the elements for Type.ARRAY.
+	MaxItems *int64 `json:"maxItems,omitempty"`
+	// Optional. Maximum length of the Type.STRING
+	MaxLength *int64 `json:"maxLength,omitempty"`
+	// Optional. Maximum number of the properties for Type.OBJECT.
+	MaxProperties *int64 `json:"maxProperties,omitempty"`
+	// Optional. Maximum value of the Type.INTEGER and Type.NUMBER
+	Maximum *float64 `json:"maximum,omitempty"`
+	// Optional. Minimum number of the elements for Type.ARRAY.
+	MinItems *int64 `json:"minItems,omitempty"`
+	// Optional. SCHEMA FIELDS FOR TYPE STRING Minimum length of the Type.STRING
+	MinLength *int64 `json:"minLength,omitempty"`
+	// Optional. Minimum number of the properties for Type.OBJECT.
+	MinProperties *int64 `json:"minProperties,omitempty"`
+	// Optional. Minimum value of the Type.INTEGER and Type.NUMBER.
+	Minimum *float64 `json:"minimum,omitempty"`
+	// Optional. Indicates if the value may be null.
+	Nullable *bool `json:"nullable,omitempty"`
+	// Optional. Pattern of the Type.STRING to restrict a string to a regular expression.
+	Pattern string `json:"pattern,omitempty"`
+	// Optional. SCHEMA FIELDS FOR TYPE OBJECT Properties of Type.OBJECT.
+	Properties map[string]*Schema `json:"properties,omitempty"`
+	// Optional. The order of the properties. Not a standard field in open API spec. Only
+	// used to support the order of the properties.
+	PropertyOrdering []string `json:"propertyOrdering,omitempty"`
+	// Optional. Required properties of Type.OBJECT.
+	Required []string `json:"required,omitempty"`
+	// Optional. The title of the Schema.
+	Title string `json:"title,omitempty"`
+	// Optional. The type of the data.
+	Type Type `json:"type,omitempty"`
+}
+
+func (s *Schema) UnmarshalJSON(data []byte) error {
+	type Alias Schema
+	aux := &struct {
+		MaxLength     string `json:"maxLength,omitempty"`
+		MinLength     string `json:"minLength,omitempty"`
+		MinProperties string `json:"minProperties,omitempty"`
+		MaxProperties string `json:"maxProperties,omitempty"`
+		MaxItems      string `json:"maxItems,omitempty"`
+		MinItems      string `json:"minItems,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(s),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	if aux.MaxLength != "" {
+		maxLength, err := strconv.ParseInt(aux.MaxLength, 10, 64)
+		if err != nil {
+			return fmt.Errorf("error parsing MaxLength: %w", err)
+		}
+		s.MaxLength = &maxLength
+	}
+
+	if aux.MinLength != "" {
+		minLength, err := strconv.ParseInt(aux.MinLength, 10, 64)
+		if err != nil {
+			return fmt.Errorf("error parsing MinLength: %w", err)
+		}
+		s.MinLength = &minLength
+	}
+
+	if aux.MinProperties != "" {
+		minProperties, err := strconv.ParseInt(aux.MinProperties, 10, 64)
+		if err != nil {
+			return fmt.Errorf("error parsing MinProperties: %w", err)
+		}
+		s.MinProperties = &minProperties
+	}
+
+	if aux.MaxProperties != "" {
+		maxProperties, err := strconv.ParseInt(aux.MaxProperties, 10, 64)
+		if err != nil {
+			return fmt.Errorf("error parsing MaxProperties: %w", err)
+		}
+		s.MaxProperties = &maxProperties
+	}
+
+	if aux.MaxItems != "" {
+		maxItems, err := strconv.ParseInt(aux.MaxItems, 10, 64)
+		if err != nil {
+			return fmt.Errorf("error parsing MaxItems: %w", err)
+		}
+		s.MaxItems = &maxItems
+	}
+
+	if aux.MinItems != "" {
+		minItems, err := strconv.ParseInt(aux.MinItems, 10, 64)
+		if err != nil {
+			return fmt.Errorf("error parsing MinItems: %w", err)
+		}
+		s.MinItems = &minItems
+	}
+
+	return nil
+}
+
+func (s *Schema) MarshalJSON() ([]byte, error) {
+	type Alias Schema
+	aux := struct {
+		MaxLength     string `json:"maxLength,omitempty"`
+		MinLength     string `json:"minLength,omitempty"`
+		MinProperties string `json:"minProperties,omitempty"`
+		MaxProperties string `json:"maxProperties,omitempty"`
+		MaxItems      string `json:"maxItems,omitempty"`
+		MinItems      string `json:"minItems,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(s),
+	}
+
+	if s.MaxLength != nil {
+		aux.MaxLength = strconv.FormatInt(*s.MaxLength, 10)
+	}
+	if s.MinLength != nil {
+		aux.MinLength = strconv.FormatInt(*s.MinLength, 10)
+	}
+	if s.MinProperties != nil {
+		aux.MinProperties = strconv.FormatInt(*s.MinProperties, 10)
+	}
+	if s.MaxProperties != nil {
+		aux.MaxProperties = strconv.FormatInt(*s.MaxProperties, 10)
+	}
+	if s.MaxItems != nil {
+		aux.MaxItems = strconv.FormatInt(*s.MaxItems, 10)
+	}
+	if s.MinItems != nil {
+		aux.MinItems = strconv.FormatInt(*s.MinItems, 10)
+	}
+	return json.Marshal(aux)
+}
+
+// Structured representation of a function declaration as defined by the [OpenAPI 3.0
+// specification](https://spec.openapis.org/oas/v3.0.3). Included in this declaration
+// are the function name, description, parameters and response type. This FunctionDeclaration
+// is a representation of a block of code that can be used as a `Tool` by the model
+// and executed by the client.
+type FunctionDeclaration struct {
+	// Optional. Description and purpose of the function. Model uses it to decide how and
+	// whether to call the function.
+	Description string `json:"description,omitempty"`
+	// Required. The name of the function to call. Must start with a letter or an underscore.
+	// Must be a-z, A-Z, 0-9, or contain underscores, dots and dashes, with a maximum length
+	// of 64.
+	Name string `json:"name,omitempty"`
+	// Optional. Describes the parameters to this function in JSON Schema Object format.
+	// Reflects the Open API 3.03 Parameter Object. string Key: the name of the parameter.
+	// Parameter names are case sensitive. Schema Value: the Schema defining the type used
+	// for the parameter. For function with no parameters, this can be left unset. Parameter
+	// names must start with a letter or an underscore and must only contain chars a-z,
+	// A-Z, 0-9, or underscores with a maximum length of 64. Example with 1 required and
+	// 1 optional parameter: type: OBJECT properties: param1: type: STRING param2: type:
+	// INTEGER required: - param1
+	Parameters *Schema `json:"parameters,omitempty"`
+	// Optional. Describes the output from this function in JSON Schema format. Reflects
+	// the Open API 3.03 Response Object. The Schema defines the type used for the response
+	// value of the function.
+	Response *Schema `json:"response,omitempty"`
+}
+
 // Tool details of a tool that the model may use to generate a response.
 type Tool struct {
-	// Optional. List of function declarations that the tool supports.
-	FunctionDeclarations []*FunctionDeclaration `json:"functionDeclarations,omitempty"`
 	// Optional. Retrieval tool type. System will always execute the provided retrieval
 	// tool(s) to get external knowledge to answer the prompt. Retrieval results are presented
 	// to the model for generation.
@@ -1152,6 +1154,13 @@ type Tool struct {
 	// Optional. CodeExecution tool type. Enables the model to execute code as part of generation.
 	// This field is only used by the Gemini Developer API services.
 	CodeExecution *ToolCodeExecution `json:"codeExecution,omitempty"`
+	// Optional. Function tool type. One or more function declarations to be passed to the
+	// model along with the current user query. Model may decide to call a subset of these
+	// functions by populating FunctionCall in the response. User should provide a FunctionResponse
+	// for each function call in the next turn. Based on the function responses, Model will
+	// generate the final response back to the user. Maximum 128 function declarations can
+	// be provided.
+	FunctionDeclarations []*FunctionDeclaration `json:"functionDeclarations,omitempty"`
 }
 
 // Function calling config.
