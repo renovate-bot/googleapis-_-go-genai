@@ -1223,6 +1223,11 @@ func liveServerContentFromMldev(ac *apiClient, fromObject map[string]any, parent
 		setValueByPath(toObject, []string{"interrupted"}, fromInterrupted)
 	}
 
+	fromGroundingMetadata := getValueByPath(fromObject, []string{"groundingMetadata"})
+	if fromGroundingMetadata != nil {
+		setValueByPath(toObject, []string{"groundingMetadata"}, fromGroundingMetadata)
+	}
+
 	fromGenerationComplete := getValueByPath(fromObject, []string{"generationComplete"})
 	if fromGenerationComplete != nil {
 		setValueByPath(toObject, []string{"generationComplete"}, fromGenerationComplete)
@@ -1272,6 +1277,11 @@ func liveServerContentFromVertex(ac *apiClient, fromObject map[string]any, paren
 	fromInterrupted := getValueByPath(fromObject, []string{"interrupted"})
 	if fromInterrupted != nil {
 		setValueByPath(toObject, []string{"interrupted"}, fromInterrupted)
+	}
+
+	fromGroundingMetadata := getValueByPath(fromObject, []string{"groundingMetadata"})
+	if fromGroundingMetadata != nil {
+		setValueByPath(toObject, []string{"groundingMetadata"}, fromGroundingMetadata)
 	}
 
 	fromGenerationComplete := getValueByPath(fromObject, []string{"generationComplete"})

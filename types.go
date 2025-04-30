@@ -3103,6 +3103,8 @@ type LiveServerContent struct {
 	// generation. If the client is playing out the content in realtime, this is a good
 	// signal to stop and empty the current queue.
 	Interrupted bool `json:"interrupted,omitempty"`
+	// Optional. Metadata returned to client when grounding is enabled.
+	GroundingMetadata *GroundingMetadata `json:"groundingMetadata,omitempty"`
 	// Optional. If true, indicates that the model is done generating. When model is
 	// interrupted while generating there will be no generation_complete message
 	// in interrupted turn, it will go through interrupted > turn_complete.
