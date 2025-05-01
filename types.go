@@ -847,6 +847,10 @@ type GoogleSearchRetrieval struct {
 	DynamicRetrievalConfig *DynamicRetrievalConfig `json:"dynamicRetrievalConfig,omitempty"`
 }
 
+// Tool to search public web data, powered by Vertex AI Search and Sec4 compliance.
+type EnterpriseWebSearch struct {
+}
+
 // Retrieve from Vertex AI Search datastore or engine for grounding. datastore and engine
 // are mutually exclusive. See https://cloud.google.com/products/agent-builder
 type VertexAISearch struct {
@@ -1151,6 +1155,9 @@ type Tool struct {
 	// Optional. GoogleSearchRetrieval tool type. Specialized retrieval tool that is powered
 	// by Google search.
 	GoogleSearchRetrieval *GoogleSearchRetrieval `json:"googleSearchRetrieval,omitempty"`
+	// Optional. Enterprise web search tool type. Specialized retrieval
+	// tool that is powered by Vertex AI Search and Sec4 compliance.
+	EnterpriseWebSearch *EnterpriseWebSearch `json:"enterpriseWebSearch,omitempty"`
 	// Optional. CodeExecution tool type. Enables the model to execute code as part of generation.
 	// This field is only used by the Gemini Developer API services.
 	CodeExecution *ToolCodeExecution `json:"codeExecution,omitempty"`

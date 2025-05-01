@@ -159,6 +159,12 @@ func googleSearchRetrievalToMldev(ac *apiClient, fromObject map[string]any, pare
 	return toObject, nil
 }
 
+func enterpriseWebSearchToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	return toObject, nil
+}
+
 func toolToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 	if getValueByPath(fromObject, []string{"retrieval"}) != nil {
@@ -183,6 +189,10 @@ func toolToMldev(ac *apiClient, fromObject map[string]any, parentObject map[stri
 		}
 
 		setValueByPath(toObject, []string{"googleSearchRetrieval"}, fromGoogleSearchRetrieval)
+	}
+
+	if getValueByPath(fromObject, []string{"enterpriseWebSearch"}) != nil {
+		return nil, fmt.Errorf("enterpriseWebSearch parameter is not supported in Gemini API")
 	}
 
 	fromCodeExecution := getValueByPath(fromObject, []string{"codeExecution"})
@@ -1153,6 +1163,12 @@ func googleSearchRetrievalToVertex(ac *apiClient, fromObject map[string]any, par
 	return toObject, nil
 }
 
+func enterpriseWebSearchToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	return toObject, nil
+}
+
 func toolToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -1179,6 +1195,16 @@ func toolToVertex(ac *apiClient, fromObject map[string]any, parentObject map[str
 		}
 
 		setValueByPath(toObject, []string{"googleSearchRetrieval"}, fromGoogleSearchRetrieval)
+	}
+
+	fromEnterpriseWebSearch := getValueByPath(fromObject, []string{"enterpriseWebSearch"})
+	if fromEnterpriseWebSearch != nil {
+		fromEnterpriseWebSearch, err = enterpriseWebSearchToVertex(ac, fromEnterpriseWebSearch.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"enterpriseWebSearch"}, fromEnterpriseWebSearch)
 	}
 
 	fromCodeExecution := getValueByPath(fromObject, []string{"codeExecution"})
