@@ -34,6 +34,11 @@ func partToMldev(ac *apiClient, fromObject map[string]any, parentObject map[stri
 		setValueByPath(toObject, []string{"thought"}, fromThought)
 	}
 
+	fromThoughtSignature := getValueByPath(fromObject, []string{"thoughtSignature"})
+	if fromThoughtSignature != nil {
+		setValueByPath(toObject, []string{"thoughtSignature"}, fromThoughtSignature)
+	}
+
 	fromCodeExecutionResult := getValueByPath(fromObject, []string{"codeExecutionResult"})
 	if fromCodeExecutionResult != nil {
 		setValueByPath(toObject, []string{"codeExecutionResult"}, fromCodeExecutionResult)
@@ -1032,6 +1037,11 @@ func partToVertex(ac *apiClient, fromObject map[string]any, parentObject map[str
 	fromThought := getValueByPath(fromObject, []string{"thought"})
 	if fromThought != nil {
 		setValueByPath(toObject, []string{"thought"}, fromThought)
+	}
+
+	fromThoughtSignature := getValueByPath(fromObject, []string{"thoughtSignature"})
+	if fromThoughtSignature != nil {
+		setValueByPath(toObject, []string{"thoughtSignature"}, fromThoughtSignature)
 	}
 
 	fromCodeExecutionResult := getValueByPath(fromObject, []string{"codeExecutionResult"})
@@ -2441,6 +2451,11 @@ func partFromMldev(ac *apiClient, fromObject map[string]any, parentObject map[st
 		setValueByPath(toObject, []string{"thought"}, fromThought)
 	}
 
+	fromThoughtSignature := getValueByPath(fromObject, []string{"thoughtSignature"})
+	if fromThoughtSignature != nil {
+		setValueByPath(toObject, []string{"thoughtSignature"}, fromThoughtSignature)
+	}
+
 	fromCodeExecutionResult := getValueByPath(fromObject, []string{"codeExecutionResult"})
 	if fromCodeExecutionResult != nil {
 		setValueByPath(toObject, []string{"codeExecutionResult"}, fromCodeExecutionResult)
@@ -2992,6 +3007,11 @@ func partFromVertex(ac *apiClient, fromObject map[string]any, parentObject map[s
 	fromThought := getValueByPath(fromObject, []string{"thought"})
 	if fromThought != nil {
 		setValueByPath(toObject, []string{"thought"}, fromThought)
+	}
+
+	fromThoughtSignature := getValueByPath(fromObject, []string{"thoughtSignature"})
+	if fromThoughtSignature != nil {
+		setValueByPath(toObject, []string{"thoughtSignature"}, fromThoughtSignature)
 	}
 
 	fromCodeExecutionResult := getValueByPath(fromObject, []string{"codeExecutionResult"})
