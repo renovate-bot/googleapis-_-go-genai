@@ -111,6 +111,25 @@ const (
 	ModeDynamic Mode = "MODE_DYNAMIC"
 )
 
+// Type of auth scheme.
+type AuthType string
+
+const (
+	AuthTypeUnspecified AuthType = "AUTH_TYPE_UNSPECIFIED"
+	// No Auth.
+	AuthTypeNoAuth AuthType = "NO_AUTH"
+	// API Key Auth.
+	AuthTypeAPIKeyAuth AuthType = "API_KEY_AUTH"
+	// HTTP Basic Auth.
+	AuthTypeHTTPBasicAuth AuthType = "HTTP_BASIC_AUTH"
+	// Google Service Account Auth.
+	AuthTypeGoogleServiceAccountAuth AuthType = "GOOGLE_SERVICE_ACCOUNT_AUTH"
+	// OAuth auth.
+	AuthTypeOauth AuthType = "OAUTH"
+	// OpenID Connect (OIDC) Auth.
+	AuthTypeOidcAuth AuthType = "OIDC_AUTH"
+)
+
 // The type of the data.
 type Type string
 
@@ -853,6 +872,80 @@ type GoogleSearchRetrieval struct {
 type EnterpriseWebSearch struct {
 }
 
+// Config for authentication with API key.
+type APIKeyConfig struct {
+	// Optional. The API key to be used in the request directly.
+	APIKeyString string `json:"apiKeyString,omitempty"`
+}
+
+// Config for Google Service Account Authentication.
+type AuthConfigGoogleServiceAccountConfig struct {
+	// Optional. The service account that the extension execution service runs as. - If
+	// the service account is specified, the `iam.serviceAccounts.getAccessToken` permission
+	// should be granted to Vertex AI Extension Service Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents)
+	// on the specified service account. - If not specified, the Vertex AI Extension Service
+	// Agent will be used to execute the Extension.
+	ServiceAccount string `json:"serviceAccount,omitempty"`
+}
+
+// Config for HTTP Basic Authentication.
+type AuthConfigHTTPBasicAuthConfig struct {
+	// Required. The name of the SecretManager secret version resource storing the base64
+	// encoded credentials. Format: `projects/{project}/secrets/{secrete}/versions/{version}`
+	// - If specified, the `secretmanager.versions.access` permission should be granted
+	// to Vertex AI Extension Service Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents)
+	// on the specified resource.
+	CredentialSecret string `json:"credentialSecret,omitempty"`
+}
+
+// Config for user oauth.
+type AuthConfigOauthConfig struct {
+	// Access token for extension endpoint. Only used to propagate token from [[ExecuteExtensionRequest.runtime_auth_config]]
+	// at request time.
+	AccessToken string `json:"accessToken,omitempty"`
+	// The service account used to generate access tokens for executing the Extension. -
+	// If the service account is specified, the `iam.serviceAccounts.getAccessToken` permission
+	// should be granted to Vertex AI Extension Service Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents)
+	// on the provided service account.
+	ServiceAccount string `json:"serviceAccount,omitempty"`
+}
+
+// Config for user OIDC auth.
+type AuthConfigOidcConfig struct {
+	// OpenID Connect formatted ID token for extension endpoint. Only used to propagate
+	// token from [[ExecuteExtensionRequest.runtime_auth_config]] at request time.
+	IDToken string `json:"idToken,omitempty"`
+	// The service account used to generate an OpenID Connect (OIDC)-compatible JWT token
+	// signed by the Google OIDC Provider (accounts.google.com) for extension endpoint (https://cloud.google.com/iam/docs/create-short-lived-credentials-direct#sa-credentials-oidc).
+	// - The audience for the token will be set to the URL in the server URL defined in
+	// the OpenAPI spec. - If the service account is provided, the service account should
+	// grant `iam.serviceAccounts.getOpenIDToken` permission to Vertex AI Extension Service
+	// Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents).
+	ServiceAccount string `json:"serviceAccount,omitempty"`
+}
+
+// Auth configuration to run the extension.
+type AuthConfig struct {
+	// Optional. Config for API key auth.
+	APIKeyConfig *APIKeyConfig `json:"apiKeyConfig,omitempty"`
+	// Type of auth scheme.
+	AuthType AuthType `json:"authType,omitempty"`
+	// Config for Google Service Account auth.
+	GoogleServiceAccountConfig *AuthConfigGoogleServiceAccountConfig `json:"googleServiceAccountConfig,omitempty"`
+	// Config for HTTP Basic auth.
+	HTTPBasicAuthConfig *AuthConfigHTTPBasicAuthConfig `json:"httpBasicAuthConfig,omitempty"`
+	// Config for user oauth.
+	OauthConfig *AuthConfigOauthConfig `json:"oauthConfig,omitempty"`
+	// Config for user OIDC auth.
+	OidcConfig *AuthConfigOidcConfig `json:"oidcConfig,omitempty"`
+}
+
+// Tool to support Google Maps in Model.
+type GoogleMaps struct {
+	// Optional. Auth config for the Google Maps tool.
+	AuthConfig *AuthConfig `json:"authConfig,omitempty"`
+}
+
 // Retrieve from Vertex AI Search datastore or engine for grounding. datastore and engine
 // are mutually exclusive. See https://cloud.google.com/products/agent-builder
 type VertexAISearch struct {
@@ -1160,6 +1253,9 @@ type Tool struct {
 	// Optional. Enterprise web search tool type. Specialized retrieval
 	// tool that is powered by Vertex AI Search and Sec4 compliance.
 	EnterpriseWebSearch *EnterpriseWebSearch `json:"enterpriseWebSearch,omitempty"`
+	// Optional. Google Maps tool type. Specialized retrieval tool
+	// that is powered by Google Maps.
+	GoogleMaps *GoogleMaps `json:"googleMaps,omitempty"`
 	// Optional. CodeExecution tool type. Enables the model to execute code as part of generation.
 	// This field is only used by the Gemini Developer API services.
 	CodeExecution *ToolCodeExecution `json:"codeExecution,omitempty"`
@@ -1182,11 +1278,31 @@ type FunctionCallingConfig struct {
 	AllowedFunctionNames []string `json:"allowedFunctionNames,omitempty"`
 }
 
+// An object that represents a latitude/longitude pair.
+// This is expressed as a pair of doubles to represent degrees latitude and
+// degrees longitude. Unless specified otherwise, this object must conform to the
+// <a href="https://en.wikipedia.org/wiki/World_Geodetic_System#1984_version">
+// WGS84 standard</a>. Values must be within normalized ranges.
+type LatLng struct {
+	// Optional. The latitude in degrees. It must be in the range [-90.0, +90.0].
+	Latitude *float64 `json:"latitude,omitempty"`
+	// Optional. The longitude in degrees. It must be in the range [-180.0, +180.0]
+	Longitude *float64 `json:"longitude,omitempty"`
+}
+
+// Retrieval config.
+type RetrievalConfig struct {
+	// Optional. The location of the user.
+	LatLng *LatLng `json:"latLng,omitempty"`
+}
+
 // Tool config.
 // This config is shared for all tools provided in the request.
 type ToolConfig struct {
 	// Optional. Function calling config.
 	FunctionCallingConfig *FunctionCallingConfig `json:"functionCallingConfig,omitempty"`
+	// Optional. Retrieval config.
+	RetrievalConfig *RetrievalConfig `json:"retrievalConfig,omitempty"`
 }
 
 // The configuration for the prebuilt speaker to use.

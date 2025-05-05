@@ -170,6 +170,58 @@ func enterpriseWebSearchToMldev(ac *apiClient, fromObject map[string]any, parent
 	return toObject, nil
 }
 
+func apiKeyConfigToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+	if getValueByPath(fromObject, []string{"apiKeyString"}) != nil {
+		return nil, fmt.Errorf("apiKeyString parameter is not supported in Gemini API")
+	}
+
+	return toObject, nil
+}
+
+func authConfigToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+	if getValueByPath(fromObject, []string{"apiKeyConfig"}) != nil {
+		return nil, fmt.Errorf("apiKeyConfig parameter is not supported in Gemini API")
+	}
+
+	fromAuthType := getValueByPath(fromObject, []string{"authType"})
+	if fromAuthType != nil {
+		setValueByPath(toObject, []string{"authType"}, fromAuthType)
+	}
+
+	fromGoogleServiceAccountConfig := getValueByPath(fromObject, []string{"googleServiceAccountConfig"})
+	if fromGoogleServiceAccountConfig != nil {
+		setValueByPath(toObject, []string{"googleServiceAccountConfig"}, fromGoogleServiceAccountConfig)
+	}
+
+	fromHttpBasicAuthConfig := getValueByPath(fromObject, []string{"httpBasicAuthConfig"})
+	if fromHttpBasicAuthConfig != nil {
+		setValueByPath(toObject, []string{"httpBasicAuthConfig"}, fromHttpBasicAuthConfig)
+	}
+
+	fromOauthConfig := getValueByPath(fromObject, []string{"oauthConfig"})
+	if fromOauthConfig != nil {
+		setValueByPath(toObject, []string{"oauthConfig"}, fromOauthConfig)
+	}
+
+	fromOidcConfig := getValueByPath(fromObject, []string{"oidcConfig"})
+	if fromOidcConfig != nil {
+		setValueByPath(toObject, []string{"oidcConfig"}, fromOidcConfig)
+	}
+
+	return toObject, nil
+}
+
+func googleMapsToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+	if getValueByPath(fromObject, []string{"authConfig"}) != nil {
+		return nil, fmt.Errorf("authConfig parameter is not supported in Gemini API")
+	}
+
+	return toObject, nil
+}
+
 func toolToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 	if getValueByPath(fromObject, []string{"retrieval"}) != nil {
@@ -198,6 +250,10 @@ func toolToMldev(ac *apiClient, fromObject map[string]any, parentObject map[stri
 
 	if getValueByPath(fromObject, []string{"enterpriseWebSearch"}) != nil {
 		return nil, fmt.Errorf("enterpriseWebSearch parameter is not supported in Gemini API")
+	}
+
+	if getValueByPath(fromObject, []string{"googleMaps"}) != nil {
+		return nil, fmt.Errorf("googleMaps parameter is not supported in Gemini API")
 	}
 
 	fromCodeExecution := getValueByPath(fromObject, []string{"codeExecution"})
@@ -229,6 +285,28 @@ func functionCallingConfigToMldev(ac *apiClient, fromObject map[string]any, pare
 	return toObject, nil
 }
 
+func latLngToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+	if getValueByPath(fromObject, []string{"latitude"}) != nil {
+		return nil, fmt.Errorf("latitude parameter is not supported in Gemini API")
+	}
+
+	if getValueByPath(fromObject, []string{"longitude"}) != nil {
+		return nil, fmt.Errorf("longitude parameter is not supported in Gemini API")
+	}
+
+	return toObject, nil
+}
+
+func retrievalConfigToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+	if getValueByPath(fromObject, []string{"latLng"}) != nil {
+		return nil, fmt.Errorf("latLng parameter is not supported in Gemini API")
+	}
+
+	return toObject, nil
+}
+
 func toolConfigToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -240,6 +318,10 @@ func toolConfigToMldev(ac *apiClient, fromObject map[string]any, parentObject ma
 		}
 
 		setValueByPath(toObject, []string{"functionCallingConfig"}, fromFunctionCallingConfig)
+	}
+
+	if getValueByPath(fromObject, []string{"retrievalConfig"}) != nil {
+		return nil, fmt.Errorf("retrievalConfig parameter is not supported in Gemini API")
 	}
 
 	return toObject, nil
@@ -1179,6 +1261,74 @@ func enterpriseWebSearchToVertex(ac *apiClient, fromObject map[string]any, paren
 	return toObject, nil
 }
 
+func apiKeyConfigToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromApiKeyString := getValueByPath(fromObject, []string{"apiKeyString"})
+	if fromApiKeyString != nil {
+		setValueByPath(toObject, []string{"apiKeyString"}, fromApiKeyString)
+	}
+
+	return toObject, nil
+}
+
+func authConfigToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromApiKeyConfig := getValueByPath(fromObject, []string{"apiKeyConfig"})
+	if fromApiKeyConfig != nil {
+		fromApiKeyConfig, err = apiKeyConfigToVertex(ac, fromApiKeyConfig.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"apiKeyConfig"}, fromApiKeyConfig)
+	}
+
+	fromAuthType := getValueByPath(fromObject, []string{"authType"})
+	if fromAuthType != nil {
+		setValueByPath(toObject, []string{"authType"}, fromAuthType)
+	}
+
+	fromGoogleServiceAccountConfig := getValueByPath(fromObject, []string{"googleServiceAccountConfig"})
+	if fromGoogleServiceAccountConfig != nil {
+		setValueByPath(toObject, []string{"googleServiceAccountConfig"}, fromGoogleServiceAccountConfig)
+	}
+
+	fromHttpBasicAuthConfig := getValueByPath(fromObject, []string{"httpBasicAuthConfig"})
+	if fromHttpBasicAuthConfig != nil {
+		setValueByPath(toObject, []string{"httpBasicAuthConfig"}, fromHttpBasicAuthConfig)
+	}
+
+	fromOauthConfig := getValueByPath(fromObject, []string{"oauthConfig"})
+	if fromOauthConfig != nil {
+		setValueByPath(toObject, []string{"oauthConfig"}, fromOauthConfig)
+	}
+
+	fromOidcConfig := getValueByPath(fromObject, []string{"oidcConfig"})
+	if fromOidcConfig != nil {
+		setValueByPath(toObject, []string{"oidcConfig"}, fromOidcConfig)
+	}
+
+	return toObject, nil
+}
+
+func googleMapsToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromAuthConfig := getValueByPath(fromObject, []string{"authConfig"})
+	if fromAuthConfig != nil {
+		fromAuthConfig, err = authConfigToVertex(ac, fromAuthConfig.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"authConfig"}, fromAuthConfig)
+	}
+
+	return toObject, nil
+}
+
 func toolToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -1217,6 +1367,16 @@ func toolToVertex(ac *apiClient, fromObject map[string]any, parentObject map[str
 		setValueByPath(toObject, []string{"enterpriseWebSearch"}, fromEnterpriseWebSearch)
 	}
 
+	fromGoogleMaps := getValueByPath(fromObject, []string{"googleMaps"})
+	if fromGoogleMaps != nil {
+		fromGoogleMaps, err = googleMapsToVertex(ac, fromGoogleMaps.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"googleMaps"}, fromGoogleMaps)
+	}
+
 	fromCodeExecution := getValueByPath(fromObject, []string{"codeExecution"})
 	if fromCodeExecution != nil {
 		setValueByPath(toObject, []string{"codeExecution"}, fromCodeExecution)
@@ -1246,6 +1406,38 @@ func functionCallingConfigToVertex(ac *apiClient, fromObject map[string]any, par
 	return toObject, nil
 }
 
+func latLngToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromLatitude := getValueByPath(fromObject, []string{"latitude"})
+	if fromLatitude != nil {
+		setValueByPath(toObject, []string{"latitude"}, fromLatitude)
+	}
+
+	fromLongitude := getValueByPath(fromObject, []string{"longitude"})
+	if fromLongitude != nil {
+		setValueByPath(toObject, []string{"longitude"}, fromLongitude)
+	}
+
+	return toObject, nil
+}
+
+func retrievalConfigToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromLatLng := getValueByPath(fromObject, []string{"latLng"})
+	if fromLatLng != nil {
+		fromLatLng, err = latLngToVertex(ac, fromLatLng.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"latLng"}, fromLatLng)
+	}
+
+	return toObject, nil
+}
+
 func toolConfigToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -1257,6 +1449,16 @@ func toolConfigToVertex(ac *apiClient, fromObject map[string]any, parentObject m
 		}
 
 		setValueByPath(toObject, []string{"functionCallingConfig"}, fromFunctionCallingConfig)
+	}
+
+	fromRetrievalConfig := getValueByPath(fromObject, []string{"retrievalConfig"})
+	if fromRetrievalConfig != nil {
+		fromRetrievalConfig, err = retrievalConfigToVertex(ac, fromRetrievalConfig.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"retrievalConfig"}, fromRetrievalConfig)
 	}
 
 	return toObject, nil
