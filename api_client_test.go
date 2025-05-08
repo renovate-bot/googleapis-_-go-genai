@@ -987,10 +987,11 @@ func createTestFile(t *testing.T, size int64) (string, func()) {
 }
 
 // mockUploadServer simulates the resumable upload endpoint.
-func mockUploadServer(t *testing.T, expectedSize int64) (*httptest.Server, *sync.Map) {
+func mockUploadServer(t *testing.T, expectedSize int64, headers []http.Header) (*httptest.Server, *sync.Map) {
 	t.Helper()
 	var totalReceived int64
 	var mu sync.Mutex
+	currentIndex := 0
 	// Use sync.Map to store received data per upload URL (though in this test we only use one)
 	receivedData := &sync.Map{}
 
@@ -999,11 +1000,9 @@ func mockUploadServer(t *testing.T, expectedSize int64) (*httptest.Server, *sync
 			http.Error(w, "Invalid method", http.StatusMethodNotAllowed)
 			return
 		}
-
 		uploadCommand := r.Header.Get("X-Goog-Upload-Command")
 		uploadOffsetStr := r.Header.Get("X-Goog-Upload-Offset")
 		contentLengthStr := r.Header.Get("Content-Length")
-
 		uploadOffset, err := strconv.ParseInt(uploadOffsetStr, 10, 64)
 		if err != nil {
 			http.Error(w, "Invalid X-Goog-Upload-Offset", http.StatusBadRequest)
@@ -1037,23 +1036,26 @@ func mockUploadServer(t *testing.T, expectedSize int64) (*httptest.Server, *sync
 		}
 
 		// Store received data chunk (optional, but useful for verification)
-		receivedData.Store(uploadOffset, bodyBytes)
-
 		mu.Lock()
-		totalReceived += contentLength
+		for key, value := range headers[currentIndex] {
+			w.Header().Set(key, value[0])
+		}
 		currentTotal := totalReceived
+		isEmptyUploadStatus := headers[currentIndex].Get("X-Goog-Upload-Status") == ""
+		if !isEmptyUploadStatus {
+			totalReceived += contentLength
+			currentTotal = totalReceived
+		}
+		currentIndex++
 		mu.Unlock()
-
 		isFinal := strings.Contains(uploadCommand, "finalize")
 
-		if isFinal {
+		if isFinal && !isEmptyUploadStatus {
 			if currentTotal != expectedSize {
 				t.Errorf("Final size mismatch: expected %d, received %d", expectedSize, currentTotal)
 				http.Error(w, "Final size mismatch", http.StatusBadRequest)
 				return
 			}
-			w.Header().Set("X-Goog-Upload-Status", "final")
-			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			finalFile := map[string]any{
 				"file": map[string]any{
@@ -1068,7 +1070,6 @@ func mockUploadServer(t *testing.T, expectedSize int64) (*httptest.Server, *sync
 				return
 			}
 		} else {
-			w.Header().Set("X-Goog-Upload-Status", "active")
 			w.WriteHeader(http.StatusOK)
 		}
 	}))
@@ -1080,12 +1081,46 @@ func TestUploadFile(t *testing.T) {
 	ctx := context.Background()
 
 	testSizes := []struct {
-		name string
-		size int64 // Size in bytes
+		name    string
+		size    int64 // Size in bytes
+		headers []http.Header
 	}{
-		{"1MB", 1 * 1024 * 1024},
-		{"8MB", 8 * 1024 * 1024}, // Exactly maxChunkSize
-		{"9MB", 9 * 1024 * 1024}, // Requires multiple chunks
+		{"1MB", 1 * 1024 * 1024, []http.Header{
+			{
+				"Content-Type":         []string{"application/json"},
+				"X-Goog-Upload-Status": []string{"final"},
+			},
+		}},
+		{"8MB", 8 * 1024 * 1024, []http.Header{
+			{
+				"X-Goog-Upload-Status": []string{"active"},
+			},
+			{
+				"Content-Type":         []string{"application/json"},
+				"X-Goog-Upload-Status": []string{"final"},
+			},
+		}}, // Exactly maxChunkSize
+		{"9MB", 9 * 1024 * 1024, []http.Header{
+			{
+				"X-Goog-Upload-Status": []string{"active"},
+			},
+			{
+				"Content-Type":         []string{"application/json"},
+				"X-Goog-Upload-Status": []string{"final"},
+			},
+		}}, // Requires multiple chunks
+		{"9MB-missing-header", 9 * 1024 * 1024, []http.Header{
+			{
+				"X-Goog-Upload-Status": []string{"active"},
+			},
+			{
+				"X-Goog-Upload-Status": []string{""},
+			},
+			{
+				"Content-Type":         []string{"application/json"},
+				"X-Goog-Upload-Status": []string{"final"},
+			},
+		}}, // Requires multiple chunks
 	}
 
 	for _, ts := range testSizes {
@@ -1093,7 +1128,7 @@ func TestUploadFile(t *testing.T) {
 			filePath, cleanup := createTestFile(t, ts.size)
 			defer cleanup()
 
-			server, _ := mockUploadServer(t, ts.size)
+			server, _ := mockUploadServer(t, ts.size, ts.headers)
 			defer server.Close()
 
 			ac := &apiClient{

@@ -32,6 +32,9 @@ import (
 )
 
 const maxChunkSize = 8 * 1024 * 1024 // 8 MB chunk size
+const maxRetryCount = 3
+const initialRetryDelay = time.Second
+const delayMultiplier = 2
 
 type apiClient struct {
 	clientConfig *ClientConfig
@@ -376,21 +379,32 @@ func (ac *apiClient) uploadFile(ctx context.Context, r io.Reader, uploadURL stri
 		} else if err != nil {
 			return nil, fmt.Errorf("Failed to read bytes from file at offset %d: %w. Bytes actually read: %d", offset, err, bytesRead)
 		}
+		for attempt := 0; attempt < maxRetryCount; attempt++ {
+			req, err := http.NewRequestWithContext(ctx, http.MethodPost, uploadURL, bytes.NewReader(buffer[:bytesRead]))
+			if err != nil {
+				return nil, fmt.Errorf("Failed to create upload request for chunk at offset %d: %w", offset, err)
+			}
+			doMergeHeaders(httpOptions.Headers, &req.Header)
+			doMergeHeaders(sdkHeader(ctx, ac), &req.Header)
 
-		req, err := http.NewRequestWithContext(ctx, http.MethodPost, uploadURL, bytes.NewReader(buffer[:bytesRead]))
-		if err != nil {
-			return nil, fmt.Errorf("Failed to create upload request for chunk at offset %d: %w", offset, err)
-		}
-		doMergeHeaders(httpOptions.Headers, &req.Header)
-		doMergeHeaders(sdkHeader(ctx, ac), &req.Header)
+			req.Header.Set("X-Goog-Upload-Command", uploadCommand)
+			req.Header.Set("X-Goog-Upload-Offset", strconv.FormatInt(offset, 10))
+			req.Header.Set("Content-Length", strconv.FormatInt(int64(bytesRead), 10))
+			resp, err = doRequest(ac, req)
+			if err != nil {
+				return nil, fmt.Errorf("upload request failed for chunk at offset %d: %w", offset, err)
+			}
+			if resp.Header.Get("X-Goog-Upload-Status") != "" {
+				break
+			}
+			resp.Body.Close()
 
-		req.Header.Set("X-Goog-Upload-Command", uploadCommand)
-		req.Header.Set("X-Goog-Upload-Offset", strconv.FormatInt(offset, 10))
-		req.Header.Set("Content-Length", strconv.FormatInt(int64(bytesRead), 10))
-
-		resp, err = doRequest(ac, req)
-		if err != nil {
-			return nil, fmt.Errorf("upload request failed for chunk at offset %d: %w", offset, err)
+			select {
+			case <-ctx.Done():
+				return nil, fmt.Errorf("upload aborted while waiting to retry (attempt %d, offset %d): %w", attempt+1, offset, ctx.Err())
+			case <-time.After(initialRetryDelay * time.Duration(delayMultiplier^attempt)):
+				// Sleep completed, continue to the next attempt.
+			}
 		}
 		defer resp.Body.Close()
 
