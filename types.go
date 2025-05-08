@@ -2183,7 +2183,7 @@ type EditImageResponse struct {
 	GeneratedImages []*GeneratedImage `json:"generatedImages,omitempty"`
 }
 
-// API config for UpscaleImage with fields not exposed to users.
+// Internal API config for UpscaleImage.
 // These fields require default values sent to the API which are not intended
 // to be modifiable or exposed to users in the SDK method.
 type upscaleImageAPIConfig struct {
