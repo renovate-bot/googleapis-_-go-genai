@@ -874,6 +874,11 @@ func updateModelConfigToMldev(ac *apiClient, fromObject map[string]any, parentOb
 		setValueByPath(parentObject, []string{"description"}, fromDescription)
 	}
 
+	fromDefaultCheckpointId := getValueByPath(fromObject, []string{"defaultCheckpointId"})
+	if fromDefaultCheckpointId != nil {
+		setValueByPath(parentObject, []string{"defaultCheckpointId"}, fromDefaultCheckpointId)
+	}
+
 	return toObject, nil
 }
 
@@ -2370,6 +2375,11 @@ func updateModelConfigToVertex(ac *apiClient, fromObject map[string]any, parentO
 		setValueByPath(parentObject, []string{"description"}, fromDescription)
 	}
 
+	fromDefaultCheckpointId := getValueByPath(fromObject, []string{"defaultCheckpointId"})
+	if fromDefaultCheckpointId != nil {
+		setValueByPath(parentObject, []string{"defaultCheckpointId"}, fromDefaultCheckpointId)
+	}
+
 	return toObject, nil
 }
 
@@ -2976,6 +2986,12 @@ func tunedModelInfoFromMldev(ac *apiClient, fromObject map[string]any, parentObj
 	if fromUpdateTime != nil {
 		setValueByPath(toObject, []string{"updateTime"}, fromUpdateTime)
 	}
+
+	return toObject, nil
+}
+
+func checkpointFromMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
 
 	return toObject, nil
 }
@@ -3620,6 +3636,27 @@ func tunedModelInfoFromVertex(ac *apiClient, fromObject map[string]any, parentOb
 	return toObject, nil
 }
 
+func checkpointFromVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromCheckpointId := getValueByPath(fromObject, []string{"checkpointId"})
+	if fromCheckpointId != nil {
+		setValueByPath(toObject, []string{"checkpointId"}, fromCheckpointId)
+	}
+
+	fromEpoch := getValueByPath(fromObject, []string{"epoch"})
+	if fromEpoch != nil {
+		setValueByPath(toObject, []string{"epoch"}, fromEpoch)
+	}
+
+	fromStep := getValueByPath(fromObject, []string{"step"})
+	if fromStep != nil {
+		setValueByPath(toObject, []string{"step"}, fromStep)
+	}
+
+	return toObject, nil
+}
+
 func modelFromVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -3666,6 +3703,21 @@ func modelFromVertex(ac *apiClient, fromObject map[string]any, parentObject map[
 		}
 
 		setValueByPath(toObject, []string{"tunedModelInfo"}, fromTunedModelInfo)
+	}
+
+	fromDefaultCheckpointId := getValueByPath(fromObject, []string{"defaultCheckpointId"})
+	if fromDefaultCheckpointId != nil {
+		setValueByPath(toObject, []string{"defaultCheckpointId"}, fromDefaultCheckpointId)
+	}
+
+	fromCheckpoints := getValueByPath(fromObject, []string{"checkpoints"})
+	if fromCheckpoints != nil {
+		fromCheckpoints, err = applyConverterToSlice(ac, fromCheckpoints.([]any), checkpointFromVertex)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"checkpoints"}, fromCheckpoints)
 	}
 
 	return toObject, nil

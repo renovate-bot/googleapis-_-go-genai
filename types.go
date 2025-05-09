@@ -2252,6 +2252,64 @@ func (c *TunedModelInfo) MarshalJSON() ([]byte, error) {
 	return json.Marshal(aux)
 }
 
+// Describes the machine learning model version checkpoint.
+type Checkpoint struct {
+	// Optional. The ID of the checkpoint.
+	CheckpointID string `json:"checkpointId,omitempty"`
+	// Optional. The epoch of the checkpoint.
+	Epoch int64 `json:"epoch,omitempty"`
+	// Optional. The step of the checkpoint.
+	Step int64 `json:"step,omitempty"`
+}
+
+func (c *Checkpoint) UnmarshalJSON(data []byte) error {
+	type Alias Checkpoint
+	aux := &struct {
+		Epoch string `json:"epoch,omitempty"`
+		Step  string `json:"step,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(c),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	if aux.Epoch != "" {
+		epoch, err := strconv.ParseInt(aux.Epoch, 10, 64)
+		if err != nil {
+			return fmt.Errorf("error parsing Epoch: %w", err)
+		}
+		c.Epoch = epoch
+	}
+
+	if aux.Step != "" {
+		step, err := strconv.ParseInt(aux.Step, 10, 64)
+		if err != nil {
+			return fmt.Errorf("error parsing Step: %w", err)
+		}
+		c.Step = step
+	}
+
+	return nil
+}
+
+func (c *Checkpoint) MarshalJSON() ([]byte, error) {
+	type Alias Checkpoint
+	aux := struct {
+		Epoch string `json:"epoch,omitempty"`
+		Step  string `json:"step,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(c),
+	}
+
+	aux.Epoch = strconv.FormatInt(c.Epoch, 10)
+	aux.Step = strconv.FormatInt(c.Step, 10)
+	return json.Marshal(aux)
+}
+
 // A trained machine learning model.
 type Model struct {
 	// Optional. Resource name of the model.
@@ -2278,6 +2336,10 @@ type Model struct {
 	OutputTokenLimit int32 `json:"outputTokenLimit,omitempty"`
 	// Optional. List of actions that are supported by the model.
 	SupportedActions []string `json:"supportedActions,omitempty"`
+	// Optional. The default checkpoint ID of a model version.
+	DefaultCheckpointID string `json:"defaultCheckpointId,omitempty"`
+	// Optional. The checkpoints of the model.
+	Checkpoints []*Checkpoint `json:"checkpoints,omitempty"`
 }
 
 type ListModelsConfig struct {
@@ -2312,6 +2374,8 @@ type UpdateModelConfig struct {
 	DisplayName string `json:"displayName,omitempty"`
 	// Optional.
 	Description string `json:"description,omitempty"`
+	// Optional.
+	DefaultCheckpointID string `json:"defaultCheckpointId,omitempty"`
 }
 
 // Configuration for deleting a tuned model.
