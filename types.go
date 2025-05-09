@@ -1406,9 +1406,20 @@ type GenerateContentConfig struct {
 	// effort to provide the same response for repeated requests. By default, a
 	// random number is used.
 	Seed *int32 `json:"seed,omitempty"`
-	// Optional. Output response media type of the generated candidate text.
+	// Optional. Output response mimetype of the generated candidate text.
+	// Supported mimetype:
+	//   - `text/plain`: (default) Text output.
+	//   - `application/json`: JSON response in the candidates.
+	// The model needs to be prompted to output the appropriate response type,
+	// otherwise the behavior is undefined.
+	// This is a preview feature.
 	ResponseMIMEType string `json:"responseMimeType,omitempty"`
-	// Optional. Schema that the generated candidate text must adhere to.
+	// Optional. The `Schema` object allows the definition of input and output data types.
+	// These types can be objects, but also primitives and arrays.
+	// Represents a select subset of an [OpenAPI 3.0 schema
+	// object](https://spec.openapis.org/oas/v3.0.3#schema).
+	// If set, a compatible response_mime_type must also be set.
+	// Compatible mimetypes: `application/json`: Schema for JSON response.
 	ResponseSchema *Schema `json:"responseSchema,omitempty"`
 	// Optional. Configuration for model router requests.
 	RoutingConfig *GenerationConfigRoutingConfig `json:"routingConfig,omitempty"`
