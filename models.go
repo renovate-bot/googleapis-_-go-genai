@@ -145,6 +145,37 @@ func safetySettingToMldev(ac *apiClient, fromObject map[string]any, parentObject
 	return toObject, nil
 }
 
+func functionDeclarationToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromBehavior := getValueByPath(fromObject, []string{"behavior"})
+	if fromBehavior != nil {
+		setValueByPath(toObject, []string{"behavior"}, fromBehavior)
+	}
+
+	fromDescription := getValueByPath(fromObject, []string{"description"})
+	if fromDescription != nil {
+		setValueByPath(toObject, []string{"description"}, fromDescription)
+	}
+
+	fromName := getValueByPath(fromObject, []string{"name"})
+	if fromName != nil {
+		setValueByPath(toObject, []string{"name"}, fromName)
+	}
+
+	fromParameters := getValueByPath(fromObject, []string{"parameters"})
+	if fromParameters != nil {
+		setValueByPath(toObject, []string{"parameters"}, fromParameters)
+	}
+
+	fromResponse := getValueByPath(fromObject, []string{"response"})
+	if fromResponse != nil {
+		setValueByPath(toObject, []string{"response"}, fromResponse)
+	}
+
+	return toObject, nil
+}
+
 func googleSearchToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -243,6 +274,17 @@ func googleMapsToMldev(ac *apiClient, fromObject map[string]any, parentObject ma
 
 func toolToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
+
+	fromFunctionDeclarations := getValueByPath(fromObject, []string{"functionDeclarations"})
+	if fromFunctionDeclarations != nil {
+		fromFunctionDeclarations, err = applyConverterToSlice(ac, fromFunctionDeclarations.([]any), functionDeclarationToMldev)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"functionDeclarations"}, fromFunctionDeclarations)
+	}
+
 	if getValueByPath(fromObject, []string{"retrieval"}) != nil {
 		return nil, fmt.Errorf("retrieval parameter is not supported in Gemini API")
 	}
@@ -278,11 +320,6 @@ func toolToMldev(ac *apiClient, fromObject map[string]any, parentObject map[stri
 	fromCodeExecution := getValueByPath(fromObject, []string{"codeExecution"})
 	if fromCodeExecution != nil {
 		setValueByPath(toObject, []string{"codeExecution"}, fromCodeExecution)
-	}
-
-	fromFunctionDeclarations := getValueByPath(fromObject, []string{"functionDeclarations"})
-	if fromFunctionDeclarations != nil {
-		setValueByPath(toObject, []string{"functionDeclarations"}, fromFunctionDeclarations)
 	}
 
 	return toObject, nil
@@ -1262,6 +1299,35 @@ func safetySettingToVertex(ac *apiClient, fromObject map[string]any, parentObjec
 	return toObject, nil
 }
 
+func functionDeclarationToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+	if getValueByPath(fromObject, []string{"behavior"}) != nil {
+		return nil, fmt.Errorf("behavior parameter is not supported in Vertex AI")
+	}
+
+	fromDescription := getValueByPath(fromObject, []string{"description"})
+	if fromDescription != nil {
+		setValueByPath(toObject, []string{"description"}, fromDescription)
+	}
+
+	fromName := getValueByPath(fromObject, []string{"name"})
+	if fromName != nil {
+		setValueByPath(toObject, []string{"name"}, fromName)
+	}
+
+	fromParameters := getValueByPath(fromObject, []string{"parameters"})
+	if fromParameters != nil {
+		setValueByPath(toObject, []string{"parameters"}, fromParameters)
+	}
+
+	fromResponse := getValueByPath(fromObject, []string{"response"})
+	if fromResponse != nil {
+		setValueByPath(toObject, []string{"response"}, fromResponse)
+	}
+
+	return toObject, nil
+}
+
 func googleSearchToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -1377,6 +1443,16 @@ func googleMapsToVertex(ac *apiClient, fromObject map[string]any, parentObject m
 func toolToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
+	fromFunctionDeclarations := getValueByPath(fromObject, []string{"functionDeclarations"})
+	if fromFunctionDeclarations != nil {
+		fromFunctionDeclarations, err = applyConverterToSlice(ac, fromFunctionDeclarations.([]any), functionDeclarationToVertex)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"functionDeclarations"}, fromFunctionDeclarations)
+	}
+
 	fromRetrieval := getValueByPath(fromObject, []string{"retrieval"})
 	if fromRetrieval != nil {
 		setValueByPath(toObject, []string{"retrieval"}, fromRetrieval)
@@ -1425,11 +1501,6 @@ func toolToVertex(ac *apiClient, fromObject map[string]any, parentObject map[str
 	fromCodeExecution := getValueByPath(fromObject, []string{"codeExecution"})
 	if fromCodeExecution != nil {
 		setValueByPath(toObject, []string{"codeExecution"}, fromCodeExecution)
-	}
-
-	fromFunctionDeclarations := getValueByPath(fromObject, []string{"functionDeclarations"})
-	if fromFunctionDeclarations != nil {
-		setValueByPath(toObject, []string{"functionDeclarations"}, fromFunctionDeclarations)
 	}
 
 	return toObject, nil

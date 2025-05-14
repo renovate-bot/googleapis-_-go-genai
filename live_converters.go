@@ -1007,6 +1007,16 @@ func liveClientRealtimeInputToVertex(ac *apiClient, fromObject map[string]any, p
 func functionResponseToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
+	fromWillContinue := getValueByPath(fromObject, []string{"willContinue"})
+	if fromWillContinue != nil {
+		setValueByPath(toObject, []string{"willContinue"}, fromWillContinue)
+	}
+
+	fromScheduling := getValueByPath(fromObject, []string{"scheduling"})
+	if fromScheduling != nil {
+		setValueByPath(toObject, []string{"scheduling"}, fromScheduling)
+	}
+
 	fromId := getValueByPath(fromObject, []string{"id"})
 	if fromId != nil {
 		setValueByPath(toObject, []string{"id"}, fromId)
@@ -1027,8 +1037,17 @@ func functionResponseToMldev(ac *apiClient, fromObject map[string]any, parentObj
 
 func functionResponseToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
-	if getValueByPath(fromObject, []string{"id"}) != nil {
-		return nil, fmt.Errorf("id parameter is not supported in Vertex AI")
+	if getValueByPath(fromObject, []string{"willContinue"}) != nil {
+		return nil, fmt.Errorf("willContinue parameter is not supported in Vertex AI")
+	}
+
+	if getValueByPath(fromObject, []string{"scheduling"}) != nil {
+		return nil, fmt.Errorf("scheduling parameter is not supported in Vertex AI")
+	}
+
+	fromId := getValueByPath(fromObject, []string{"id"})
+	if fromId != nil {
+		setValueByPath(toObject, []string{"id"}, fromId)
 	}
 
 	fromName := getValueByPath(fromObject, []string{"name"})
