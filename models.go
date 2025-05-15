@@ -176,8 +176,34 @@ func functionDeclarationToMldev(ac *apiClient, fromObject map[string]any, parent
 	return toObject, nil
 }
 
+func intervalToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromStartTime := getValueByPath(fromObject, []string{"startTime"})
+	if fromStartTime != nil {
+		setValueByPath(toObject, []string{"startTime"}, fromStartTime)
+	}
+
+	fromEndTime := getValueByPath(fromObject, []string{"endTime"})
+	if fromEndTime != nil {
+		setValueByPath(toObject, []string{"endTime"}, fromEndTime)
+	}
+
+	return toObject, nil
+}
+
 func googleSearchToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
+
+	fromTimeRangeFilter := getValueByPath(fromObject, []string{"timeRangeFilter"})
+	if fromTimeRangeFilter != nil {
+		fromTimeRangeFilter, err = intervalToMldev(ac, fromTimeRangeFilter.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"timeRangeFilter"}, fromTimeRangeFilter)
+	}
 
 	return toObject, nil
 }
@@ -1344,8 +1370,34 @@ func functionDeclarationToVertex(ac *apiClient, fromObject map[string]any, paren
 	return toObject, nil
 }
 
+func intervalToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromStartTime := getValueByPath(fromObject, []string{"startTime"})
+	if fromStartTime != nil {
+		setValueByPath(toObject, []string{"startTime"}, fromStartTime)
+	}
+
+	fromEndTime := getValueByPath(fromObject, []string{"endTime"})
+	if fromEndTime != nil {
+		setValueByPath(toObject, []string{"endTime"}, fromEndTime)
+	}
+
+	return toObject, nil
+}
+
 func googleSearchToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
+
+	fromTimeRangeFilter := getValueByPath(fromObject, []string{"timeRangeFilter"})
+	if fromTimeRangeFilter != nil {
+		fromTimeRangeFilter, err = intervalToVertex(ac, fromTimeRangeFilter.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"timeRangeFilter"}, fromTimeRangeFilter)
+	}
 
 	return toObject, nil
 }

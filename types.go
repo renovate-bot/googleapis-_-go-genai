@@ -1093,8 +1093,23 @@ type FunctionDeclaration struct {
 	Response *Schema `json:"response,omitempty"`
 }
 
+// Represents a time interval, encoded as a start time (inclusive) and an end time (exclusive).
+// The start time must be less than or equal to the end time.
+// When the start equals the end time, the interval is an empty interval.
+// (matches no time)
+// When both start and end are unspecified, the interval matches any time.
+type Interval struct {
+	// Optional. The start time of the interval.
+	StartTime time.Time `json:"startTime,omitempty"`
+	// Optional. The end time of the interval.
+	EndTime time.Time `json:"endTime,omitempty"`
+}
+
 // Tool to support Google Search in Model. Powered by Google.
 type GoogleSearch struct {
+	// Optional. Filter search results to a specific time range.
+	// If customers set a start time, they must set an end time (and vice versa).
+	TimeRangeFilter *Interval `json:"timeRangeFilter,omitempty"`
 }
 
 // Describes the options to customize dynamic retrieval.
