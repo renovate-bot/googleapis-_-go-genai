@@ -1284,6 +1284,16 @@ func liveServerContentFromMldev(ac *apiClient, fromObject map[string]any, parent
 		setValueByPath(toObject, []string{"outputTranscription"}, fromOutputTranscription)
 	}
 
+	fromUrlContextMetadata := getValueByPath(fromObject, []string{"urlContextMetadata"})
+	if fromUrlContextMetadata != nil {
+		fromUrlContextMetadata, err = urlContextMetadataFromMldev(ac, fromUrlContextMetadata.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"urlContextMetadata"}, fromUrlContextMetadata)
+	}
+
 	return toObject, nil
 }
 

@@ -272,6 +272,12 @@ func googleMapsToMldev(ac *apiClient, fromObject map[string]any, parentObject ma
 	return toObject, nil
 }
 
+func urlContextToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	return toObject, nil
+}
+
 func toolToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -315,6 +321,16 @@ func toolToMldev(ac *apiClient, fromObject map[string]any, parentObject map[stri
 
 	if getValueByPath(fromObject, []string{"googleMaps"}) != nil {
 		return nil, fmt.Errorf("googleMaps parameter is not supported in Gemini API")
+	}
+
+	fromUrlContext := getValueByPath(fromObject, []string{"urlContext"})
+	if fromUrlContext != nil {
+		fromUrlContext, err = urlContextToMldev(ac, fromUrlContext.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"urlContext"}, fromUrlContext)
 	}
 
 	fromCodeExecution := getValueByPath(fromObject, []string{"codeExecution"})
@@ -1440,6 +1456,12 @@ func googleMapsToVertex(ac *apiClient, fromObject map[string]any, parentObject m
 	return toObject, nil
 }
 
+func urlContextToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	return toObject, nil
+}
+
 func toolToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -1496,6 +1518,10 @@ func toolToVertex(ac *apiClient, fromObject map[string]any, parentObject map[str
 		}
 
 		setValueByPath(toObject, []string{"googleMaps"}, fromGoogleMaps)
+	}
+
+	if getValueByPath(fromObject, []string{"urlContext"}) != nil {
+		return nil, fmt.Errorf("urlContext parameter is not supported in Vertex AI")
 	}
 
 	fromCodeExecution := getValueByPath(fromObject, []string{"codeExecution"})
@@ -2865,6 +2891,38 @@ func citationMetadataFromMldev(ac *apiClient, fromObject map[string]any, parentO
 	return toObject, nil
 }
 
+func urlMetadataFromMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromRetrievedUrl := getValueByPath(fromObject, []string{"retrievedUrl"})
+	if fromRetrievedUrl != nil {
+		setValueByPath(toObject, []string{"retrievedUrl"}, fromRetrievedUrl)
+	}
+
+	fromUrlRetrievalStatus := getValueByPath(fromObject, []string{"urlRetrievalStatus"})
+	if fromUrlRetrievalStatus != nil {
+		setValueByPath(toObject, []string{"urlRetrievalStatus"}, fromUrlRetrievalStatus)
+	}
+
+	return toObject, nil
+}
+
+func urlContextMetadataFromMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromUrlMetadata := getValueByPath(fromObject, []string{"urlMetadata"})
+	if fromUrlMetadata != nil {
+		fromUrlMetadata, err = applyConverterToSlice(ac, fromUrlMetadata.([]any), urlMetadataFromMldev)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"urlMetadata"}, fromUrlMetadata)
+	}
+
+	return toObject, nil
+}
+
 func candidateFromMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -2896,6 +2954,16 @@ func candidateFromMldev(ac *apiClient, fromObject map[string]any, parentObject m
 	fromFinishReason := getValueByPath(fromObject, []string{"finishReason"})
 	if fromFinishReason != nil {
 		setValueByPath(toObject, []string{"finishReason"}, fromFinishReason)
+	}
+
+	fromUrlContextMetadata := getValueByPath(fromObject, []string{"urlContextMetadata"})
+	if fromUrlContextMetadata != nil {
+		fromUrlContextMetadata, err = urlContextMetadataFromMldev(ac, fromUrlContextMetadata.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"urlContextMetadata"}, fromUrlContextMetadata)
 	}
 
 	fromAvgLogprobs := getValueByPath(fromObject, []string{"avgLogprobs"})
@@ -3445,6 +3513,38 @@ func citationMetadataFromVertex(ac *apiClient, fromObject map[string]any, parent
 	fromCitations := getValueByPath(fromObject, []string{"citations"})
 	if fromCitations != nil {
 		setValueByPath(toObject, []string{"citations"}, fromCitations)
+	}
+
+	return toObject, nil
+}
+
+func urlMetadataFromVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromRetrievedUrl := getValueByPath(fromObject, []string{"retrievedUrl"})
+	if fromRetrievedUrl != nil {
+		setValueByPath(toObject, []string{"retrievedUrl"}, fromRetrievedUrl)
+	}
+
+	fromUrlRetrievalStatus := getValueByPath(fromObject, []string{"urlRetrievalStatus"})
+	if fromUrlRetrievalStatus != nil {
+		setValueByPath(toObject, []string{"urlRetrievalStatus"}, fromUrlRetrievalStatus)
+	}
+
+	return toObject, nil
+}
+
+func urlContextMetadataFromVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromUrlMetadata := getValueByPath(fromObject, []string{"urlMetadata"})
+	if fromUrlMetadata != nil {
+		fromUrlMetadata, err = applyConverterToSlice(ac, fromUrlMetadata.([]any), urlMetadataFromVertex)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"urlMetadata"}, fromUrlMetadata)
 	}
 
 	return toObject, nil

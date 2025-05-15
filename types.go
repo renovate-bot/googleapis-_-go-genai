@@ -325,6 +325,18 @@ const (
 	FunctionCallingConfigModeNone FunctionCallingConfigMode = "NONE"
 )
 
+// Status of the URL retrieval.
+type UrlRetrievalStatus string
+
+const (
+	// Default value. This value is unused
+	URLRetrievalStatusUnspecified UrlRetrievalStatus = "URL_RETRIEVAL_STATUS_UNSPECIFIED"
+	// URL retrieval is successful.
+	URLRetrievalStatusSuccess UrlRetrievalStatus = "URL_RETRIEVAL_STATUS_SUCCESS"
+	// URL retrieval is failed due to error.
+	URLRetrievalStatusError UrlRetrievalStatus = "URL_RETRIEVAL_STATUS_ERROR"
+)
+
 // Enum that controls the safety filter level for objectionable content.
 type SafetyFilterLevel string
 
@@ -1178,6 +1190,10 @@ type GoogleMaps struct {
 	AuthConfig *AuthConfig `json:"authConfig,omitempty"`
 }
 
+// Tool to support URL context retrieval.
+type URLContext struct {
+}
+
 // Retrieve from Vertex AI Search datastore or engine for grounding. datastore and engine
 // are mutually exclusive. See https://cloud.google.com/products/agent-builder
 type VertexAISearch struct {
@@ -1301,6 +1317,8 @@ type Tool struct {
 	// Optional. Google Maps tool type. Specialized retrieval tool
 	// that is powered by Google Maps.
 	GoogleMaps *GoogleMaps `json:"googleMaps,omitempty"`
+	// Optional. Tool to support URL context retrieval.
+	URLContext *URLContext `json:"urlContext,omitempty"`
 	// Optional. CodeExecution tool type. Enables the model to execute code as part of generation.
 	// This field is only used by the Gemini Developer API services.
 	CodeExecution *ToolCodeExecution `json:"codeExecution,omitempty"`
@@ -1565,6 +1583,20 @@ type CitationMetadata struct {
 	Citations []*Citation `json:"citations,omitempty"`
 }
 
+// Context for a single URL retrieval.
+type URLMetadata struct {
+	// Optional. The URL retrieved by the tool.
+	RetrievedURL string `json:"retrievedUrl,omitempty"`
+	// Optional. Status of the URL retrieval.
+	URLRetrievalStatus UrlRetrievalStatus `json:"urlRetrievalStatus,omitempty"`
+}
+
+// Metadata related to URL context retrieval tool.
+type URLContextMetadata struct {
+	// Optional. List of URL context.
+	URLMetadata []*URLMetadata `json:"urlMetadata,omitempty"`
+}
+
 // Chunk from context retrieved by the retrieval tools.
 type GroundingChunkRetrievedContext struct {
 	// Text of the attribution.
@@ -1709,6 +1741,8 @@ type Candidate struct {
 	// Optional. The reason why the model stopped generating tokens.
 	// If empty, the model has not stopped generating the tokens.
 	FinishReason FinishReason `json:"finishReason,omitempty"`
+	// Optional. Metadata related to URL context retrieval tool.
+	URLContextMetadata *URLContextMetadata `json:"urlContextMetadata,omitempty"`
 	// Output only. Average log probability score of the candidate.
 	AvgLogprobs float64 `json:"avgLogprobs,omitempty"`
 	// Output only. Metadata specifies sources used to ground generated content.
@@ -3360,6 +3394,8 @@ type LiveServerContent struct {
 	// turn which means it doesn’t imply any ordering between transcription and
 	// model turn.
 	OutputTranscription *Transcription `json:"outputTranscription,omitempty"`
+	// Optional. Metadata related to URL context retrieval tool.
+	URLContextMetadata *URLContextMetadata `json:"urlContextMetadata,omitempty"`
 }
 
 // Request for the client to execute the `function_calls` and return the responses with
