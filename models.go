@@ -468,6 +468,43 @@ func voiceConfigToMldev(ac *apiClient, fromObject map[string]any, parentObject m
 	return toObject, nil
 }
 
+func speakerVoiceConfigToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromSpeaker := getValueByPath(fromObject, []string{"speaker"})
+	if fromSpeaker != nil {
+		setValueByPath(toObject, []string{"speaker"}, fromSpeaker)
+	}
+
+	fromVoiceConfig := getValueByPath(fromObject, []string{"voiceConfig"})
+	if fromVoiceConfig != nil {
+		fromVoiceConfig, err = voiceConfigToMldev(ac, fromVoiceConfig.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"voiceConfig"}, fromVoiceConfig)
+	}
+
+	return toObject, nil
+}
+
+func multiSpeakerVoiceConfigToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromSpeakerVoiceConfigs := getValueByPath(fromObject, []string{"speakerVoiceConfigs"})
+	if fromSpeakerVoiceConfigs != nil {
+		fromSpeakerVoiceConfigs, err = applyConverterToSlice(ac, fromSpeakerVoiceConfigs.([]any), speakerVoiceConfigToMldev)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"speakerVoiceConfigs"}, fromSpeakerVoiceConfigs)
+	}
+
+	return toObject, nil
+}
+
 func speechConfigToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -479,6 +516,16 @@ func speechConfigToMldev(ac *apiClient, fromObject map[string]any, parentObject 
 		}
 
 		setValueByPath(toObject, []string{"voiceConfig"}, fromVoiceConfig)
+	}
+
+	fromMultiSpeakerVoiceConfig := getValueByPath(fromObject, []string{"multiSpeakerVoiceConfig"})
+	if fromMultiSpeakerVoiceConfig != nil {
+		fromMultiSpeakerVoiceConfig, err = multiSpeakerVoiceConfigToMldev(ac, fromMultiSpeakerVoiceConfig.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"multiSpeakerVoiceConfig"}, fromMultiSpeakerVoiceConfig)
 	}
 
 	fromLanguageCode := getValueByPath(fromObject, []string{"languageCode"})
@@ -1701,6 +1748,28 @@ func voiceConfigToVertex(ac *apiClient, fromObject map[string]any, parentObject 
 	return toObject, nil
 }
 
+func speakerVoiceConfigToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+	if getValueByPath(fromObject, []string{"speaker"}) != nil {
+		return nil, fmt.Errorf("speaker parameter is not supported in Vertex AI")
+	}
+
+	if getValueByPath(fromObject, []string{"voiceConfig"}) != nil {
+		return nil, fmt.Errorf("voiceConfig parameter is not supported in Vertex AI")
+	}
+
+	return toObject, nil
+}
+
+func multiSpeakerVoiceConfigToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+	if getValueByPath(fromObject, []string{"speakerVoiceConfigs"}) != nil {
+		return nil, fmt.Errorf("speakerVoiceConfigs parameter is not supported in Vertex AI")
+	}
+
+	return toObject, nil
+}
+
 func speechConfigToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -1712,6 +1781,10 @@ func speechConfigToVertex(ac *apiClient, fromObject map[string]any, parentObject
 		}
 
 		setValueByPath(toObject, []string{"voiceConfig"}, fromVoiceConfig)
+	}
+
+	if getValueByPath(fromObject, []string{"multiSpeakerVoiceConfig"}) != nil {
+		return nil, fmt.Errorf("multiSpeakerVoiceConfig parameter is not supported in Vertex AI")
 	}
 
 	fromLanguageCode := getValueByPath(fromObject, []string{"languageCode"})

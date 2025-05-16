@@ -1388,11 +1388,29 @@ type VoiceConfig struct {
 	PrebuiltVoiceConfig *PrebuiltVoiceConfig `json:"prebuiltVoiceConfig,omitempty"`
 }
 
+// The configuration for the speaker to use.
+type SpeakerVoiceConfig struct {
+	// The name of the speaker to use. Should be the same as in the
+	// prompt.
+	Speaker string `json:"speaker,omitempty"`
+	// The configuration for the voice to use.
+	VoiceConfig *VoiceConfig `json:"voiceConfig,omitempty"`
+}
+
+// The configuration for the multi-speaker setup.
+type MultiSpeakerVoiceConfig struct {
+	// The configuration for the speaker to use.
+	SpeakerVoiceConfigs []*SpeakerVoiceConfig `json:"speakerVoiceConfigs,omitempty"`
+}
+
 // The speech generation configuration.
 type SpeechConfig struct {
-	// The configuration for the speaker to use.
+	// Optional. The configuration for the speaker to use.
 	VoiceConfig *VoiceConfig `json:"voiceConfig,omitempty"`
-	// Language code (ISO 639. e.g. en-US) for the speech synthesization.
+	// Optional. The configuration for the multi-speaker setup.
+	// It is mutually exclusive with the voice_config field.
+	MultiSpeakerVoiceConfig *MultiSpeakerVoiceConfig `json:"multiSpeakerVoiceConfig,omitempty"`
+	// Optional. Language code (ISO 639. e.g. en-US) for the speech synthesization.
 	// Only available for Live API.
 	LanguageCode string `json:"languageCode,omitempty"`
 }
