@@ -2761,6 +2761,15 @@ type CreateCachedContentConfig struct {
 	Tools []*Tool `json:"tools,omitempty"`
 	// Optional. Configuration for the tools to use. This config is shared for all tools.
 	ToolConfig *ToolConfig `json:"toolConfig,omitempty"`
+	// Optional. The Cloud KMS resource identifier of the customer managed
+	// encryption key used to protect a resource.
+	// The key needs to be in the same region as where the compute resource is
+	// created. See
+	// https://cloud.google.com/vertex-ai/docs/general/cmek for more
+	// details. If this is set, then all created CachedContent objects
+	// will be encrypted with the provided encryption key.
+	// Allowed formats: projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{crypto_key}
+	KmsKeyName string `json:"kmsKeyName,omitempty"`
 }
 
 func (c *CreateCachedContentConfig) MarshalJSON() ([]byte, error) {
