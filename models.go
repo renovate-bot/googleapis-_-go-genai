@@ -23,6 +23,27 @@ import (
 	"net/http"
 )
 
+func videoMetadataToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromFps := getValueByPath(fromObject, []string{"fps"})
+	if fromFps != nil {
+		setValueByPath(toObject, []string{"fps"}, fromFps)
+	}
+
+	fromEndOffset := getValueByPath(fromObject, []string{"endOffset"})
+	if fromEndOffset != nil {
+		setValueByPath(toObject, []string{"endOffset"}, fromEndOffset)
+	}
+
+	fromStartOffset := getValueByPath(fromObject, []string{"startOffset"})
+	if fromStartOffset != nil {
+		setValueByPath(toObject, []string{"startOffset"}, fromStartOffset)
+	}
+
+	return toObject, nil
+}
+
 func blobToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 	if getValueByPath(fromObject, []string{"displayName"}) != nil {
@@ -44,8 +65,15 @@ func blobToMldev(ac *apiClient, fromObject map[string]any, parentObject map[stri
 
 func partToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
-	if getValueByPath(fromObject, []string{"videoMetadata"}) != nil {
-		return nil, fmt.Errorf("videoMetadata parameter is not supported in Gemini API")
+
+	fromVideoMetadata := getValueByPath(fromObject, []string{"videoMetadata"})
+	if fromVideoMetadata != nil {
+		fromVideoMetadata, err = videoMetadataToMldev(ac, fromVideoMetadata.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"videoMetadata"}, fromVideoMetadata)
 	}
 
 	fromThought := getValueByPath(fromObject, []string{"thought"})
@@ -1274,6 +1302,27 @@ func generateVideosParametersToMldev(ac *apiClient, fromObject map[string]any, p
 	return toObject, nil
 }
 
+func videoMetadataToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromFps := getValueByPath(fromObject, []string{"fps"})
+	if fromFps != nil {
+		setValueByPath(toObject, []string{"fps"}, fromFps)
+	}
+
+	fromEndOffset := getValueByPath(fromObject, []string{"endOffset"})
+	if fromEndOffset != nil {
+		setValueByPath(toObject, []string{"endOffset"}, fromEndOffset)
+	}
+
+	fromStartOffset := getValueByPath(fromObject, []string{"startOffset"})
+	if fromStartOffset != nil {
+		setValueByPath(toObject, []string{"startOffset"}, fromStartOffset)
+	}
+
+	return toObject, nil
+}
+
 func blobToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -1300,6 +1349,11 @@ func partToVertex(ac *apiClient, fromObject map[string]any, parentObject map[str
 
 	fromVideoMetadata := getValueByPath(fromObject, []string{"videoMetadata"})
 	if fromVideoMetadata != nil {
+		fromVideoMetadata, err = videoMetadataToVertex(ac, fromVideoMetadata.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
 		setValueByPath(toObject, []string{"videoMetadata"}, fromVideoMetadata)
 	}
 
@@ -2933,6 +2987,27 @@ func generateVideosParametersToVertex(ac *apiClient, fromObject map[string]any, 
 	return toObject, nil
 }
 
+func videoMetadataFromMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromFps := getValueByPath(fromObject, []string{"fps"})
+	if fromFps != nil {
+		setValueByPath(toObject, []string{"fps"}, fromFps)
+	}
+
+	fromEndOffset := getValueByPath(fromObject, []string{"endOffset"})
+	if fromEndOffset != nil {
+		setValueByPath(toObject, []string{"endOffset"}, fromEndOffset)
+	}
+
+	fromStartOffset := getValueByPath(fromObject, []string{"startOffset"})
+	if fromStartOffset != nil {
+		setValueByPath(toObject, []string{"startOffset"}, fromStartOffset)
+	}
+
+	return toObject, nil
+}
+
 func blobFromMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -2951,6 +3026,16 @@ func blobFromMldev(ac *apiClient, fromObject map[string]any, parentObject map[st
 
 func partFromMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
+
+	fromVideoMetadata := getValueByPath(fromObject, []string{"videoMetadata"})
+	if fromVideoMetadata != nil {
+		fromVideoMetadata, err = videoMetadataFromMldev(ac, fromVideoMetadata.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"videoMetadata"}, fromVideoMetadata)
+	}
 
 	fromThought := getValueByPath(fromObject, []string{"thought"})
 	if fromThought != nil {
@@ -3550,6 +3635,27 @@ func generateVideosOperationFromMldev(ac *apiClient, fromObject map[string]any, 
 	return toObject, nil
 }
 
+func videoMetadataFromVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromFps := getValueByPath(fromObject, []string{"fps"})
+	if fromFps != nil {
+		setValueByPath(toObject, []string{"fps"}, fromFps)
+	}
+
+	fromEndOffset := getValueByPath(fromObject, []string{"endOffset"})
+	if fromEndOffset != nil {
+		setValueByPath(toObject, []string{"endOffset"}, fromEndOffset)
+	}
+
+	fromStartOffset := getValueByPath(fromObject, []string{"startOffset"})
+	if fromStartOffset != nil {
+		setValueByPath(toObject, []string{"startOffset"}, fromStartOffset)
+	}
+
+	return toObject, nil
+}
+
 func blobFromVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -3576,6 +3682,11 @@ func partFromVertex(ac *apiClient, fromObject map[string]any, parentObject map[s
 
 	fromVideoMetadata := getValueByPath(fromObject, []string{"videoMetadata"})
 	if fromVideoMetadata != nil {
+		fromVideoMetadata, err = videoMetadataFromVertex(ac, fromVideoMetadata.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
 		setValueByPath(toObject, []string{"videoMetadata"}, fromVideoMetadata)
 	}
 

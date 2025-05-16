@@ -517,19 +517,11 @@ const (
 	FunctionResponseSchedulingInterrupt FunctionResponseScheduling = "INTERRUPT"
 )
 
-// Content blob.
-type Blob struct {
-	// Optional. Display name of the blob. Used to provide a label or filename to distinguish
-	// blobs. This field is not currently used in the Gemini GenerateContent calls.
-	DisplayName string `json:"displayName,omitempty"`
-	// Required. Raw bytes.
-	Data []byte `json:"data,omitempty"`
-	// Required. The IANA standard MIME type of the source data.
-	MIMEType string `json:"mimeType,omitempty"`
-}
-
-// Metadata describes the input video content.
+// Describes how the video in the Part should be used by the model.
 type VideoMetadata struct {
+	// Optional. The frame rate of the video sent to the model. If not specified, the
+	// default value will be 1.0. The FPS range is (0.0, 24.0].
+	FPS *float64 `json:"fps,omitempty"`
 	// Optional. The end offset of the video.
 	EndOffset time.Duration `json:"endOffset,omitempty"`
 	// Optional. The start offset of the video.
@@ -590,6 +582,17 @@ func (c *VideoMetadata) MarshalJSON() ([]byte, error) {
 	}
 
 	return json.Marshal(aux)
+}
+
+// Content blob.
+type Blob struct {
+	// Optional. Display name of the blob. Used to provide a label or filename to distinguish
+	// blobs. This field is not currently used in the Gemini GenerateContent calls.
+	DisplayName string `json:"displayName,omitempty"`
+	// Required. Raw bytes.
+	Data []byte `json:"data,omitempty"`
+	// Required. The IANA standard MIME type of the source data.
+	MIMEType string `json:"mimeType,omitempty"`
 }
 
 // Result of executing the [ExecutableCode]. Always follows a `part` containing the
