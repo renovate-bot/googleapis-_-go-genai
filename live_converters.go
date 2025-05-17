@@ -241,6 +241,28 @@ func contextWindowCompressionConfigToVertex(ac *apiClient, fromObject map[string
 	return toObject, nil
 }
 
+func proactivityConfigToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromProactiveAudio := getValueByPath(fromObject, []string{"proactiveAudio"})
+	if fromProactiveAudio != nil {
+		setValueByPath(toObject, []string{"proactiveAudio"}, fromProactiveAudio)
+	}
+
+	return toObject, nil
+}
+
+func proactivityConfigToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromProactiveAudio := getValueByPath(fromObject, []string{"proactiveAudio"})
+	if fromProactiveAudio != nil {
+		setValueByPath(toObject, []string{"proactiveAudio"}, fromProactiveAudio)
+	}
+
+	return toObject, nil
+}
+
 func liveConnectConfigToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -292,6 +314,11 @@ func liveConnectConfigToMldev(ac *apiClient, fromObject map[string]any, parentOb
 		}
 
 		setValueByPath(parentObject, []string{"setup", "generationConfig", "speechConfig"}, fromSpeechConfig)
+	}
+
+	fromEnableAffectiveDialog := getValueByPath(fromObject, []string{"enableAffectiveDialog"})
+	if fromEnableAffectiveDialog != nil {
+		setValueByPath(parentObject, []string{"setup", "generationConfig", "enableAffectiveDialog"}, fromEnableAffectiveDialog)
 	}
 
 	fromSystemInstruction := getValueByPath(fromObject, []string{"systemInstruction"})
@@ -379,6 +406,16 @@ func liveConnectConfigToMldev(ac *apiClient, fromObject map[string]any, parentOb
 		setValueByPath(parentObject, []string{"setup", "contextWindowCompression"}, fromContextWindowCompression)
 	}
 
+	fromProactivity := getValueByPath(fromObject, []string{"proactivity"})
+	if fromProactivity != nil {
+		fromProactivity, err = proactivityConfigToMldev(ac, fromProactivity.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(parentObject, []string{"setup", "proactivity"}, fromProactivity)
+	}
+
 	return toObject, nil
 }
 
@@ -433,6 +470,11 @@ func liveConnectConfigToVertex(ac *apiClient, fromObject map[string]any, parentO
 		}
 
 		setValueByPath(parentObject, []string{"setup", "generationConfig", "speechConfig"}, fromSpeechConfig)
+	}
+
+	fromEnableAffectiveDialog := getValueByPath(fromObject, []string{"enableAffectiveDialog"})
+	if fromEnableAffectiveDialog != nil {
+		setValueByPath(parentObject, []string{"setup", "generationConfig", "enableAffectiveDialog"}, fromEnableAffectiveDialog)
 	}
 
 	fromSystemInstruction := getValueByPath(fromObject, []string{"systemInstruction"})
@@ -518,6 +560,16 @@ func liveConnectConfigToVertex(ac *apiClient, fromObject map[string]any, parentO
 		}
 
 		setValueByPath(parentObject, []string{"setup", "contextWindowCompression"}, fromContextWindowCompression)
+	}
+
+	fromProactivity := getValueByPath(fromObject, []string{"proactivity"})
+	if fromProactivity != nil {
+		fromProactivity, err = proactivityConfigToVertex(ac, fromProactivity.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(parentObject, []string{"setup", "proactivity"}, fromProactivity)
 	}
 
 	return toObject, nil
@@ -816,6 +868,16 @@ func liveClientSetupToMldev(ac *apiClient, fromObject map[string]any, parentObje
 		setValueByPath(toObject, []string{"outputAudioTranscription"}, fromOutputAudioTranscription)
 	}
 
+	fromProactivity := getValueByPath(fromObject, []string{"proactivity"})
+	if fromProactivity != nil {
+		fromProactivity, err = proactivityConfigToMldev(ac, fromProactivity.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"proactivity"}, fromProactivity)
+	}
+
 	return toObject, nil
 }
 
@@ -915,6 +977,16 @@ func liveClientSetupToVertex(ac *apiClient, fromObject map[string]any, parentObj
 		}
 
 		setValueByPath(toObject, []string{"outputAudioTranscription"}, fromOutputAudioTranscription)
+	}
+
+	fromProactivity := getValueByPath(fromObject, []string{"proactivity"})
+	if fromProactivity != nil {
+		fromProactivity, err = proactivityConfigToVertex(ac, fromProactivity.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"proactivity"}, fromProactivity)
 	}
 
 	return toObject, nil

@@ -3768,6 +3768,14 @@ func (c *ContextWindowCompressionConfig) MarshalJSON() ([]byte, error) {
 type AudioTranscriptionConfig struct {
 }
 
+// Config for proactivity features.
+type ProactivityConfig struct {
+	// Optional. If enabled, the model can reject responding to the last prompt. For
+	// example, this allows the model to ignore out of context speech or to stay
+	// silent if the user did not make a request, yet.
+	ProactiveAudio *bool `json:"proactiveAudio,omitempty"`
+}
+
 // Message contains configuration that will apply for the duration of the streaming
 // session.
 type LiveClientSetup struct {
@@ -3799,6 +3807,10 @@ type LiveClientSetup struct {
 	// Optional. The transcription of the output aligns with the language code
 	// specified for the output audio.
 	OutputAudioTranscription *AudioTranscriptionConfig `json:"outputAudioTranscription,omitempty"`
+	// Optional. Configures the proactivity of the model. This allows the model to respond
+	// proactively to
+	// the input and to ignore irrelevant input.
+	Proactivity *ProactivityConfig `json:"proactivity,omitempty"`
 }
 
 // Incremental update of the current conversation delivered from the client.
@@ -3929,6 +3941,8 @@ type LiveConnectConfig struct {
 	Seed *int32 `json:"seed,omitempty"`
 	// Optional. The speech generation configuration.
 	SpeechConfig *SpeechConfig `json:"speechConfig,omitempty"`
+	// Optional. If enabled, the model will detect emotions and adapt its responses accordingly.
+	EnableAffectiveDialog *bool `json:"enableAffectiveDialog,omitempty"`
 	// Optional. The user provided system instructions for the model.
 	// Note: only text should be used in parts and content in each part will be
 	// in a separate paragraph.
@@ -3951,6 +3965,10 @@ type LiveConnectConfig struct {
 	// Optional. Configures context window compression mechanism.
 	// If included, server will compress context window to fit into given length.
 	ContextWindowCompression *ContextWindowCompressionConfig `json:"contextWindowCompression,omitempty"`
+	// Optional. Configures the proactivity of the model. This allows the model to respond
+	// proactively to
+	// the input and to ignore irrelevant input.
+	Proactivity *ProactivityConfig `json:"proactivity,omitempty"`
 }
 
 // Parameters for sending client content to the live API.
