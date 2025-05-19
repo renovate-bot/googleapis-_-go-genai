@@ -3912,6 +3912,8 @@ type LiveClientMessage struct {
 
 // Session config for the API connection.
 type LiveConnectConfig struct {
+	// Optional. Used to override HTTP request options.
+	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
 	// Optional. The requested modalities of the response. Represents the set of
 	// modalities that the model can return. Defaults to AUDIO if not specified.
 	ResponseModalities []Modality `json:"responseModalities,omitempty"`
@@ -4001,4 +4003,39 @@ func (p LiveSendToolResponseParameters) toLiveClientMessage() *LiveClientMessage
 	return &LiveClientMessage{
 		ToolResponse: &LiveClientToolResponse{FunctionResponses: p.FunctionResponses},
 	}
+}
+
+// Config for LiveEphemeralParameters for Auth Token creation.
+type LiveEphemeralParameters struct {
+	// Optional. ID of the model to configure in the ephemeral token for Live API.
+	// For a list of models, see `Gemini models
+	// <https://ai.google.dev/gemini-api/docs/models>`.
+	Model string `json:"model,omitempty"`
+	// Optional. Configuration specific to Live API connections created using this token.
+	Config *LiveConnectConfig `json:"config,omitempty"`
+}
+
+// Optional parameters.
+type CreateAuthTokenConfig struct {
+	// Optional. Used to override HTTP request options.
+	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
+	// Optional. An optional time after which, when using the resulting token,
+	// messages in Live API sessions will be rejected. (Gemini may
+	// preemptively close the session after this time.)
+	// If not set then this defaults to 30 minutes in the future. If set, this
+	// value must be less than 20 hours in the future.
+	ExpireTime time.Time `json:"expireTime,omitempty"`
+	// Optional. The time after which new Live API sessions using the token
+	// resulting from this request will be rejected.
+	// If not set this defaults to 60 seconds in the future. If set, this value
+	// must be less than 20 hours in the future.
+	NewSessionExpireTime time.Time `json:"newSessionExpireTime,omitempty"`
+	// Optional. The number of times the token can be used. If this value is zero
+	// then no limit is applied. Default is 1. Resuming a Live API session does
+	// not count as a use.
+	Uses int32 `json:"uses,omitempty"`
+	// Optional. Configuration specific to Live API connections created using this token.
+	LiveEphemeralParameters *LiveEphemeralParameters `json:"liveEphemeralParameters,omitempty"`
+	// Optional. Additional fields to lock in the effective LiveConnectParameters.
+	LockAdditionalFields []string `json:"lockAdditionalFields,omitempty"`
 }
