@@ -63,6 +63,25 @@ func blobToMldev(ac *apiClient, fromObject map[string]any, parentObject map[stri
 	return toObject, nil
 }
 
+func fileDataToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+	if getValueByPath(fromObject, []string{"displayName"}) != nil {
+		return nil, fmt.Errorf("displayName parameter is not supported in Gemini API")
+	}
+
+	fromFileUri := getValueByPath(fromObject, []string{"fileUri"})
+	if fromFileUri != nil {
+		setValueByPath(toObject, []string{"fileUri"}, fromFileUri)
+	}
+
+	fromMimeType := getValueByPath(fromObject, []string{"mimeType"})
+	if fromMimeType != nil {
+		setValueByPath(toObject, []string{"mimeType"}, fromMimeType)
+	}
+
+	return toObject, nil
+}
+
 func partToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -91,6 +110,16 @@ func partToMldev(ac *apiClient, fromObject map[string]any, parentObject map[stri
 		setValueByPath(toObject, []string{"inlineData"}, fromInlineData)
 	}
 
+	fromFileData := getValueByPath(fromObject, []string{"fileData"})
+	if fromFileData != nil {
+		fromFileData, err = fileDataToMldev(ac, fromFileData.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"fileData"}, fromFileData)
+	}
+
 	fromCodeExecutionResult := getValueByPath(fromObject, []string{"codeExecutionResult"})
 	if fromCodeExecutionResult != nil {
 		setValueByPath(toObject, []string{"codeExecutionResult"}, fromCodeExecutionResult)
@@ -99,11 +128,6 @@ func partToMldev(ac *apiClient, fromObject map[string]any, parentObject map[stri
 	fromExecutableCode := getValueByPath(fromObject, []string{"executableCode"})
 	if fromExecutableCode != nil {
 		setValueByPath(toObject, []string{"executableCode"}, fromExecutableCode)
-	}
-
-	fromFileData := getValueByPath(fromObject, []string{"fileData"})
-	if fromFileData != nil {
-		setValueByPath(toObject, []string{"fileData"}, fromFileData)
 	}
 
 	fromFunctionCall := getValueByPath(fromObject, []string{"functionCall"})
@@ -140,6 +164,122 @@ func contentToMldev(ac *apiClient, fromObject map[string]any, parentObject map[s
 	fromRole := getValueByPath(fromObject, []string{"role"})
 	if fromRole != nil {
 		setValueByPath(toObject, []string{"role"}, fromRole)
+	}
+
+	return toObject, nil
+}
+
+func schemaToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromAnyOf := getValueByPath(fromObject, []string{"anyOf"})
+	if fromAnyOf != nil {
+		setValueByPath(toObject, []string{"anyOf"}, fromAnyOf)
+	}
+
+	fromDefault := getValueByPath(fromObject, []string{"default"})
+	if fromDefault != nil {
+		setValueByPath(toObject, []string{"default"}, fromDefault)
+	}
+
+	fromDescription := getValueByPath(fromObject, []string{"description"})
+	if fromDescription != nil {
+		setValueByPath(toObject, []string{"description"}, fromDescription)
+	}
+
+	fromEnum := getValueByPath(fromObject, []string{"enum"})
+	if fromEnum != nil {
+		setValueByPath(toObject, []string{"enum"}, fromEnum)
+	}
+
+	fromExample := getValueByPath(fromObject, []string{"example"})
+	if fromExample != nil {
+		setValueByPath(toObject, []string{"example"}, fromExample)
+	}
+
+	fromFormat := getValueByPath(fromObject, []string{"format"})
+	if fromFormat != nil {
+		setValueByPath(toObject, []string{"format"}, fromFormat)
+	}
+
+	fromItems := getValueByPath(fromObject, []string{"items"})
+	if fromItems != nil {
+		setValueByPath(toObject, []string{"items"}, fromItems)
+	}
+
+	fromMaxItems := getValueByPath(fromObject, []string{"maxItems"})
+	if fromMaxItems != nil {
+		setValueByPath(toObject, []string{"maxItems"}, fromMaxItems)
+	}
+
+	fromMaxLength := getValueByPath(fromObject, []string{"maxLength"})
+	if fromMaxLength != nil {
+		setValueByPath(toObject, []string{"maxLength"}, fromMaxLength)
+	}
+
+	fromMaxProperties := getValueByPath(fromObject, []string{"maxProperties"})
+	if fromMaxProperties != nil {
+		setValueByPath(toObject, []string{"maxProperties"}, fromMaxProperties)
+	}
+
+	fromMaximum := getValueByPath(fromObject, []string{"maximum"})
+	if fromMaximum != nil {
+		setValueByPath(toObject, []string{"maximum"}, fromMaximum)
+	}
+
+	fromMinItems := getValueByPath(fromObject, []string{"minItems"})
+	if fromMinItems != nil {
+		setValueByPath(toObject, []string{"minItems"}, fromMinItems)
+	}
+
+	fromMinLength := getValueByPath(fromObject, []string{"minLength"})
+	if fromMinLength != nil {
+		setValueByPath(toObject, []string{"minLength"}, fromMinLength)
+	}
+
+	fromMinProperties := getValueByPath(fromObject, []string{"minProperties"})
+	if fromMinProperties != nil {
+		setValueByPath(toObject, []string{"minProperties"}, fromMinProperties)
+	}
+
+	fromMinimum := getValueByPath(fromObject, []string{"minimum"})
+	if fromMinimum != nil {
+		setValueByPath(toObject, []string{"minimum"}, fromMinimum)
+	}
+
+	fromNullable := getValueByPath(fromObject, []string{"nullable"})
+	if fromNullable != nil {
+		setValueByPath(toObject, []string{"nullable"}, fromNullable)
+	}
+
+	fromPattern := getValueByPath(fromObject, []string{"pattern"})
+	if fromPattern != nil {
+		setValueByPath(toObject, []string{"pattern"}, fromPattern)
+	}
+
+	fromProperties := getValueByPath(fromObject, []string{"properties"})
+	if fromProperties != nil {
+		setValueByPath(toObject, []string{"properties"}, fromProperties)
+	}
+
+	fromPropertyOrdering := getValueByPath(fromObject, []string{"propertyOrdering"})
+	if fromPropertyOrdering != nil {
+		setValueByPath(toObject, []string{"propertyOrdering"}, fromPropertyOrdering)
+	}
+
+	fromRequired := getValueByPath(fromObject, []string{"required"})
+	if fromRequired != nil {
+		setValueByPath(toObject, []string{"required"}, fromRequired)
+	}
+
+	fromTitle := getValueByPath(fromObject, []string{"title"})
+	if fromTitle != nil {
+		setValueByPath(toObject, []string{"title"}, fromTitle)
+	}
+
+	fromType := getValueByPath(fromObject, []string{"type"})
+	if fromType != nil {
+		setValueByPath(toObject, []string{"type"}, fromType)
 	}
 
 	return toObject, nil
@@ -440,6 +580,11 @@ func retrievalConfigToMldev(ac *apiClient, fromObject map[string]any, parentObje
 		setValueByPath(toObject, []string{"latLng"}, fromLatLng)
 	}
 
+	fromLanguageCode := getValueByPath(fromObject, []string{"languageCode"})
+	if fromLanguageCode != nil {
+		setValueByPath(toObject, []string{"languageCode"}, fromLanguageCode)
+	}
+
 	return toObject, nil
 }
 
@@ -661,6 +806,11 @@ func generateContentConfigToMldev(ac *apiClient, fromObject map[string]any, pare
 	fromResponseSchema := getValueByPath(fromObject, []string{"responseSchema"})
 	if fromResponseSchema != nil {
 		fromResponseSchema, err = tSchema(ac, fromResponseSchema)
+		if err != nil {
+			return nil, err
+		}
+
+		fromResponseSchema, err = schemaToMldev(ac, fromResponseSchema.(map[string]any), toObject)
 		if err != nil {
 			return nil, err
 		}
@@ -1344,6 +1494,27 @@ func blobToVertex(ac *apiClient, fromObject map[string]any, parentObject map[str
 	return toObject, nil
 }
 
+func fileDataToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromDisplayName := getValueByPath(fromObject, []string{"displayName"})
+	if fromDisplayName != nil {
+		setValueByPath(toObject, []string{"displayName"}, fromDisplayName)
+	}
+
+	fromFileUri := getValueByPath(fromObject, []string{"fileUri"})
+	if fromFileUri != nil {
+		setValueByPath(toObject, []string{"fileUri"}, fromFileUri)
+	}
+
+	fromMimeType := getValueByPath(fromObject, []string{"mimeType"})
+	if fromMimeType != nil {
+		setValueByPath(toObject, []string{"mimeType"}, fromMimeType)
+	}
+
+	return toObject, nil
+}
+
 func partToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -1372,6 +1543,16 @@ func partToVertex(ac *apiClient, fromObject map[string]any, parentObject map[str
 		setValueByPath(toObject, []string{"inlineData"}, fromInlineData)
 	}
 
+	fromFileData := getValueByPath(fromObject, []string{"fileData"})
+	if fromFileData != nil {
+		fromFileData, err = fileDataToVertex(ac, fromFileData.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"fileData"}, fromFileData)
+	}
+
 	fromCodeExecutionResult := getValueByPath(fromObject, []string{"codeExecutionResult"})
 	if fromCodeExecutionResult != nil {
 		setValueByPath(toObject, []string{"codeExecutionResult"}, fromCodeExecutionResult)
@@ -1380,11 +1561,6 @@ func partToVertex(ac *apiClient, fromObject map[string]any, parentObject map[str
 	fromExecutableCode := getValueByPath(fromObject, []string{"executableCode"})
 	if fromExecutableCode != nil {
 		setValueByPath(toObject, []string{"executableCode"}, fromExecutableCode)
-	}
-
-	fromFileData := getValueByPath(fromObject, []string{"fileData"})
-	if fromFileData != nil {
-		setValueByPath(toObject, []string{"fileData"}, fromFileData)
 	}
 
 	fromFunctionCall := getValueByPath(fromObject, []string{"functionCall"})
@@ -1421,6 +1597,122 @@ func contentToVertex(ac *apiClient, fromObject map[string]any, parentObject map[
 	fromRole := getValueByPath(fromObject, []string{"role"})
 	if fromRole != nil {
 		setValueByPath(toObject, []string{"role"}, fromRole)
+	}
+
+	return toObject, nil
+}
+
+func schemaToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromAnyOf := getValueByPath(fromObject, []string{"anyOf"})
+	if fromAnyOf != nil {
+		setValueByPath(toObject, []string{"anyOf"}, fromAnyOf)
+	}
+
+	fromDefault := getValueByPath(fromObject, []string{"default"})
+	if fromDefault != nil {
+		setValueByPath(toObject, []string{"default"}, fromDefault)
+	}
+
+	fromDescription := getValueByPath(fromObject, []string{"description"})
+	if fromDescription != nil {
+		setValueByPath(toObject, []string{"description"}, fromDescription)
+	}
+
+	fromEnum := getValueByPath(fromObject, []string{"enum"})
+	if fromEnum != nil {
+		setValueByPath(toObject, []string{"enum"}, fromEnum)
+	}
+
+	fromExample := getValueByPath(fromObject, []string{"example"})
+	if fromExample != nil {
+		setValueByPath(toObject, []string{"example"}, fromExample)
+	}
+
+	fromFormat := getValueByPath(fromObject, []string{"format"})
+	if fromFormat != nil {
+		setValueByPath(toObject, []string{"format"}, fromFormat)
+	}
+
+	fromItems := getValueByPath(fromObject, []string{"items"})
+	if fromItems != nil {
+		setValueByPath(toObject, []string{"items"}, fromItems)
+	}
+
+	fromMaxItems := getValueByPath(fromObject, []string{"maxItems"})
+	if fromMaxItems != nil {
+		setValueByPath(toObject, []string{"maxItems"}, fromMaxItems)
+	}
+
+	fromMaxLength := getValueByPath(fromObject, []string{"maxLength"})
+	if fromMaxLength != nil {
+		setValueByPath(toObject, []string{"maxLength"}, fromMaxLength)
+	}
+
+	fromMaxProperties := getValueByPath(fromObject, []string{"maxProperties"})
+	if fromMaxProperties != nil {
+		setValueByPath(toObject, []string{"maxProperties"}, fromMaxProperties)
+	}
+
+	fromMaximum := getValueByPath(fromObject, []string{"maximum"})
+	if fromMaximum != nil {
+		setValueByPath(toObject, []string{"maximum"}, fromMaximum)
+	}
+
+	fromMinItems := getValueByPath(fromObject, []string{"minItems"})
+	if fromMinItems != nil {
+		setValueByPath(toObject, []string{"minItems"}, fromMinItems)
+	}
+
+	fromMinLength := getValueByPath(fromObject, []string{"minLength"})
+	if fromMinLength != nil {
+		setValueByPath(toObject, []string{"minLength"}, fromMinLength)
+	}
+
+	fromMinProperties := getValueByPath(fromObject, []string{"minProperties"})
+	if fromMinProperties != nil {
+		setValueByPath(toObject, []string{"minProperties"}, fromMinProperties)
+	}
+
+	fromMinimum := getValueByPath(fromObject, []string{"minimum"})
+	if fromMinimum != nil {
+		setValueByPath(toObject, []string{"minimum"}, fromMinimum)
+	}
+
+	fromNullable := getValueByPath(fromObject, []string{"nullable"})
+	if fromNullable != nil {
+		setValueByPath(toObject, []string{"nullable"}, fromNullable)
+	}
+
+	fromPattern := getValueByPath(fromObject, []string{"pattern"})
+	if fromPattern != nil {
+		setValueByPath(toObject, []string{"pattern"}, fromPattern)
+	}
+
+	fromProperties := getValueByPath(fromObject, []string{"properties"})
+	if fromProperties != nil {
+		setValueByPath(toObject, []string{"properties"}, fromProperties)
+	}
+
+	fromPropertyOrdering := getValueByPath(fromObject, []string{"propertyOrdering"})
+	if fromPropertyOrdering != nil {
+		setValueByPath(toObject, []string{"propertyOrdering"}, fromPropertyOrdering)
+	}
+
+	fromRequired := getValueByPath(fromObject, []string{"required"})
+	if fromRequired != nil {
+		setValueByPath(toObject, []string{"required"}, fromRequired)
+	}
+
+	fromTitle := getValueByPath(fromObject, []string{"title"})
+	if fromTitle != nil {
+		setValueByPath(toObject, []string{"title"}, fromTitle)
+	}
+
+	fromType := getValueByPath(fromObject, []string{"type"})
+	if fromType != nil {
+		setValueByPath(toObject, []string{"type"}, fromType)
 	}
 
 	return toObject, nil
@@ -1746,6 +2038,11 @@ func retrievalConfigToVertex(ac *apiClient, fromObject map[string]any, parentObj
 		setValueByPath(toObject, []string{"latLng"}, fromLatLng)
 	}
 
+	fromLanguageCode := getValueByPath(fromObject, []string{"languageCode"})
+	if fromLanguageCode != nil {
+		setValueByPath(toObject, []string{"languageCode"}, fromLanguageCode)
+	}
+
 	return toObject, nil
 }
 
@@ -1946,6 +2243,11 @@ func generateContentConfigToVertex(ac *apiClient, fromObject map[string]any, par
 	fromResponseSchema := getValueByPath(fromObject, []string{"responseSchema"})
 	if fromResponseSchema != nil {
 		fromResponseSchema, err = tSchema(ac, fromResponseSchema)
+		if err != nil {
+			return nil, err
+		}
+
+		fromResponseSchema, err = schemaToVertex(ac, fromResponseSchema.(map[string]any), toObject)
 		if err != nil {
 			return nil, err
 		}
@@ -3024,6 +3326,22 @@ func blobFromMldev(ac *apiClient, fromObject map[string]any, parentObject map[st
 	return toObject, nil
 }
 
+func fileDataFromMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromFileUri := getValueByPath(fromObject, []string{"fileUri"})
+	if fromFileUri != nil {
+		setValueByPath(toObject, []string{"fileUri"}, fromFileUri)
+	}
+
+	fromMimeType := getValueByPath(fromObject, []string{"mimeType"})
+	if fromMimeType != nil {
+		setValueByPath(toObject, []string{"mimeType"}, fromMimeType)
+	}
+
+	return toObject, nil
+}
+
 func partFromMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -3052,6 +3370,16 @@ func partFromMldev(ac *apiClient, fromObject map[string]any, parentObject map[st
 		setValueByPath(toObject, []string{"inlineData"}, fromInlineData)
 	}
 
+	fromFileData := getValueByPath(fromObject, []string{"fileData"})
+	if fromFileData != nil {
+		fromFileData, err = fileDataFromMldev(ac, fromFileData.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"fileData"}, fromFileData)
+	}
+
 	fromCodeExecutionResult := getValueByPath(fromObject, []string{"codeExecutionResult"})
 	if fromCodeExecutionResult != nil {
 		setValueByPath(toObject, []string{"codeExecutionResult"}, fromCodeExecutionResult)
@@ -3060,11 +3388,6 @@ func partFromMldev(ac *apiClient, fromObject map[string]any, parentObject map[st
 	fromExecutableCode := getValueByPath(fromObject, []string{"executableCode"})
 	if fromExecutableCode != nil {
 		setValueByPath(toObject, []string{"executableCode"}, fromExecutableCode)
-	}
-
-	fromFileData := getValueByPath(fromObject, []string{"fileData"})
-	if fromFileData != nil {
-		setValueByPath(toObject, []string{"fileData"}, fromFileData)
 	}
 
 	fromFunctionCall := getValueByPath(fromObject, []string{"functionCall"})
@@ -3677,6 +4000,27 @@ func blobFromVertex(ac *apiClient, fromObject map[string]any, parentObject map[s
 	return toObject, nil
 }
 
+func fileDataFromVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromDisplayName := getValueByPath(fromObject, []string{"displayName"})
+	if fromDisplayName != nil {
+		setValueByPath(toObject, []string{"displayName"}, fromDisplayName)
+	}
+
+	fromFileUri := getValueByPath(fromObject, []string{"fileUri"})
+	if fromFileUri != nil {
+		setValueByPath(toObject, []string{"fileUri"}, fromFileUri)
+	}
+
+	fromMimeType := getValueByPath(fromObject, []string{"mimeType"})
+	if fromMimeType != nil {
+		setValueByPath(toObject, []string{"mimeType"}, fromMimeType)
+	}
+
+	return toObject, nil
+}
+
 func partFromVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -3705,6 +4049,16 @@ func partFromVertex(ac *apiClient, fromObject map[string]any, parentObject map[s
 		setValueByPath(toObject, []string{"inlineData"}, fromInlineData)
 	}
 
+	fromFileData := getValueByPath(fromObject, []string{"fileData"})
+	if fromFileData != nil {
+		fromFileData, err = fileDataFromVertex(ac, fromFileData.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"fileData"}, fromFileData)
+	}
+
 	fromCodeExecutionResult := getValueByPath(fromObject, []string{"codeExecutionResult"})
 	if fromCodeExecutionResult != nil {
 		setValueByPath(toObject, []string{"codeExecutionResult"}, fromCodeExecutionResult)
@@ -3713,11 +4067,6 @@ func partFromVertex(ac *apiClient, fromObject map[string]any, parentObject map[s
 	fromExecutableCode := getValueByPath(fromObject, []string{"executableCode"})
 	if fromExecutableCode != nil {
 		setValueByPath(toObject, []string{"executableCode"}, fromExecutableCode)
-	}
-
-	fromFileData := getValueByPath(fromObject, []string{"fileData"})
-	if fromFileData != nil {
-		setValueByPath(toObject, []string{"fileData"}, fromFileData)
 	}
 
 	fromFunctionCall := getValueByPath(fromObject, []string{"functionCall"})
