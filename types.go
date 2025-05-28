@@ -2727,6 +2727,8 @@ type GenerateVideosConfig struct {
 	NegativePrompt string `json:"negativePrompt,omitempty"`
 	// Optional. Whether to use the prompt rewriting logic.
 	EnhancePrompt bool `json:"enhancePrompt,omitempty"`
+	// Optional. Whether to generate audio along with the video.
+	GenerateAudio *bool `json:"generateAudio,omitempty"`
 }
 
 // A generated video.
