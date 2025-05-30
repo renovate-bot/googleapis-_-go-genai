@@ -120,6 +120,11 @@ func partToMldev(ac *apiClient, fromObject map[string]any, parentObject map[stri
 		setValueByPath(toObject, []string{"fileData"}, fromFileData)
 	}
 
+	fromThoughtSignature := getValueByPath(fromObject, []string{"thoughtSignature"})
+	if fromThoughtSignature != nil {
+		setValueByPath(toObject, []string{"thoughtSignature"}, fromThoughtSignature)
+	}
+
 	fromCodeExecutionResult := getValueByPath(fromObject, []string{"codeExecutionResult"})
 	if fromCodeExecutionResult != nil {
 		setValueByPath(toObject, []string{"codeExecutionResult"}, fromCodeExecutionResult)
@@ -1555,6 +1560,11 @@ func partToVertex(ac *apiClient, fromObject map[string]any, parentObject map[str
 		}
 
 		setValueByPath(toObject, []string{"fileData"}, fromFileData)
+	}
+
+	fromThoughtSignature := getValueByPath(fromObject, []string{"thoughtSignature"})
+	if fromThoughtSignature != nil {
+		setValueByPath(toObject, []string{"thoughtSignature"}, fromThoughtSignature)
 	}
 
 	fromCodeExecutionResult := getValueByPath(fromObject, []string{"codeExecutionResult"})
@@ -3389,6 +3399,11 @@ func partFromMldev(ac *apiClient, fromObject map[string]any, parentObject map[st
 		setValueByPath(toObject, []string{"fileData"}, fromFileData)
 	}
 
+	fromThoughtSignature := getValueByPath(fromObject, []string{"thoughtSignature"})
+	if fromThoughtSignature != nil {
+		setValueByPath(toObject, []string{"thoughtSignature"}, fromThoughtSignature)
+	}
+
 	fromCodeExecutionResult := getValueByPath(fromObject, []string{"codeExecutionResult"})
 	if fromCodeExecutionResult != nil {
 		setValueByPath(toObject, []string{"codeExecutionResult"}, fromCodeExecutionResult)
@@ -4066,6 +4081,11 @@ func partFromVertex(ac *apiClient, fromObject map[string]any, parentObject map[s
 		}
 
 		setValueByPath(toObject, []string{"fileData"}, fromFileData)
+	}
+
+	fromThoughtSignature := getValueByPath(fromObject, []string{"thoughtSignature"})
+	if fromThoughtSignature != nil {
+		setValueByPath(toObject, []string{"thoughtSignature"}, fromThoughtSignature)
 	}
 
 	fromCodeExecutionResult := getValueByPath(fromObject, []string{"codeExecutionResult"})
