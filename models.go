@@ -1409,8 +1409,9 @@ func generateVideosConfigToMldev(ac *apiClient, fromObject map[string]any, paren
 		setValueByPath(parentObject, []string{"parameters", "negativePrompt"}, fromNegativePrompt)
 	}
 
-	if getValueByPath(fromObject, []string{"enhancePrompt"}) != nil {
-		return nil, fmt.Errorf("enhancePrompt parameter is not supported in Gemini API")
+	fromEnhancePrompt := getValueByPath(fromObject, []string{"enhancePrompt"})
+	if fromEnhancePrompt != nil {
+		setValueByPath(parentObject, []string{"parameters", "enhancePrompt"}, fromEnhancePrompt)
 	}
 
 	if getValueByPath(fromObject, []string{"generateAudio"}) != nil {
