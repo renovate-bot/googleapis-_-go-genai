@@ -63,6 +63,31 @@ client, err := genai.NewClient(ctx, &genai.ClientConfig{
 })
 ```
 
+### (Optional) Using environment variables:
+
+You can create a client by configuring the necessary environment variables.
+Configuration setup instructions depends on whether you're using the Gemini
+Developer API or the Gemini API in Vertex AI.
+
+**Gemini Developer API:** Set `GOOGLE_API_KEY` as shown below:
+
+```bash
+export GOOGLE_API_KEY='your-api-key'
+```
+
+**Gemini API on Vertex AI:** Set `GOOGLE_GENAI_USE_VERTEXAI`,
+`GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION`, as shown below:
+
+```bash
+export GOOGLE_GENAI_USE_VERTEXAI=true
+export GOOGLE_CLOUD_PROJECT='your-project-id'
+export GOOGLE_CLOUD_LOCATION='us-central1'
+```
+
+```go
+client, err := genai.NewClient(ctx, &genai.ClientConfig{})
+```
+
 ## License
 
 The contents of this repository are licensed under the
