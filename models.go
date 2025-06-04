@@ -1996,8 +1996,14 @@ func toolToVertex(ac *apiClient, fromObject map[string]any, parentObject map[str
 		setValueByPath(toObject, []string{"googleMaps"}, fromGoogleMaps)
 	}
 
-	if getValueByPath(fromObject, []string{"urlContext"}) != nil {
-		return nil, fmt.Errorf("urlContext parameter is not supported in Vertex AI")
+	fromUrlContext := getValueByPath(fromObject, []string{"urlContext"})
+	if fromUrlContext != nil {
+		fromUrlContext, err = urlContextToVertex(ac, fromUrlContext.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"urlContext"}, fromUrlContext)
 	}
 
 	fromCodeExecution := getValueByPath(fromObject, []string{"codeExecution"})
@@ -4212,6 +4218,16 @@ func candidateFromVertex(ac *apiClient, fromObject map[string]any, parentObject 
 	fromFinishReason := getValueByPath(fromObject, []string{"finishReason"})
 	if fromFinishReason != nil {
 		setValueByPath(toObject, []string{"finishReason"}, fromFinishReason)
+	}
+
+	fromUrlContextMetadata := getValueByPath(fromObject, []string{"urlContextMetadata"})
+	if fromUrlContextMetadata != nil {
+		fromUrlContextMetadata, err = urlContextMetadataFromVertex(ac, fromUrlContextMetadata.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"urlContextMetadata"}, fromUrlContextMetadata)
 	}
 
 	fromAvgLogprobs := getValueByPath(fromObject, []string{"avgLogprobs"})
