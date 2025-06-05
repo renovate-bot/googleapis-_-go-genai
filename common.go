@@ -276,18 +276,21 @@ func mergeHTTPOptions(clientConfig *ClientConfig, configHTTPOptions *HTTPOptions
 		clientHTTPOptions = &(clientConfig.HTTPOptions)
 	}
 
+	// TODO(b/422842863): Implement a more flexible HTTPOptions merger.
 	result := HTTPOptions{}
 	if clientHTTPOptions == nil && configHTTPOptions == nil {
 		return nil
 	} else if clientHTTPOptions == nil {
 		result = HTTPOptions{
-			BaseURL:    configHTTPOptions.BaseURL,
-			APIVersion: configHTTPOptions.APIVersion,
+			BaseURL:               configHTTPOptions.BaseURL,
+			APIVersion:            configHTTPOptions.APIVersion,
+			ExtrasRequestProvider: configHTTPOptions.ExtrasRequestProvider,
 		}
 	} else {
 		result = HTTPOptions{
-			BaseURL:    clientHTTPOptions.BaseURL,
-			APIVersion: clientHTTPOptions.APIVersion,
+			BaseURL:               clientHTTPOptions.BaseURL,
+			APIVersion:            clientHTTPOptions.APIVersion,
+			ExtrasRequestProvider: clientHTTPOptions.ExtrasRequestProvider,
 		}
 	}
 
@@ -297,6 +300,9 @@ func mergeHTTPOptions(clientConfig *ClientConfig, configHTTPOptions *HTTPOptions
 		}
 		if configHTTPOptions.APIVersion != "" {
 			result.APIVersion = configHTTPOptions.APIVersion
+		}
+		if configHTTPOptions.ExtrasRequestProvider != nil {
+			result.ExtrasRequestProvider = configHTTPOptions.ExtrasRequestProvider
 		}
 	}
 	result.Headers = mergeHeaders(clientHTTPOptions, configHTTPOptions)
