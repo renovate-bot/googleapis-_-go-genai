@@ -896,7 +896,14 @@ type HTTPOptions struct {
 	APIVersion string `json:"apiVersion,omitempty"`
 	// Optional. Additional HTTP headers to be sent with the request.
 	Headers http.Header `json:"headers,omitempty"`
+	// Optional. [Experimental] No forward compatibility is guaranteed for this feature.
+	// Usage of this field is strongly discouraged.
+	ExtrasRequestProvider ExtrasRequestProvider `json:"-"`
 }
+
+// [Experimental] No forward compatibility is guaranteed for this feature.
+// Usage of this field is strongly discouraged.
+type ExtrasRequestProvider = func(body map[string]any) map[string]any
 
 // Schema is used to define the format of input/output data.
 // Represents a select subset of an [OpenAPI 3.0 schema

@@ -126,6 +126,11 @@ func buildRequest(ctx context.Context, ac *apiClient, path string, body map[stri
 	if err != nil {
 		return nil, err
 	}
+	if httpOptions.ExtrasRequestProvider != nil {
+		log.Printf("Warning: Usage of ExtrasRequestProvider is strongly discouraged. No forward compatibility is guaranteed.")
+		body = httpOptions.ExtrasRequestProvider(body)
+	}
+
 	b := new(bytes.Buffer)
 	if len(body) > 0 {
 		if err := json.NewEncoder(b).Encode(body); err != nil {
