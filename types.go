@@ -1211,6 +1211,11 @@ type VertexRAGStore struct {
 	RAGRetrievalConfig *RAGRetrievalConfig `json:"ragRetrievalConfig,omitempty"`
 	// Optional. Number of top k results to return from the selected corpora.
 	SimilarityTopK *int32 `json:"similarityTopK,omitempty"`
+	// Optional. Currently only supported for Gemini Multimodal Live API. In Gemini Multimodal
+	// Live API, if `store_context` bool is specified, Gemini will leverage it to automatically
+	// memorize the interactions between the client and Gemini, and retrieve context when
+	// needed to augment the response generation for users' ongoing and future interactions.
+	StoreContext *bool `json:"storeContext,omitempty"`
 	// Optional. Only return results with vector distance smaller than the threshold.
 	VectorDistanceThreshold *float64 `json:"vectorDistanceThreshold,omitempty"`
 }
