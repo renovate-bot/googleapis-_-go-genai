@@ -1124,9 +1124,23 @@ type GoogleMaps struct {
 type URLContext struct {
 }
 
+// Define data stores within engine to filter on in a search call and configurations
+// for those data stores. For more information, see https://cloud.google.com/generative-ai-app-builder/docs/reference/rpc/google.cloud.discoveryengine.v1#datastorespec
+type VertexAISearchDataStoreSpec struct {
+	// Full resource name of DataStore, such as Format: `projects/{project}/locations/{location}/collections/{collection}/dataStores/{dataStore}`
+	DataStore string `json:"dataStore,omitempty"`
+	// Optional. Filter specification to filter documents in the data store specified by
+	// data_store field. For more information on filtering, see [Filtering](https://cloud.google.com/generative-ai-app-builder/docs/filter-search-metadata)
+	Filter string `json:"filter,omitempty"`
+}
+
 // Retrieve from Vertex AI Search datastore or engine for grounding. datastore and engine
 // are mutually exclusive. See https://cloud.google.com/products/agent-builder
 type VertexAISearch struct {
+	// Specifications that define the specific DataStores to be searched, along with configurations
+	// for those data stores. This is only considered for Engines with multiple data stores.
+	// It should only be set if engine is used.
+	DataStoreSpecs []*VertexAISearchDataStoreSpec `json:"dataStoreSpecs,omitempty"`
 	// Optional. Fully-qualified Vertex AI Search data store resource ID. Format: `projects/{project}/locations/{location}/collections/{collection}/dataStores/{dataStore}`
 	Datastore string `json:"datastore,omitempty"`
 	// Optional. Fully-qualified Vertex AI Search engine resource ID. Format: `projects/{project}/locations/{location}/collections/{collection}/engines/{engine}`
