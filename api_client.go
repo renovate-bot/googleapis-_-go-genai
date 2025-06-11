@@ -259,8 +259,22 @@ func iterateResponseStream[R any](rs *responseStream[R], responseConverter func(
 					return
 				}
 			default:
-				// Stream chunk not started with "data" is treated as an error.
-				if !yield(nil, fmt.Errorf("iterateResponseStream: invalid stream chunk: %s:%s", string(prefix), string(data))) {
+				var err error
+				if len(line) > 0 {
+					var respWithError = new(responseWithError)
+					// Stream chunk that doesn't matches error format.
+					if marshalErr := json.Unmarshal(line, respWithError); marshalErr != nil {
+						err = fmt.Errorf("iterateResponseStream: invalid stream chunk: %s:%s", string(prefix), string(data))
+					}
+					// Stream chunk that matches error format.
+					if respWithError.ErrorInfo != nil {
+						err = *respWithError.ErrorInfo
+					}
+				}
+				if err == nil {
+					err = fmt.Errorf("iterateResponseStream: invalid stream chunk: %s:%s", string(prefix), string(data))
+				}
+				if !yield(nil, err) {
 					return
 				}
 			}

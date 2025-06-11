@@ -24,7 +24,6 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-// TODO(b/384580303): Add streaming request tests.
 func TestSendRequest(t *testing.T) {
 	ctx := context.Background()
 	// Setup test cases
@@ -246,13 +245,12 @@ func TestSendStreamRequest(t *testing.T) {
 			wantErrorMessage: "error unmarshalling data data:invalid. error: invalid character 'i' looking for beginning of value",
 		},
 		{
-			name:           "Stream with Invalid Seperator",
-			method:         "POST",
-			path:           "test",
-			body:           map[string]any{"key": "value"},
-			mockResponse:   "data:{\"key1\":\"value1\"}\t\tdata:{\"key2\":\"value2\"}",
-			mockStatusCode: http.StatusOK,
-			// converterErr:     fmt.Errorf("converter error"),
+			name:             "Stream with Invalid Seperator",
+			method:           "POST",
+			path:             "test",
+			body:             map[string]any{"key": "value"},
+			mockResponse:     "data:{\"key1\":\"value1\"}\t\tdata:{\"key2\":\"value2\"}",
+			mockStatusCode:   http.StatusOK,
 			wantResponse:     nil,
 			wantErr:          true,
 			wantErrorMessage: "iterateResponseStream: error unmarshalling data data:{\"key1\":\"value1\"}\t\tdata:{\"key2\":\"value2\"}. error: invalid character 'd' after top-level value",
@@ -353,6 +351,16 @@ func TestSendStreamRequest(t *testing.T) {
 			mockStatusCode:   http.StatusInternalServerError,
 			wantErr:          true,
 			wantErrorMessage: "Error 500, Message: invalid json, Status: 500 Internal Server Error, Details: []",
+		},
+		{
+			name:             "Error Response with status ok but error stream chunk",
+			method:           "POST",
+			path:             "test",
+			body:             map[string]any{"key": "value"},
+			mockResponse:     `{"error": {"code": 500, "message": "internal server error", "status": "INTERNAL_SERVER_ERROR"}}`,
+			mockStatusCode:   http.StatusOK,
+			wantErr:          true,
+			wantErrorMessage: "Error 500, Message: internal server error, Status: INTERNAL_SERVER_ERROR, Details: []",
 		},
 		{
 			name:           "Request Error",
