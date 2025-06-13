@@ -205,6 +205,7 @@ func TestModelsGenerateContentMultiSpeakerVoiceConfigAudio(t *testing.T) {
 }
 
 func TestModelsGenerateVideosText2VideoPoll(t *testing.T) {
+	fmt.Println("TestModelsGenerateVideosText2VideoPoll mode", *mode, *mode == apiMode)
 	if *mode != apiMode {
 		t.Skip("Skip. This test is only in the API mode")
 	}
@@ -219,7 +220,7 @@ func TestModelsGenerateVideosText2VideoPoll(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			operation, err := client.Models.GenerateVideos(ctx, "veo-2.0-generate-001", "A neon hologram of a cat driving at top speed", nil, nil, nil)
+			operation, err := client.Models.GenerateVideos(ctx, "veo-2.0-generate-001", "A neon hologram of a cat driving at top speed", nil, nil)
 			if err != nil {
 				t.Errorf("GenerateVideos failed unexpectedly: %v", err)
 			}

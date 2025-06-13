@@ -1479,10 +1479,6 @@ func generateVideosParametersToMldev(ac *apiClient, fromObject map[string]any, p
 		setValueByPath(toObject, []string{"instances[0]", "image"}, fromImage)
 	}
 
-	if getValueByPath(fromObject, []string{"video"}) != nil {
-		return nil, fmt.Errorf("video parameter is not supported in Gemini API")
-	}
-
 	fromConfig := getValueByPath(fromObject, []string{"config"})
 	if fromConfig != nil {
 		fromConfig, err = generateVideosConfigToMldev(ac, fromConfig.(map[string]any), toObject)
@@ -3370,16 +3366,6 @@ func generateVideosParametersToVertex(ac *apiClient, fromObject map[string]any, 
 		}
 
 		setValueByPath(toObject, []string{"instances[0]", "image"}, fromImage)
-	}
-
-	fromVideo := getValueByPath(fromObject, []string{"video"})
-	if fromVideo != nil {
-		fromVideo, err = videoToVertex(ac, fromVideo.(map[string]any), toObject)
-		if err != nil {
-			return nil, err
-		}
-
-		setValueByPath(toObject, []string{"instances[0]", "video"}, fromVideo)
 	}
 
 	fromConfig := getValueByPath(fromObject, []string{"config"})
@@ -5725,10 +5711,10 @@ func (m Models) ComputeTokens(ctx context.Context, model string, contents []*Con
 }
 
 // GenerateVideos creates a long-running video generation operation.
-func (m Models) GenerateVideos(ctx context.Context, model string, prompt string, image *Image, video *Video, config *GenerateVideosConfig) (*GenerateVideosOperation, error) {
+func (m Models) GenerateVideos(ctx context.Context, model string, prompt string, image *Image, config *GenerateVideosConfig) (*GenerateVideosOperation, error) {
 	parameterMap := make(map[string]any)
 
-	kwargs := map[string]any{"model": model, "prompt": prompt, "image": image, "video": video, "config": config}
+	kwargs := map[string]any{"model": model, "prompt": prompt, "image": image, "config": config}
 	deepMarshal(kwargs, &parameterMap)
 
 	var httpOptions *HTTPOptions
