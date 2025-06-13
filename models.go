@@ -341,9 +341,19 @@ func functionDeclarationToMldev(ac *apiClient, fromObject map[string]any, parent
 		setValueByPath(toObject, []string{"parameters"}, fromParameters)
 	}
 
+	fromParametersJsonSchema := getValueByPath(fromObject, []string{"parametersJsonSchema"})
+	if fromParametersJsonSchema != nil {
+		setValueByPath(toObject, []string{"parametersJsonSchema"}, fromParametersJsonSchema)
+	}
+
 	fromResponse := getValueByPath(fromObject, []string{"response"})
 	if fromResponse != nil {
 		setValueByPath(toObject, []string{"response"}, fromResponse)
+	}
+
+	fromResponseJsonSchema := getValueByPath(fromObject, []string{"responseJsonSchema"})
+	if fromResponseJsonSchema != nil {
+		setValueByPath(toObject, []string{"responseJsonSchema"}, fromResponseJsonSchema)
 	}
 
 	return toObject, nil
@@ -1816,9 +1826,19 @@ func functionDeclarationToVertex(ac *apiClient, fromObject map[string]any, paren
 		setValueByPath(toObject, []string{"parameters"}, fromParameters)
 	}
 
+	fromParametersJsonSchema := getValueByPath(fromObject, []string{"parametersJsonSchema"})
+	if fromParametersJsonSchema != nil {
+		setValueByPath(toObject, []string{"parametersJsonSchema"}, fromParametersJsonSchema)
+	}
+
 	fromResponse := getValueByPath(fromObject, []string{"response"})
 	if fromResponse != nil {
 		setValueByPath(toObject, []string{"response"}, fromResponse)
+	}
+
+	fromResponseJsonSchema := getValueByPath(fromObject, []string{"responseJsonSchema"})
+	if fromResponseJsonSchema != nil {
+		setValueByPath(toObject, []string{"responseJsonSchema"}, fromResponseJsonSchema)
 	}
 
 	return toObject, nil

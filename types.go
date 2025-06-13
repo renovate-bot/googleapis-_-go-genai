@@ -1002,10 +1002,21 @@ type FunctionDeclaration struct {
 	// 1 optional parameter: type: OBJECT properties: param1: type: STRING param2: type:
 	// INTEGER required: - param1
 	Parameters *Schema `json:"parameters,omitempty"`
+	// Optional. Describes the parameters to the function in JSON Schema format. The schema
+	// must describe an object where the properties are the parameters to the function.
+	// For example: ``` { "type": "object", "properties": { "name": { "type": "string" },
+	// "age": { "type": "integer" } }, "additionalProperties": false, "required": ["name",
+	// "age"], "propertyOrdering": ["name", "age"] } ``` This field is mutually exclusive
+	// with `parameters`.
+	ParametersJsonSchema any `json:"parametersJsonSchema,omitempty"`
 	// Optional. Describes the output from this function in JSON Schema format. Reflects
 	// the Open API 3.03 Response Object. The Schema defines the type used for the response
 	// value of the function.
 	Response *Schema `json:"response,omitempty"`
+	// Optional. Describes the output from this function in JSON Schema format. The value
+	// specified by the schema is the response value of the function. This field is mutually
+	// exclusive with `response`.
+	ResponseJsonSchema any `json:"responseJsonSchema,omitempty"`
 }
 
 // Represents a time interval, encoded as a start time (inclusive) and an end time (exclusive).
@@ -2462,6 +2473,19 @@ type GenerationConfig struct {
 	// set, a compatible response_mime_type must also be set. Compatible mimetypes: `application/json`:
 	// Schema for JSON response.
 	ResponseSchema *Schema `json:"responseSchema,omitempty"`
+	// Optional. Output schema of the generated response. This is an alternative to `response_schema`
+	// that accepts [JSON Schema](https://json-schema.org/). If set, `response_schema` must
+	// be omitted, but `response_mime_type` is required. While the full JSON Schema may
+	// be sent, not all features are supported. Specifically, only the following properties
+	// are supported: - `$id` - `$defs` - `$ref` - `$anchor` - `type` - `format` - `title`
+	// - `description` - `enum` (for strings and numbers) - `items` - `prefixItems` - `minItems`
+	// - `maxItems` - `minimum` - `maximum` - `anyOf` - `oneOf` (interpreted the same as
+	// `anyOf`) - `properties` - `additionalProperties` - `required` The non-standard `propertyOrdering`
+	// property may also be set. Cyclic references are unrolled to a limited degree and,
+	// as such, may only be used within non-required properties. (Nullable properties are
+	// not sufficient.) If `$ref` is set on a sub-schema, no other properties, except for
+	// than those starting as a `$`, may be set.
+	ResponseJsonSchema any `json:"responseJsonSchema,omitempty"`
 	// Optional. Routing configuration.
 	RoutingConfig *GenerationConfigRoutingConfig `json:"routingConfig,omitempty"`
 	// Optional. Seed.
