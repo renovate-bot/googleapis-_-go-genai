@@ -246,7 +246,7 @@ func NewClient(ctx context.Context, cc *ClientConfig) (*Client, error) {
 			// Explicit project/location takes precedence over implicit API key.
 			log.Println("Warning: The user provided project/location will take precedence over the API key from the environment variable.")
 			cc.APIKey = ""
-		} else if (envProject != "" && envLocation != "") && envAPIKey == "" {
+		} else if (envProject != "" && envLocation != "") && envAPIKey != "" {
 			// Implicit project/location takes precedence over implicit API key.
 			log.Println("Warning: The project/location from the environment variables will take precedence over the API key from the environment variable.")
 			cc.APIKey = ""

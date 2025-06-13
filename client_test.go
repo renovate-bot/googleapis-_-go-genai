@@ -366,7 +366,7 @@ func TestNewClient(t *testing.T) {
 			// Vertex AI API key combo 3
 			project := "test-project-env"
 			location := "test-location-env"
-			client, err := NewClient(ctx, &ClientConfig{Backend: BackendVertexAI, Project: project, Location: location,
+			client, err := NewClient(ctx, &ClientConfig{Backend: BackendVertexAI,
 				envVarProvider: func() map[string]string {
 					return map[string]string{
 						"GOOGLE_API_KEY":        "vertexai-api-key-env",
@@ -378,7 +378,7 @@ func TestNewClient(t *testing.T) {
 			if err != nil {
 				t.Fatalf("Expected no error, got %v", err)
 			}
-			// Explicit project/location takes precedence over implicit API key.
+			// Implicit project/location takes precedence over implicit API key.
 			if client.clientConfig.Backend != BackendVertexAI {
 				t.Errorf("Expected Backend %q, got %q", BackendVertexAI, client.clientConfig.Backend)
 			}
