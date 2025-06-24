@@ -354,9 +354,12 @@ const (
 type PersonGeneration string
 
 const (
-	PersonGenerationDontAllow  PersonGeneration = "DONT_ALLOW"
+	// Block generation of images of people.
+	PersonGenerationDontAllow PersonGeneration = "DONT_ALLOW"
+	// Generate images of adults, but not children.
 	PersonGenerationAllowAdult PersonGeneration = "ALLOW_ADULT"
-	PersonGenerationAllowAll   PersonGeneration = "ALLOW_ALL"
+	// Generate images that include adults and children.
+	PersonGenerationAllowAll PersonGeneration = "ALLOW_ALL"
 )
 
 // Enum that specifies the language of the text in the prompt.
@@ -2037,7 +2040,8 @@ type GenerateImagesConfig struct {
 	// Optional. Number of images to generate.
 	// If empty, the system will choose a default value (currently 4).
 	NumberOfImages int32 `json:"numberOfImages,omitempty"`
-	// Optional. Aspect ratio of the generated images.
+	// Optional. Aspect ratio of the generated images. Supported values are
+	// "1:1", "3:4", "4:3", "9:16", and "16:9".
 	AspectRatio string `json:"aspectRatio,omitempty"`
 	// Optional. Controls how much the model adheres to the text prompt. Large
 	// values increase output and prompt alignment, but may compromise image
@@ -2248,7 +2252,8 @@ type EditImageConfig struct {
 	// Optional. Number of images to generate.
 	// If empty, the system will choose a default value (currently 4).
 	NumberOfImages int32 `json:"numberOfImages,omitempty"`
-	// Optional. Aspect ratio of the generated images.
+	// Optional. Aspect ratio of the generated images. Supported values are
+	// "1:1", "3:4", "4:3", "9:16", and "16:9".
 	AspectRatio string `json:"aspectRatio,omitempty"`
 	// Optional. Controls how much the model adheres to the text prompt. Large
 	// values increase output and prompt alignment, but may compromise image
