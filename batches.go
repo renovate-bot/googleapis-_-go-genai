@@ -2740,6 +2740,9 @@ func listBatchJobsResponseFromVertex(ac *apiClient, fromObject map[string]any, p
 	return toObject, nil
 }
 
+// Batches provides methods for managing the batch jobs.
+// You don't need to initiate this struct. Create a client instance via NewClient, and
+// then access Batches through client.Batches field.
 type Batches struct {
 	apiClient *apiClient
 }
@@ -2814,6 +2817,7 @@ func (m Batches) create(ctx context.Context, model string, src *BatchJobSource, 
 	return response, nil
 }
 
+// Get gets a batch job resource.
 func (m Batches) Get(ctx context.Context, name string, config *GetBatchJobConfig) (*BatchJob, error) {
 	parameterMap := make(map[string]any)
 
@@ -2884,6 +2888,7 @@ func (m Batches) Get(ctx context.Context, name string, config *GetBatchJobConfig
 	return response, nil
 }
 
+// Cancel cancels a batch job resource.
 func (m Batches) Cancel(ctx context.Context, name string, config *CancelBatchJobConfig) error {
 	parameterMap := make(map[string]any)
 
