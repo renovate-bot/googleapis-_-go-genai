@@ -330,6 +330,8 @@ func TestTable(t *testing.T) {
 									}
 								}
 								for _, v := range want {
+									// TODO(b/425393586): Remove this hack once golang support sdkHttpResponse.
+									delete(v, "sdkHttpResponse")
 									_ = convertFloat64ToString(v)
 								}
 								for _, v := range got {
