@@ -449,6 +449,38 @@ const (
 	FileSourceGenerated   FileSource = "GENERATED"
 )
 
+// Job state.
+type JobState string
+
+const (
+	// The job state is unspecified.
+	JobStateUnspecified JobState = "JOB_STATE_UNSPECIFIED"
+	// The job has been just created or resumed and processing has not yet begun.
+	JobStateQueued JobState = "JOB_STATE_QUEUED"
+	// The service is preparing to run the job.
+	JobStatePending JobState = "JOB_STATE_PENDING"
+	// The job is in progress.
+	JobStateRunning JobState = "JOB_STATE_RUNNING"
+	// The job completed successfully.
+	JobStateSucceeded JobState = "JOB_STATE_SUCCEEDED"
+	// The job failed.
+	JobStateFailed JobState = "JOB_STATE_FAILED"
+	// The job is being cancelled. From this state the job may only go to either `JOB_STATE_SUCCEEDED`,
+	// `JOB_STATE_FAILED` or `JOB_STATE_CANCELLED`.
+	JobStateCancelling JobState = "JOB_STATE_CANCELLING"
+	// The job has been cancelled.
+	JobStateCancelled JobState = "JOB_STATE_CANCELLED"
+	// The job has been stopped, and can be resumed.
+	JobStatePaused JobState = "JOB_STATE_PAUSED"
+	// The job has expired.
+	JobStateExpired JobState = "JOB_STATE_EXPIRED"
+	// The job is being updated. Only jobs in the `JOB_STATE_RUNNING` state can be updated.
+	// After updating, the job goes back to the `JOB_STATE_RUNNING` state.
+	JobStateUpdating JobState = "JOB_STATE_UPDATING"
+	// The job is partially succeeded, some results may be missing due to errors.
+	JobStatePartiallySucceeded JobState = "JOB_STATE_PARTIALLY_SUCCEEDED"
+)
+
 // Server content modalities.
 type MediaModality string
 
@@ -3108,6 +3140,147 @@ type DeleteFileConfig struct {
 
 // Response for the delete file method.
 type DeleteFileResponse struct {
+}
+
+// Config for inlined request.
+type InlinedRequest struct {
+	// ID of the model to use. For a list of models, see `Google models
+	// <https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models>`_.
+	Model string `json:"model,omitempty"`
+	// Content of the request.
+	Contents []*Content `json:"contents,omitempty"`
+	// Optional. Configuration that contains optional model parameters.
+	Config *GenerateContentConfig `json:"config,omitempty"`
+}
+
+// Config for `src` parameter.
+type BatchJobSource struct {
+	// Storage format of the input files. Must be one of:
+	// 'jsonl', 'bigquery'.
+	Format string `json:"format,omitempty"`
+	// Optional. The Google Cloud Storage URIs to input files.
+	GCSURI []string `json:"gcsUri,omitempty"`
+	// Optional. The BigQuery URI to input table.
+	BigqueryURI string `json:"bigqueryUri,omitempty"`
+	// Optional. The Gemini Developer API's file resource name of the input data
+	// (e.g. "files/12345").
+	FileName string `json:"fileName,omitempty"`
+	// Optional. The Gemini Developer API's inlined input data to run batch job.
+	InlinedRequests []*InlinedRequest `json:"inlinedRequests,omitempty"`
+}
+
+// Job error.
+type JobError struct {
+	// A list of messages that carry the error details. There is a common set of message
+	// types for APIs to use.
+	Details []string `json:"details,omitempty"`
+	// The status code.
+	Code *int32 `json:"code,omitempty"`
+	// A developer-facing error message, which should be in English. Any user-facing error
+	// message should be localized and sent in the `details` field.
+	Message string `json:"message,omitempty"`
+}
+
+// Config for `inlined_responses` parameter.
+type InlinedResponse struct {
+	// The response to the request.
+	Response *GenerateContentResponse `json:"response,omitempty"`
+	// Optional. The error encountered while processing the request.
+	Error *JobError `json:"error,omitempty"`
+}
+
+// Config for `des` parameter.
+type BatchJobDestination struct {
+	// Storage format of the output files. Must be one of:
+	// 'jsonl', 'bigquery'.
+	Format string `json:"format,omitempty"`
+	// Optional. The Google Cloud Storage URI to the output file.
+	GCSURI string `json:"gcsUri,omitempty"`
+	// Optional. The BigQuery URI to the output table.
+	BigqueryURI string `json:"bigqueryUri,omitempty"`
+	// Optional. The Gemini Developer API's file resource name of the output data
+	// (e.g. "files/12345"). The file will be a JSONL file with a single response
+	// per line. The responses will be GenerateContentResponse messages formatted
+	// as JSON. The responses will be written in the same order as the input
+	// requests.
+	FileName string `json:"fileName,omitempty"`
+	// Optional. The responses to the requests in the batch. Returned when the batch was
+	// built using inlined requests. The responses will be in the same order as
+	// the input requests.
+	InlinedResponses []*InlinedResponse `json:"inlinedResponses,omitempty"`
+}
+
+// Config for optional parameters.
+type CreateBatchJobConfig struct {
+	// Optional. Used to override HTTP request options.
+	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
+	// Optional. The user-defined name of this BatchJob.
+	DisplayName string `json:"displayName,omitempty"`
+	// GCS or BigQuery URI prefix for the output predictions. Example:
+	// "gs://path/to/output/data" or "bq://projectId.bqDatasetId.bqTableId".
+	Dest *BatchJobDestination `json:"dest,omitempty"`
+}
+
+// Config for batches.create return value.
+type BatchJob struct {
+	// The resource name of the BatchJob. Output only.".
+	Name string `json:"name,omitempty"`
+	// The display name of the BatchJob.
+	DisplayName string `json:"displayName,omitempty"`
+	// The state of the BatchJob.
+	State JobState `json:"state,omitempty"`
+	// Output only. Only populated when the job's state is JOB_STATE_FAILED or JOB_STATE_CANCELLED.
+	Error *JobError `json:"error,omitempty"`
+	// The time when the BatchJob was created.
+	CreateTime time.Time `json:"createTime,omitempty"`
+	// Output only. Time when the Job for the first time entered the `JOB_STATE_RUNNING`
+	// state.
+	StartTime time.Time `json:"startTime,omitempty"`
+	// The time when the BatchJob was completed.
+	EndTime time.Time `json:"endTime,omitempty"`
+	// The time when the BatchJob was last updated.
+	UpdateTime time.Time `json:"updateTime,omitempty"`
+	// The name of the model that produces the predictions via the BatchJob.
+	Model string `json:"model,omitempty"`
+	// Configuration for the input data.
+	Src *BatchJobSource `json:"src,omitempty"`
+	// Configuration for the output data.
+	Dest *BatchJobDestination `json:"dest,omitempty"`
+}
+
+// Optional parameters.
+type GetBatchJobConfig struct {
+	// Optional. Used to override HTTP request options.
+	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
+}
+
+// Optional parameters.
+type CancelBatchJobConfig struct {
+	// Optional. Used to override HTTP request options.
+	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
+}
+
+// Config for optional parameters.
+type ListBatchJobsConfig struct {
+	// Optional. Used to override HTTP request options.
+	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
+	// Optional. PageSize specifies the maximum number of cached contents to return per
+	// API call. If zero, the server will use a default value.
+	PageSize int32 `json:"pageSize,omitempty"`
+	// Optional. PageToken represents a token used for pagination in API responses. It's
+	// an opaque string that should be passed to subsequent requests to retrieve the next
+	// page of results. An empty PageToken typically indicates that there are no further
+	// pages available.
+	PageToken string `json:"pageToken,omitempty"`
+	// Optional.
+	Filter string `json:"filter,omitempty"`
+}
+
+// Config for batches.list return value.
+type ListBatchJobsResponse struct {
+	NextPageToken string `json:"nextPageToken,omitempty"`
+
+	BatchJobs []*BatchJob `json:"batchJobs,omitempty"`
 }
 
 type GetOperationConfig struct {

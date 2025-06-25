@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"log"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -271,5 +272,54 @@ func tAudioBlob(ac *apiClient, blob any) (any, error) {
 		return nil, fmt.Errorf("Unsupported mime type: %s", blob["mimeType"])
 	default:
 		return nil, fmt.Errorf("tAudioBlob: blob is not a map")
+	}
+}
+
+func tBatchJobSource(_ *apiClient, src any) (any, error) {
+	return src, nil
+}
+
+func tBatchJobDestination(_ *apiClient, dest any) (any, error) {
+	return dest, nil
+}
+
+func tBatchJobName(ac *apiClient, name any) (any, error) {
+	var (
+		mldevBatchPattern  = regexp.MustCompile("batches/[^/]+$")
+		vertexBatchPattern = regexp.MustCompile("^projects/[^/]+/locations/[^/]+/batchPredictionJobs/[^/]+$")
+	)
+	// Convert any to string.
+	nameStr := name.(string)
+	if ac.clientConfig.Backend == BackendVertexAI {
+		if vertexBatchPattern.MatchString(nameStr) {
+			parts := strings.Split(nameStr, "/")
+			return parts[len(parts)-1], nil
+		}
+		if _, err := strconv.Atoi(nameStr); err == nil {
+			return nameStr, nil
+		}
+		return nil, fmt.Errorf("Invalid batch job name: %s. Expected format like 'projects/id/locations/id/batchPredictionJobs/id' or 'id'", nameStr)
+	}
+	if mldevBatchPattern.MatchString(nameStr) {
+		parts := strings.Split(nameStr, "/")
+		return parts[len(parts)-1], nil
+	}
+	return nil, fmt.Errorf("Invalid batch job name: %s. Expected format like 'batches/id'", nameStr)
+}
+
+func tJobState(_ *apiClient, state any) (any, error) {
+	switch state {
+	case "BATCH_STATE_UNSPECIFIED":
+		return "JOB_STATE_UNSPECIFIED", nil
+	case "BATCH_STATE_PENDING":
+		return "JOB_STATE_PENDING", nil
+	case "BATCH_STATE_SUCCEEDED":
+		return "JOB_STATE_SUCCEEDED", nil
+	case "BATCH_STATE_FAILED":
+		return "JOB_STATE_FAILED", nil
+	case "BATCH_STATE_CANCELLED":
+		return "JOB_STATE_CANCELLED", nil
+	default:
+		return state, nil
 	}
 }
