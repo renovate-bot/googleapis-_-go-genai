@@ -418,6 +418,18 @@ const (
 	EditModeProductImage      EditMode = "EDIT_MODE_PRODUCT_IMAGE"
 )
 
+// Enum that controls the compression quality of the generated videos.
+type VideoCompressionQuality string
+
+const (
+	// Optimized video compression quality. This will produce videos
+	// with a compressed, smaller file size.
+	VideoCompressionQualityOptimized VideoCompressionQuality = "OPTIMIZED"
+	// Lossless video compression quality. This will produce videos
+	// with a larger file size.
+	VideoCompressionQualityLossless VideoCompressionQuality = "LOSSLESS"
+)
+
 // State for the lifecycle of a File.
 type FileState string
 
@@ -2665,6 +2677,8 @@ type GenerateVideosConfig struct {
 	// Optional. Image to use as the last frame of generated videos. Only supported for
 	// image to video use cases.
 	LastFrame *Image `json:"lastFrame,omitempty"`
+	// Optional. Compression quality of the generated videos.
+	CompressionQuality VideoCompressionQuality `json:"compressionQuality,omitempty"`
 }
 
 // A generated video.

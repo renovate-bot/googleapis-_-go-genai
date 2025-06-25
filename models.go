@@ -1463,6 +1463,10 @@ func generateVideosConfigToMldev(ac *apiClient, fromObject map[string]any, paren
 		return nil, fmt.Errorf("lastFrame parameter is not supported in Gemini API")
 	}
 
+	if getValueByPath(fromObject, []string{"compressionQuality"}) != nil {
+		return nil, fmt.Errorf("compressionQuality parameter is not supported in Gemini API")
+	}
+
 	return toObject, nil
 }
 
@@ -3375,6 +3379,11 @@ func generateVideosConfigToVertex(ac *apiClient, fromObject map[string]any, pare
 		}
 
 		setValueByPath(parentObject, []string{"instances[0]", "lastFrame"}, fromLastFrame)
+	}
+
+	fromCompressionQuality := getValueByPath(fromObject, []string{"compressionQuality"})
+	if fromCompressionQuality != nil {
+		setValueByPath(parentObject, []string{"parameters", "compressionQuality"}, fromCompressionQuality)
 	}
 
 	return toObject, nil
