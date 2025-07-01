@@ -3634,6 +3634,8 @@ func (r *SubjectReferenceImage) referenceImageAPI() *referenceImageAPI {
 
 // Sent in response to a `LiveGenerateContentSetup` message from the client.
 type LiveServerSetupComplete struct {
+	// Optional. The session ID of the live session.
+	SessionID string `json:"sessionId,omitempty"`
 }
 
 // Audio transcription in Server Conent.

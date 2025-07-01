@@ -730,8 +730,14 @@ func liveSendRealtimeInputParametersToVertex(fromObject map[string]any, parentOb
 		setValueByPath(toObject, []string{"mediaChunks"}, fromMedia)
 	}
 
-	if getValueByPath(fromObject, []string{"audio"}) != nil {
-		return nil, fmt.Errorf("audio parameter is not supported in Vertex AI")
+	fromAudio := getValueByPath(fromObject, []string{"audio"})
+	if fromAudio != nil {
+		fromAudio, err = tAudioBlob(fromAudio)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"audio"}, fromAudio)
 	}
 
 	fromAudioStreamEnd := getValueByPath(fromObject, []string{"audioStreamEnd"})
@@ -739,12 +745,19 @@ func liveSendRealtimeInputParametersToVertex(fromObject map[string]any, parentOb
 		setValueByPath(toObject, []string{"audioStreamEnd"}, fromAudioStreamEnd)
 	}
 
-	if getValueByPath(fromObject, []string{"video"}) != nil {
-		return nil, fmt.Errorf("video parameter is not supported in Vertex AI")
+	fromVideo := getValueByPath(fromObject, []string{"video"})
+	if fromVideo != nil {
+		fromVideo, err = tImageBlob(fromVideo)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"video"}, fromVideo)
 	}
 
-	if getValueByPath(fromObject, []string{"text"}) != nil {
-		return nil, fmt.Errorf("text parameter is not supported in Vertex AI")
+	fromText := getValueByPath(fromObject, []string{"text"})
+	if fromText != nil {
+		setValueByPath(toObject, []string{"text"}, fromText)
 	}
 
 	fromActivityStart := getValueByPath(fromObject, []string{"activityStart"})
@@ -1287,6 +1300,11 @@ func liveServerSetupCompleteFromMldev(fromObject map[string]any, parentObject ma
 
 func liveServerSetupCompleteFromVertex(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
+
+	fromSessionId := getValueByPath(fromObject, []string{"sessionId"})
+	if fromSessionId != nil {
+		setValueByPath(toObject, []string{"sessionId"}, fromSessionId)
+	}
 
 	return toObject, nil
 }
