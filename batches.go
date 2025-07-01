@@ -462,6 +462,27 @@ func listBatchJobsParametersToMldev(fromObject map[string]any, parentObject map[
 	return toObject, nil
 }
 
+func deleteBatchJobParametersToMldev(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromName := getValueByPath(fromObject, []string{"name"})
+	if fromName != nil {
+		fromName, err = tBatchJobName(ac, fromName)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"_url", "name"}, fromName)
+	}
+
+	fromConfig := getValueByPath(fromObject, []string{"config"})
+	if fromConfig != nil {
+		setValueByPath(toObject, []string{"config"}, fromConfig)
+	}
+
+	return toObject, nil
+}
+
 func inlinedRequestToVertex(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 	if getValueByPath(fromObject, []string{"model"}) != nil {
@@ -870,6 +891,27 @@ func listBatchJobsParametersToVertex(fromObject map[string]any, parentObject map
 			return nil, err
 		}
 
+		setValueByPath(toObject, []string{"config"}, fromConfig)
+	}
+
+	return toObject, nil
+}
+
+func deleteBatchJobParametersToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromName := getValueByPath(fromObject, []string{"name"})
+	if fromName != nil {
+		fromName, err = tBatchJobName(ac, fromName)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"_url", "name"}, fromName)
+	}
+
+	fromConfig := getValueByPath(fromObject, []string{"config"})
+	if fromConfig != nil {
 		setValueByPath(toObject, []string{"config"}, fromConfig)
 	}
 
@@ -1793,6 +1835,32 @@ func listBatchJobsResponseFromMldev(fromObject map[string]any, parentObject map[
 		}
 
 		setValueByPath(toObject, []string{"batchJobs"}, fromBatchJobs)
+	}
+
+	return toObject, nil
+}
+
+func deleteResourceJobFromMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromName := getValueByPath(fromObject, []string{"name"})
+	if fromName != nil {
+		setValueByPath(toObject, []string{"name"}, fromName)
+	}
+
+	fromDone := getValueByPath(fromObject, []string{"done"})
+	if fromDone != nil {
+		setValueByPath(toObject, []string{"done"}, fromDone)
+	}
+
+	fromError := getValueByPath(fromObject, []string{"error"})
+	if fromError != nil {
+		fromError, err = jobErrorFromMldev(fromError.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"error"}, fromError)
 	}
 
 	return toObject, nil
@@ -2750,6 +2818,32 @@ func listBatchJobsResponseFromVertex(fromObject map[string]any, parentObject map
 	return toObject, nil
 }
 
+func deleteResourceJobFromVertex(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromName := getValueByPath(fromObject, []string{"name"})
+	if fromName != nil {
+		setValueByPath(toObject, []string{"name"}, fromName)
+	}
+
+	fromDone := getValueByPath(fromObject, []string{"done"})
+	if fromDone != nil {
+		setValueByPath(toObject, []string{"done"}, fromDone)
+	}
+
+	fromError := getValueByPath(fromObject, []string{"error"})
+	if fromError != nil {
+		fromError, err = jobErrorFromVertex(fromError.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"error"}, fromError)
+	}
+
+	return toObject, nil
+}
+
 // Batches provides methods for managing the batch jobs.
 // You don't need to initiate this struct. Create a client instance via NewClient, and
 // then access Batches through client.Batches field.
@@ -3014,6 +3108,77 @@ func (m Batches) list(ctx context.Context, config *ListBatchJobsConfig) (*ListBa
 		delete(body, "config")
 	}
 	responseMap, err = sendRequest(ctx, m.apiClient, path, http.MethodGet, body, httpOptions)
+	if err != nil {
+		return nil, err
+	}
+	responseMap, err = fromConverter(responseMap, nil)
+	if err != nil {
+		return nil, err
+	}
+	err = mapToStruct(responseMap, response)
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+// Delete deletes a batch job resource.
+func (m Batches) Delete(ctx context.Context, name string, config *DeleteBatchJobConfig) (*DeleteResourceJob, error) {
+	parameterMap := make(map[string]any)
+
+	kwargs := map[string]any{"name": name, "config": config}
+	deepMarshal(kwargs, &parameterMap)
+
+	var httpOptions *HTTPOptions
+	if config == nil {
+		httpOptions = mergeHTTPOptions(m.apiClient.clientConfig, nil)
+	} else {
+		httpOptions = mergeHTTPOptions(m.apiClient.clientConfig, config.HTTPOptions)
+		config.HTTPOptions = nil
+	}
+	var response = new(DeleteResourceJob)
+	var responseMap map[string]any
+	var fromConverter func(map[string]any, map[string]any) (map[string]any, error)
+	var toConverter func(*apiClient, map[string]any, map[string]any) (map[string]any, error)
+	if m.apiClient.clientConfig.Backend == BackendVertexAI {
+		toConverter = deleteBatchJobParametersToVertex
+		fromConverter = deleteResourceJobFromVertex
+	} else {
+		toConverter = deleteBatchJobParametersToMldev
+		fromConverter = deleteResourceJobFromMldev
+	}
+
+	body, err := toConverter(m.apiClient, parameterMap, nil)
+	if err != nil {
+		return nil, err
+	}
+	var path string
+	var urlParams map[string]any
+	if _, ok := body["_url"]; ok {
+		urlParams = body["_url"].(map[string]any)
+		delete(body, "_url")
+	}
+	if m.apiClient.clientConfig.Backend == BackendVertexAI {
+		path, err = formatMap("batchPredictionJobs/{name}", urlParams)
+	} else {
+		path, err = formatMap("batches/{name}", urlParams)
+	}
+	if err != nil {
+		return nil, fmt.Errorf("invalid url params: %#v.\n%w", urlParams, err)
+	}
+	if _, ok := body["_query"]; ok {
+		query, err := createURLQuery(body["_query"].(map[string]any))
+		if err != nil {
+			return nil, err
+		}
+		path += "?" + query
+		delete(body, "_query")
+	}
+
+	if _, ok := body["config"]; ok {
+		delete(body, "config")
+	}
+	responseMap, err = sendRequest(ctx, m.apiClient, path, http.MethodDelete, body, httpOptions)
 	if err != nil {
 		return nil, err
 	}

@@ -3386,6 +3386,22 @@ type ListBatchJobsResponse struct {
 	BatchJobs []*BatchJob `json:"batchJobs,omitempty"`
 }
 
+// Optional parameters for models.get method.
+type DeleteBatchJobConfig struct {
+	// Optional. Used to override HTTP request options.
+	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
+}
+
+// The return value of delete operation.
+type DeleteResourceJob struct {
+	// Optional.
+	Name string `json:"name,omitempty"`
+	// Optional.
+	Done bool `json:"done,omitempty"`
+	// Optional.
+	Error *JobError `json:"error,omitempty"`
+}
+
 type GetOperationConfig struct {
 	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
