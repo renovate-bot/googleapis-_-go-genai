@@ -58,16 +58,18 @@ func live(w http.ResponseWriter, r *http.Request) {
 	defer c.Close()
 
 	ctx := context.Background()
-	// Create a new GenAI client instance.
-	client, err := genai.NewClient(ctx, &genai.ClientConfig{Backend: genai.BackendGeminiAPI, HTTPOptions: genai.HTTPOptions{APIVersion: "v1beta"}})
-	model := "gemini-live-2.5-flash-preview"
-	// Vertex AI client.
-	// client, err := genai.NewClient(ctx, &genai.ClientConfig{Backend: genai.BackendVertexAI, HTTPOptions: genai.HTTPOptions{APIVersion: "v1beta"}})
-	// model = "gemini-2.0-flash-live-preview-04-09"
+	client, err := genai.NewClient(ctx, nil)
 	if err != nil {
 		// Log fatal error if client creation fails (e.g., invalid config, authentication issues).
 		log.Fatal("create client error: ", err)
 		return
+	}
+
+	var model string
+	if client.ClientConfig().Backend == genai.BackendVertexAI {
+		model = "gemini-2.0-flash-live-preview-04-09"
+	} else {
+		model = "gemini-live-2.5-flash-preview"
 	}
 
 	// Establish the live WebSocket connection with the specified GenAI model.
