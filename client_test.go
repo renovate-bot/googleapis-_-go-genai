@@ -30,7 +30,7 @@ import (
 func TestNewClient(t *testing.T) {
 
 	ctx := context.Background()
-	t.Run("VertexAI", func(t *testing.T) {
+	t.Run("VertexAI with default credentials", func(t *testing.T) {
 		// Needed for account default credential.
 		// Usually this file is in ~/.config/gcloud/application_default_credentials.json
 		os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", "testdata/credentials.json")
@@ -446,6 +446,15 @@ func TestNewClient(t *testing.T) {
 		})
 	})
 
+	t.Run("VertexAI without default credentials", func(t *testing.T) {
+		t.Run("Credentials empty when providing http client", func(t *testing.T) {
+			_, err := NewClient(ctx, &ClientConfig{Backend: BackendVertexAI, HTTPClient: &http.Client{}, Project: "test-project", Location: "test-location"})
+			if err != nil {
+				t.Fatalf("Expected no error, got error %v", err)
+			}
+		})
+	})
+
 	t.Run("GoogleAI", func(t *testing.T) {
 		t.Run("API Key from config", func(t *testing.T) {
 			apiKey := "test-api-key"
@@ -597,6 +606,13 @@ func TestNewClient(t *testing.T) {
 			}
 			if client.clientConfig.HTTPOptions.BaseURL != baseURL {
 				t.Errorf("Expected base URL %q, got %q", baseURL, client.clientConfig.HTTPOptions.BaseURL)
+			}
+		})
+
+		t.Run("Credentials empty when providing http client", func(t *testing.T) {
+			_, err := NewClient(ctx, &ClientConfig{Backend: BackendGeminiAPI, HTTPClient: &http.Client{}, APIKey: "test-api-key"})
+			if err != nil {
+				t.Fatalf("Expected no error, got error %v", err)
 			}
 		})
 	})
