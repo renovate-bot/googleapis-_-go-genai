@@ -290,15 +290,6 @@ func schemaToMldev(fromObject map[string]any, parentObject map[string]any) (toOb
 	return toObject, nil
 }
 
-func modelSelectionConfigToMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-	if getValueByPath(fromObject, []string{"featureSelectionPreference"}) != nil {
-		return nil, fmt.Errorf("featureSelectionPreference parameter is not supported in Gemini API")
-	}
-
-	return toObject, nil
-}
-
 func safetySettingToMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 	if getValueByPath(fromObject, []string{"method"}) != nil {
@@ -418,64 +409,6 @@ func googleSearchRetrievalToMldev(fromObject map[string]any, parentObject map[st
 		}
 
 		setValueByPath(toObject, []string{"dynamicRetrievalConfig"}, fromDynamicRetrievalConfig)
-	}
-
-	return toObject, nil
-}
-
-func enterpriseWebSearchToMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-
-	return toObject, nil
-}
-
-func apiKeyConfigToMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-	if getValueByPath(fromObject, []string{"apiKeyString"}) != nil {
-		return nil, fmt.Errorf("apiKeyString parameter is not supported in Gemini API")
-	}
-
-	return toObject, nil
-}
-
-func authConfigToMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-	if getValueByPath(fromObject, []string{"apiKeyConfig"}) != nil {
-		return nil, fmt.Errorf("apiKeyConfig parameter is not supported in Gemini API")
-	}
-
-	fromAuthType := getValueByPath(fromObject, []string{"authType"})
-	if fromAuthType != nil {
-		setValueByPath(toObject, []string{"authType"}, fromAuthType)
-	}
-
-	fromGoogleServiceAccountConfig := getValueByPath(fromObject, []string{"googleServiceAccountConfig"})
-	if fromGoogleServiceAccountConfig != nil {
-		setValueByPath(toObject, []string{"googleServiceAccountConfig"}, fromGoogleServiceAccountConfig)
-	}
-
-	fromHttpBasicAuthConfig := getValueByPath(fromObject, []string{"httpBasicAuthConfig"})
-	if fromHttpBasicAuthConfig != nil {
-		setValueByPath(toObject, []string{"httpBasicAuthConfig"}, fromHttpBasicAuthConfig)
-	}
-
-	fromOauthConfig := getValueByPath(fromObject, []string{"oauthConfig"})
-	if fromOauthConfig != nil {
-		setValueByPath(toObject, []string{"oauthConfig"}, fromOauthConfig)
-	}
-
-	fromOidcConfig := getValueByPath(fromObject, []string{"oidcConfig"})
-	if fromOidcConfig != nil {
-		setValueByPath(toObject, []string{"oidcConfig"}, fromOidcConfig)
-	}
-
-	return toObject, nil
-}
-
-func googleMapsToMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-	if getValueByPath(fromObject, []string{"authConfig"}) != nil {
-		return nil, fmt.Errorf("authConfig parameter is not supported in Gemini API")
 	}
 
 	return toObject, nil
@@ -1381,32 +1314,6 @@ func imageToMldev(fromObject map[string]any, parentObject map[string]any) (toObj
 	return toObject, nil
 }
 
-func videoToMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-
-	fromUri := getValueByPath(fromObject, []string{"uri"})
-	if fromUri != nil {
-		setValueByPath(toObject, []string{"video", "uri"}, fromUri)
-	}
-
-	fromVideoBytes := getValueByPath(fromObject, []string{"videoBytes"})
-	if fromVideoBytes != nil {
-		fromVideoBytes, err = tBytes(fromVideoBytes)
-		if err != nil {
-			return nil, err
-		}
-
-		setValueByPath(toObject, []string{"video", "encodedVideo"}, fromVideoBytes)
-	}
-
-	fromMimeType := getValueByPath(fromObject, []string{"mimeType"})
-	if fromMimeType != nil {
-		setValueByPath(toObject, []string{"encoding"}, fromMimeType)
-	}
-
-	return toObject, nil
-}
-
 func generateVideosConfigToMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -2184,28 +2091,6 @@ func voiceConfigToVertex(fromObject map[string]any, parentObject map[string]any)
 		}
 
 		setValueByPath(toObject, []string{"prebuiltVoiceConfig"}, fromPrebuiltVoiceConfig)
-	}
-
-	return toObject, nil
-}
-
-func speakerVoiceConfigToVertex(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-	if getValueByPath(fromObject, []string{"speaker"}) != nil {
-		return nil, fmt.Errorf("speaker parameter is not supported in Vertex AI")
-	}
-
-	if getValueByPath(fromObject, []string{"voiceConfig"}) != nil {
-		return nil, fmt.Errorf("voiceConfig parameter is not supported in Vertex AI")
-	}
-
-	return toObject, nil
-}
-
-func multiSpeakerVoiceConfigToVertex(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-	if getValueByPath(fromObject, []string{"speakerVoiceConfigs"}) != nil {
-		return nil, fmt.Errorf("speakerVoiceConfigs parameter is not supported in Vertex AI")
 	}
 
 	return toObject, nil
@@ -3726,12 +3611,6 @@ func generateContentResponseFromMldev(fromObject map[string]any, parentObject ma
 	if fromUsageMetadata != nil {
 		setValueByPath(toObject, []string{"usageMetadata"}, fromUsageMetadata)
 	}
-
-	return toObject, nil
-}
-
-func contentEmbeddingStatisticsFromMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
 
 	return toObject, nil
 }
