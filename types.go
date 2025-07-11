@@ -2808,7 +2808,7 @@ type GenerateVideosConfig struct {
 	// Optional. The aspect ratio for the generated video. 16:9 (landscape) and 9:16 (portrait)
 	// are supported.
 	AspectRatio string `json:"aspectRatio,omitempty"`
-	// Optional. The resolution for the generated video. 1280x720, 1920x1080 are supported.
+	// Optional. The resolution for the generated video. 720p and 1080p are supported.
 	Resolution string `json:"resolution,omitempty"`
 	// Optional. Whether allow to generate person videos, and restrict to specific ages.
 	// Supported values are: dont_allow, allow_adult.
