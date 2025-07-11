@@ -49,6 +49,10 @@ type Session struct {
 // model with the given configuration. It sends the initial
 // setup message and returns a [Session] object representing the connection.
 func (r *Live) Connect(context context.Context, model string, config *LiveConnectConfig) (*Session, error) {
+	// TODO: b/406076143 - Support per request HTTP options.
+	if config != nil && config.HTTPOptions != nil {
+		return nil, fmt.Errorf("live module does not support httpOptions at request-level in LiveConnectConfig yet. Please use the client-level httpOptions configuration instead")
+	}
 	httpOptions := r.apiClient.clientConfig.HTTPOptions
 	if httpOptions.APIVersion == "" {
 		return nil, fmt.Errorf("live module requires APIVersion to be set. You can set APIVersion to v1beta1 for BackendVertexAI or v1apha for BackendGeminiAPI")
@@ -64,7 +68,6 @@ func (r *Live) Connect(context context.Context, model string, config *LiveConnec
 	}
 
 	var u url.URL
-	// TODO(b/406076143): Support function level httpOptions.
 	var header http.Header = mergeHeaders(&httpOptions, nil)
 	if r.apiClient.clientConfig.Backend == BackendVertexAI {
 		token, err := r.apiClient.clientConfig.Credentials.Token(context)
