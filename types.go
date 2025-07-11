@@ -2435,6 +2435,8 @@ type EditImageConfig struct {
 	// Optional. Compression quality of the generated image (for ``image/jpeg``
 	// only).
 	OutputCompressionQuality *int32 `json:"outputCompressionQuality,omitempty"`
+	// Optional. Whether to add a watermark to the generated images.
+	AddWatermark *bool `json:"addWatermark,omitempty"`
 	// Optional. Describes the editing mode for the request.
 	EditMode EditMode `json:"editMode,omitempty"`
 	// Optional. The number of sampling steps. A higher value has better image

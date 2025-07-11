@@ -2792,6 +2792,11 @@ func editImageConfigToVertex(fromObject map[string]any, parentObject map[string]
 		setValueByPath(parentObject, []string{"parameters", "outputOptions", "compressionQuality"}, fromOutputCompressionQuality)
 	}
 
+	fromAddWatermark := getValueByPath(fromObject, []string{"addWatermark"})
+	if fromAddWatermark != nil {
+		setValueByPath(parentObject, []string{"parameters", "addWatermark"}, fromAddWatermark)
+	}
+
 	fromEditMode := getValueByPath(fromObject, []string{"editMode"})
 	if fromEditMode != nil {
 		setValueByPath(parentObject, []string{"parameters", "editMode"}, fromEditMode)
