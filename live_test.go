@@ -125,8 +125,8 @@ func TestLiveConnect(t *testing.T) {
 			client:          mldevClient,
 			clientHTTPOpts:  &HTTPOptions{Headers: map[string][]string{"test-header": {"test-value"}}, APIVersion: "test-api-version"},
 			wantRequestBody: `{"setup":{"model":"models/test-model"}}`,
-			wantHeaders:     map[string]string{"test-header": "test-value"},
-			wantPath:        "/ws/google.ai.generativelanguage.test-api-version.GenerativeService.BidiGenerateContent?key=test-api-key",
+			wantHeaders:     map[string]string{"test-header": "test-value", "x-goog-api-key": "test-api-key"},
+			wantPath:        "/ws/google.ai.generativelanguage.test-api-version.GenerativeService.BidiGenerateContent",
 			wantErr:         false,
 		},
 		{

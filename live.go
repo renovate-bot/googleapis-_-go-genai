@@ -81,11 +81,14 @@ func (r *Live) Connect(context context.Context, model string, config *LiveConnec
 			Path:   fmt.Sprintf("%s/ws/google.cloud.aiplatform.%s.LlmBidiService/BidiGenerateContent", baseURL.Path, httpOptions.APIVersion),
 		}
 	} else {
+		apiKey := r.apiClient.clientConfig.APIKey
+		if apiKey != "" {
+			header.Set("x-goog-api-key", apiKey)
+		}
 		u = url.URL{
-			Scheme:   scheme,
-			Host:     baseURL.Host,
-			Path:     fmt.Sprintf("%s/ws/google.ai.generativelanguage.%s.GenerativeService.BidiGenerateContent", baseURL.Path, httpOptions.APIVersion),
-			RawQuery: fmt.Sprintf("key=%s", r.apiClient.clientConfig.APIKey),
+			Scheme: scheme,
+			Host:   baseURL.Host,
+			Path:   fmt.Sprintf("%s/ws/google.ai.generativelanguage.%s.GenerativeService.BidiGenerateContent", baseURL.Path, httpOptions.APIVersion),
 		}
 	}
 
