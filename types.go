@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"reflect"
 	"strings"
 	"time"
 )
@@ -1146,6 +1147,52 @@ type Interval struct {
 	EndTime time.Time `json:"endTime,omitempty"`
 }
 
+func (i *Interval) UnmarshalJSON(data []byte) error {
+	type Alias Interval
+	aux := &struct {
+		StartTime *time.Time `json:"startTime,omitempty"`
+		EndTime   *time.Time `json:"endTime,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(i),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	if !reflect.ValueOf(aux.StartTime).IsZero() {
+		i.StartTime = time.Time(*aux.StartTime)
+	}
+
+	if !reflect.ValueOf(aux.EndTime).IsZero() {
+		i.EndTime = time.Time(*aux.EndTime)
+	}
+
+	return nil
+}
+
+func (i *Interval) MarshalJSON() ([]byte, error) {
+	type Alias Interval
+	aux := &struct {
+		StartTime *time.Time `json:"startTime,omitempty"`
+		EndTime   *time.Time `json:"endTime,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(i),
+	}
+
+	if !reflect.ValueOf(i.StartTime).IsZero() {
+		aux.StartTime = (*time.Time)(&i.StartTime)
+	}
+
+	if !reflect.ValueOf(i.EndTime).IsZero() {
+		aux.EndTime = (*time.Time)(&i.EndTime)
+	}
+
+	return json.Marshal(aux)
+}
+
 // Tool to support Google Search in Model. Powered by Google.
 type GoogleSearch struct {
 	// Optional. Filter search results to a specific time range.
@@ -1708,11 +1755,10 @@ type Citation struct {
 	URI string `json:"uri,omitempty"`
 }
 
-// UnmarshalJSON custom unmarshalling to handle PublicationDate as a map containing year, month, and day.
 func (c *Citation) UnmarshalJSON(data []byte) error {
 	type Alias Citation
 	aux := &struct {
-		PublicationDate map[string]int `json:"publicationDate"`
+		PublicationDate *dateJSON `json:"publicationDate,omitempty"`
 		*Alias
 	}{
 		Alias: (*Alias)(c),
@@ -1722,17 +1768,8 @@ func (c *Citation) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	if aux.PublicationDate != nil {
-		if _, ok := aux.PublicationDate["year"]; !ok {
-			return fmt.Errorf("key %q not found", "year")
-		}
-		c.PublicationDate = civil.Date{Year: aux.PublicationDate["year"]}
-		if month, ok := aux.PublicationDate["month"]; ok {
-			c.PublicationDate.Month = time.Month(month)
-		}
-		if day, ok := aux.PublicationDate["day"]; ok {
-			c.PublicationDate.Day = day
-		}
+	if !reflect.ValueOf(aux.PublicationDate).IsZero() {
+		c.PublicationDate = civil.Date(*aux.PublicationDate)
 	}
 
 	return nil
@@ -1741,17 +1778,14 @@ func (c *Citation) UnmarshalJSON(data []byte) error {
 func (c *Citation) MarshalJSON() ([]byte, error) {
 	type Alias Citation
 	aux := &struct {
-		PublicationDate map[string]int `json:"publicationDate,omitempty"`
+		PublicationDate *dateJSON `json:"publicationDate,omitempty"`
 		*Alias
 	}{
 		Alias: (*Alias)(c),
 	}
 
-	if !c.PublicationDate.IsZero() {
-		aux.PublicationDate = make(map[string]int)
-		aux.PublicationDate["year"] = c.PublicationDate.Year
-		aux.PublicationDate["month"] = int(c.PublicationDate.Month)
-		aux.PublicationDate["day"] = c.PublicationDate.Day
+	if !reflect.ValueOf(c.PublicationDate).IsZero() {
+		aux.PublicationDate = (*dateJSON)(&c.PublicationDate)
 	}
 
 	return json.Marshal(aux)
@@ -2026,6 +2060,42 @@ type GenerateContentResponse struct {
 	UsageMetadata *GenerateContentResponseUsageMetadata `json:"usageMetadata,omitempty"`
 }
 
+func (g *GenerateContentResponse) UnmarshalJSON(data []byte) error {
+	type Alias GenerateContentResponse
+	aux := &struct {
+		CreateTime *time.Time `json:"createTime,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(g),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	if !reflect.ValueOf(aux.CreateTime).IsZero() {
+		g.CreateTime = time.Time(*aux.CreateTime)
+	}
+
+	return nil
+}
+
+func (g *GenerateContentResponse) MarshalJSON() ([]byte, error) {
+	type Alias GenerateContentResponse
+	aux := &struct {
+		CreateTime *time.Time `json:"createTime,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(g),
+	}
+
+	if !reflect.ValueOf(g.CreateTime).IsZero() {
+		aux.CreateTime = (*time.Time)(&g.CreateTime)
+	}
+
+	return json.Marshal(aux)
+}
+
 // Text concatenates all the text parts in the GenerateContentResponse.
 func (r *GenerateContentResponse) Text() string {
 	if len(r.Candidates) == 0 || r.Candidates[0].Content == nil || len(r.Candidates[0].Content.Parts) == 0 {
@@ -2137,22 +2207,6 @@ func (r *GenerateContentResponse) CodeExecutionResult() string {
 	}
 
 	return ""
-}
-
-func (c *GenerateContentResponse) MarshalJSON() ([]byte, error) {
-	type Alias GenerateContentResponse
-	aux := &struct {
-		CreateTime *time.Time `json:"createTime,omitempty"`
-		*Alias
-	}{
-		Alias: (*Alias)(c),
-	}
-
-	if !c.CreateTime.IsZero() {
-		aux.CreateTime = &c.CreateTime
-	}
-
-	return json.Marshal(aux)
 }
 
 // Optional parameters for the EmbedContent method.
@@ -2536,21 +2590,47 @@ type TunedModelInfo struct {
 	UpdateTime time.Time `json:"updateTime,omitempty"`
 }
 
-func (c *TunedModelInfo) MarshalJSON() ([]byte, error) {
+func (t *TunedModelInfo) UnmarshalJSON(data []byte) error {
 	type Alias TunedModelInfo
 	aux := &struct {
 		CreateTime *time.Time `json:"createTime,omitempty"`
 		UpdateTime *time.Time `json:"updateTime,omitempty"`
 		*Alias
 	}{
-		Alias: (*Alias)(c),
+		Alias: (*Alias)(t),
 	}
 
-	if !c.CreateTime.IsZero() {
-		aux.CreateTime = &c.CreateTime
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
 	}
-	if !c.UpdateTime.IsZero() {
-		aux.UpdateTime = &c.UpdateTime
+
+	if !reflect.ValueOf(aux.CreateTime).IsZero() {
+		t.CreateTime = time.Time(*aux.CreateTime)
+	}
+
+	if !reflect.ValueOf(aux.UpdateTime).IsZero() {
+		t.UpdateTime = time.Time(*aux.UpdateTime)
+	}
+
+	return nil
+}
+
+func (t *TunedModelInfo) MarshalJSON() ([]byte, error) {
+	type Alias TunedModelInfo
+	aux := &struct {
+		CreateTime *time.Time `json:"createTime,omitempty"`
+		UpdateTime *time.Time `json:"updateTime,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(t),
+	}
+
+	if !reflect.ValueOf(t.CreateTime).IsZero() {
+		aux.CreateTime = (*time.Time)(&t.CreateTime)
+	}
+
+	if !reflect.ValueOf(t.UpdateTime).IsZero() {
+		aux.UpdateTime = (*time.Time)(&t.UpdateTime)
 	}
 
 	return json.Marshal(aux)
@@ -2761,31 +2841,38 @@ type TokensInfo struct {
 	Tokens [][]byte `json:"tokens,omitempty"`
 }
 
-func (ti *TokensInfo) UnmarshalJSON(data []byte) error {
+func (t *TokensInfo) UnmarshalJSON(data []byte) error {
 	type Alias TokensInfo
-	aux := struct {
-		TokenIDs int64sFromStringSlice `json:"tokenIds,omitempty"`
+	aux := &struct {
+		TokenIDs int64SliceJSON `json:"tokenIds,omitempty"`
 		*Alias
 	}{
-		Alias: (*Alias)(ti),
+		Alias: (*Alias)(t),
 	}
+
 	if err := json.Unmarshal(data, &aux); err != nil {
 		return err
 	}
 
-	ti.TokenIDs = aux.TokenIDs
+	if !reflect.ValueOf(aux.TokenIDs).IsZero() {
+		t.TokenIDs = aux.TokenIDs
+	}
+
 	return nil
 }
 
-func (ti *TokensInfo) MarshalJSON() ([]byte, error) {
+func (t *TokensInfo) MarshalJSON() ([]byte, error) {
 	type Alias TokensInfo
-	aux := struct {
-		TokenIDs int64sFromStringSlice `json:"tokenIds,omitempty"`
+	aux := &struct {
+		TokenIDs int64SliceJSON `json:"tokenIds,omitempty"`
 		*Alias
 	}{
-		Alias: (*Alias)(ti),
+		Alias: (*Alias)(t),
 	}
-	aux.TokenIDs = ti.TokenIDs
+
+	if !reflect.ValueOf(t.TokenIDs).IsZero() {
+		aux.TokenIDs = t.TokenIDs
+	}
 
 	return json.Marshal(aux)
 }
@@ -3100,6 +3187,42 @@ type SupervisedTuningDataStats struct {
 	UserOutputTokenDistribution *SupervisedTuningDatasetDistribution `json:"userOutputTokenDistribution,omitempty"`
 }
 
+func (s *SupervisedTuningDataStats) UnmarshalJSON(data []byte) error {
+	type Alias SupervisedTuningDataStats
+	aux := &struct {
+		TruncatedExampleIndices int64SliceJSON `json:"truncatedExampleIndices,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(s),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	if !reflect.ValueOf(aux.TruncatedExampleIndices).IsZero() {
+		s.TruncatedExampleIndices = aux.TruncatedExampleIndices
+	}
+
+	return nil
+}
+
+func (s *SupervisedTuningDataStats) MarshalJSON() ([]byte, error) {
+	type Alias SupervisedTuningDataStats
+	aux := &struct {
+		TruncatedExampleIndices int64SliceJSON `json:"truncatedExampleIndices,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(s),
+	}
+
+	if !reflect.ValueOf(s.TruncatedExampleIndices).IsZero() {
+		aux.TruncatedExampleIndices = s.TruncatedExampleIndices
+	}
+
+	return json.Marshal(aux)
+}
+
 // The tuning data statistic values for TuningJob.
 type TuningDataStats struct {
 	// Output only. Statistics for distillation.
@@ -3223,6 +3346,72 @@ type TuningJob struct {
 	// Optional. The display name of the TunedModel. The name can be up to 128 characters
 	// long and can consist of any UTF-8 characters.
 	TunedModelDisplayName string `json:"tunedModelDisplayName,omitempty"`
+}
+
+func (t *TuningJob) UnmarshalJSON(data []byte) error {
+	type Alias TuningJob
+	aux := &struct {
+		CreateTime *time.Time `json:"createTime,omitempty"`
+		StartTime  *time.Time `json:"startTime,omitempty"`
+		EndTime    *time.Time `json:"endTime,omitempty"`
+		UpdateTime *time.Time `json:"updateTime,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(t),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	if !reflect.ValueOf(aux.CreateTime).IsZero() {
+		t.CreateTime = time.Time(*aux.CreateTime)
+	}
+
+	if !reflect.ValueOf(aux.StartTime).IsZero() {
+		t.StartTime = time.Time(*aux.StartTime)
+	}
+
+	if !reflect.ValueOf(aux.EndTime).IsZero() {
+		t.EndTime = time.Time(*aux.EndTime)
+	}
+
+	if !reflect.ValueOf(aux.UpdateTime).IsZero() {
+		t.UpdateTime = time.Time(*aux.UpdateTime)
+	}
+
+	return nil
+}
+
+func (t *TuningJob) MarshalJSON() ([]byte, error) {
+	type Alias TuningJob
+	aux := &struct {
+		CreateTime *time.Time `json:"createTime,omitempty"`
+		StartTime  *time.Time `json:"startTime,omitempty"`
+		EndTime    *time.Time `json:"endTime,omitempty"`
+		UpdateTime *time.Time `json:"updateTime,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(t),
+	}
+
+	if !reflect.ValueOf(t.CreateTime).IsZero() {
+		aux.CreateTime = (*time.Time)(&t.CreateTime)
+	}
+
+	if !reflect.ValueOf(t.StartTime).IsZero() {
+		aux.StartTime = (*time.Time)(&t.StartTime)
+	}
+
+	if !reflect.ValueOf(t.EndTime).IsZero() {
+		aux.EndTime = (*time.Time)(&t.EndTime)
+	}
+
+	if !reflect.ValueOf(t.UpdateTime).IsZero() {
+		aux.UpdateTime = (*time.Time)(&t.UpdateTime)
+	}
+
+	return json.Marshal(aux)
 }
 
 // Configuration for the list tuning jobs method.
@@ -3353,30 +3542,11 @@ type CreateCachedContentConfig struct {
 	KmsKeyName string `json:"kmsKeyName,omitempty"`
 }
 
-func (c *CreateCachedContentConfig) MarshalJSON() ([]byte, error) {
-	type Alias CreateCachedContentConfig
-	aux := &struct {
-		ExpireTime *time.Time `json:"expireTime,omitempty"`
-		TTL        string     `json:"ttl,omitempty"`
-		*Alias
-	}{
-		Alias: (*Alias)(c),
-	}
-
-	if !c.ExpireTime.IsZero() {
-		aux.ExpireTime = &c.ExpireTime
-	}
-	if c.TTL != 0 {
-		aux.TTL = fmt.Sprintf("%.0fs", c.TTL.Seconds())
-	}
-
-	return json.Marshal(aux)
-}
-
 func (c *CreateCachedContentConfig) UnmarshalJSON(data []byte) error {
 	type Alias CreateCachedContentConfig
 	aux := &struct {
-		TTL string `json:"ttl,omitempty"`
+		TTL        *durationJSON `json:"ttl,omitempty"`
+		ExpireTime *time.Time    `json:"expireTime,omitempty"`
 		*Alias
 	}{
 		Alias: (*Alias)(c),
@@ -3386,15 +3556,36 @@ func (c *CreateCachedContentConfig) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	if aux.TTL != "" {
-		d, err := time.ParseDuration(aux.TTL)
-		if err != nil {
-			return err
-		}
-		c.TTL = d
+	if !reflect.ValueOf(aux.TTL).IsZero() {
+		c.TTL = time.Duration(*aux.TTL)
+	}
+
+	if !reflect.ValueOf(aux.ExpireTime).IsZero() {
+		c.ExpireTime = time.Time(*aux.ExpireTime)
 	}
 
 	return nil
+}
+
+func (c *CreateCachedContentConfig) MarshalJSON() ([]byte, error) {
+	type Alias CreateCachedContentConfig
+	aux := &struct {
+		TTL        *durationJSON `json:"ttl,omitempty"`
+		ExpireTime *time.Time    `json:"expireTime,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(c),
+	}
+
+	if !reflect.ValueOf(c.TTL).IsZero() {
+		aux.TTL = (*durationJSON)(&c.TTL)
+	}
+
+	if !reflect.ValueOf(c.ExpireTime).IsZero() {
+		aux.ExpireTime = (*time.Time)(&c.ExpireTime)
+	}
+
+	return json.Marshal(aux)
 }
 
 // Metadata on the usage of the cached content.
@@ -3429,25 +3620,57 @@ type CachedContent struct {
 	UsageMetadata *CachedContentUsageMetadata `json:"usageMetadata,omitempty"`
 }
 
-func (c *CachedContent) MarshalJSON() ([]byte, error) {
+func (c *CachedContent) UnmarshalJSON(data []byte) error {
 	type Alias CachedContent
 	aux := &struct {
-		ExpireTime *time.Time `json:"expireTime,omitempty"`
 		CreateTime *time.Time `json:"createTime,omitempty"`
 		UpdateTime *time.Time `json:"updateTime,omitempty"`
+		ExpireTime *time.Time `json:"expireTime,omitempty"`
 		*Alias
 	}{
 		Alias: (*Alias)(c),
 	}
 
-	if !c.ExpireTime.IsZero() {
-		aux.ExpireTime = &c.ExpireTime
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
 	}
-	if !c.CreateTime.IsZero() {
-		aux.CreateTime = &c.CreateTime
+
+	if !reflect.ValueOf(aux.CreateTime).IsZero() {
+		c.CreateTime = time.Time(*aux.CreateTime)
 	}
-	if !c.UpdateTime.IsZero() {
-		aux.UpdateTime = &c.UpdateTime
+
+	if !reflect.ValueOf(aux.UpdateTime).IsZero() {
+		c.UpdateTime = time.Time(*aux.UpdateTime)
+	}
+
+	if !reflect.ValueOf(aux.ExpireTime).IsZero() {
+		c.ExpireTime = time.Time(*aux.ExpireTime)
+	}
+
+	return nil
+}
+
+func (c *CachedContent) MarshalJSON() ([]byte, error) {
+	type Alias CachedContent
+	aux := &struct {
+		CreateTime *time.Time `json:"createTime,omitempty"`
+		UpdateTime *time.Time `json:"updateTime,omitempty"`
+		ExpireTime *time.Time `json:"expireTime,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(c),
+	}
+
+	if !reflect.ValueOf(c.CreateTime).IsZero() {
+		aux.CreateTime = (*time.Time)(&c.CreateTime)
+	}
+
+	if !reflect.ValueOf(c.UpdateTime).IsZero() {
+		aux.UpdateTime = (*time.Time)(&c.UpdateTime)
+	}
+
+	if !reflect.ValueOf(c.ExpireTime).IsZero() {
+		aux.ExpireTime = (*time.Time)(&c.ExpireTime)
 	}
 
 	return json.Marshal(aux)
@@ -3479,48 +3702,50 @@ type UpdateCachedContentConfig struct {
 	ExpireTime time.Time `json:"expireTime,omitempty"`
 }
 
-func (c *UpdateCachedContentConfig) MarshalJSON() ([]byte, error) {
+func (u *UpdateCachedContentConfig) UnmarshalJSON(data []byte) error {
 	type Alias UpdateCachedContentConfig
 	aux := &struct {
-		ExpireTime *time.Time `json:"expireTime,omitempty"`
-		TTL        string     `json:"ttl,omitempty"`
+		TTL        *durationJSON `json:"ttl,omitempty"`
+		ExpireTime *time.Time    `json:"expireTime,omitempty"`
 		*Alias
 	}{
-		Alias: (*Alias)(c),
-	}
-
-	if !c.ExpireTime.IsZero() {
-		aux.ExpireTime = &c.ExpireTime
-	}
-	if c.TTL != 0 {
-		aux.TTL = fmt.Sprintf("%.0fs", c.TTL.Seconds())
-	}
-
-	return json.Marshal(aux)
-}
-
-func (c *UpdateCachedContentConfig) UnmarshalJSON(data []byte) error {
-	type Alias UpdateCachedContentConfig
-	aux := &struct {
-		TTL string `json:"ttl,omitempty"`
-		*Alias
-	}{
-		Alias: (*Alias)(c),
+		Alias: (*Alias)(u),
 	}
 
 	if err := json.Unmarshal(data, &aux); err != nil {
 		return err
 	}
 
-	if aux.TTL != "" {
-		d, err := time.ParseDuration(aux.TTL)
-		if err != nil {
-			return err
-		}
-		c.TTL = d
+	if !reflect.ValueOf(aux.TTL).IsZero() {
+		u.TTL = time.Duration(*aux.TTL)
+	}
+
+	if !reflect.ValueOf(aux.ExpireTime).IsZero() {
+		u.ExpireTime = time.Time(*aux.ExpireTime)
 	}
 
 	return nil
+}
+
+func (u *UpdateCachedContentConfig) MarshalJSON() ([]byte, error) {
+	type Alias UpdateCachedContentConfig
+	aux := &struct {
+		TTL        *durationJSON `json:"ttl,omitempty"`
+		ExpireTime *time.Time    `json:"expireTime,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(u),
+	}
+
+	if !reflect.ValueOf(u.TTL).IsZero() {
+		aux.TTL = (*durationJSON)(&u.TTL)
+	}
+
+	if !reflect.ValueOf(u.ExpireTime).IsZero() {
+		aux.ExpireTime = (*time.Time)(&u.ExpireTime)
+	}
+
+	return json.Marshal(aux)
 }
 
 // Config for caches.list method.
@@ -3608,6 +3833,62 @@ type File struct {
 	Error *FileStatus `json:"error,omitempty"`
 }
 
+func (f *File) UnmarshalJSON(data []byte) error {
+	type Alias File
+	aux := &struct {
+		CreateTime     *time.Time `json:"createTime,omitempty"`
+		ExpirationTime *time.Time `json:"expirationTime,omitempty"`
+		UpdateTime     *time.Time `json:"updateTime,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(f),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	if !reflect.ValueOf(aux.CreateTime).IsZero() {
+		f.CreateTime = time.Time(*aux.CreateTime)
+	}
+
+	if !reflect.ValueOf(aux.ExpirationTime).IsZero() {
+		f.ExpirationTime = time.Time(*aux.ExpirationTime)
+	}
+
+	if !reflect.ValueOf(aux.UpdateTime).IsZero() {
+		f.UpdateTime = time.Time(*aux.UpdateTime)
+	}
+
+	return nil
+}
+
+func (f *File) MarshalJSON() ([]byte, error) {
+	type Alias File
+	aux := &struct {
+		CreateTime     *time.Time `json:"createTime,omitempty"`
+		ExpirationTime *time.Time `json:"expirationTime,omitempty"`
+		UpdateTime     *time.Time `json:"updateTime,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(f),
+	}
+
+	if !reflect.ValueOf(f.CreateTime).IsZero() {
+		aux.CreateTime = (*time.Time)(&f.CreateTime)
+	}
+
+	if !reflect.ValueOf(f.ExpirationTime).IsZero() {
+		aux.ExpirationTime = (*time.Time)(&f.ExpirationTime)
+	}
+
+	if !reflect.ValueOf(f.UpdateTime).IsZero() {
+		aux.UpdateTime = (*time.Time)(&f.UpdateTime)
+	}
+
+	return json.Marshal(aux)
+}
+
 // DownloadURI represents a resource that can be downloaded.
 //
 // It is used to abstract the different types of resources that can be downloaded,
@@ -3646,30 +3927,6 @@ func (f *File) uri() string {
 func (f *File) setVideoBytes(b []byte) bool {
 	// File does not support setting video bytes.
 	return false
-}
-
-func (f *File) MarshalJSON() ([]byte, error) {
-	type Alias File
-	aux := struct {
-		*Alias
-		ExpirationTime *time.Time `json:"expirationTime,omitempty"`
-		CreateTime     *time.Time `json:"createTime,omitempty"`
-		UpdateTime     *time.Time `json:"updateTime,omitempty"`
-	}{
-		Alias: (*Alias)(f),
-	}
-
-	if !f.ExpirationTime.IsZero() {
-		aux.ExpirationTime = &f.ExpirationTime
-	}
-	if !f.CreateTime.IsZero() {
-		aux.CreateTime = &f.CreateTime
-	}
-	if !f.UpdateTime.IsZero() {
-		aux.UpdateTime = &f.UpdateTime
-	}
-
-	return json.Marshal(aux)
 }
 
 // Response for the list files method.
@@ -3815,6 +4072,72 @@ type BatchJob struct {
 	Src *BatchJobSource `json:"src,omitempty"`
 	// Configuration for the output data.
 	Dest *BatchJobDestination `json:"dest,omitempty"`
+}
+
+func (b *BatchJob) UnmarshalJSON(data []byte) error {
+	type Alias BatchJob
+	aux := &struct {
+		CreateTime *time.Time `json:"createTime,omitempty"`
+		StartTime  *time.Time `json:"startTime,omitempty"`
+		EndTime    *time.Time `json:"endTime,omitempty"`
+		UpdateTime *time.Time `json:"updateTime,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(b),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	if !reflect.ValueOf(aux.CreateTime).IsZero() {
+		b.CreateTime = time.Time(*aux.CreateTime)
+	}
+
+	if !reflect.ValueOf(aux.StartTime).IsZero() {
+		b.StartTime = time.Time(*aux.StartTime)
+	}
+
+	if !reflect.ValueOf(aux.EndTime).IsZero() {
+		b.EndTime = time.Time(*aux.EndTime)
+	}
+
+	if !reflect.ValueOf(aux.UpdateTime).IsZero() {
+		b.UpdateTime = time.Time(*aux.UpdateTime)
+	}
+
+	return nil
+}
+
+func (b *BatchJob) MarshalJSON() ([]byte, error) {
+	type Alias BatchJob
+	aux := &struct {
+		CreateTime *time.Time `json:"createTime,omitempty"`
+		StartTime  *time.Time `json:"startTime,omitempty"`
+		EndTime    *time.Time `json:"endTime,omitempty"`
+		UpdateTime *time.Time `json:"updateTime,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(b),
+	}
+
+	if !reflect.ValueOf(b.CreateTime).IsZero() {
+		aux.CreateTime = (*time.Time)(&b.CreateTime)
+	}
+
+	if !reflect.ValueOf(b.StartTime).IsZero() {
+		aux.StartTime = (*time.Time)(&b.StartTime)
+	}
+
+	if !reflect.ValueOf(b.EndTime).IsZero() {
+		aux.EndTime = (*time.Time)(&b.EndTime)
+	}
+
+	if !reflect.ValueOf(b.UpdateTime).IsZero() {
+		aux.UpdateTime = (*time.Time)(&b.UpdateTime)
+	}
+
+	return json.Marshal(aux)
 }
 
 // Optional parameters.
@@ -4221,40 +4544,40 @@ type LiveServerGoAway struct {
 	TimeLeft time.Duration `json:"timeLeft,omitempty"`
 }
 
-func (c *LiveServerGoAway) MarshalJSON() ([]byte, error) {
+func (l *LiveServerGoAway) UnmarshalJSON(data []byte) error {
 	type Alias LiveServerGoAway
 	aux := &struct {
-		TimeLeft string `json:"timeLeft,omitempty"`
+		TimeLeft *durationJSON `json:"timeLeft,omitempty"`
 		*Alias
 	}{
-		Alias: (*Alias)(c),
+		Alias: (*Alias)(l),
 	}
 
-	if c.TimeLeft != 0 {
-		aux.TimeLeft = fmt.Sprintf("%.0fs", c.TimeLeft.Seconds())
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
 	}
 
-	return json.Marshal(aux)
-}
-
-func (c *LiveServerGoAway) UnmarshalJSON(data []byte) error {
-	type Alias LiveServerGoAway
-	aux := &struct {
-		TimeLeft string `json:"timeLeft,omitempty"`
-		*Alias
-	}{
-		Alias: (*Alias)(c),
-	}
-
-	if aux.TimeLeft != "" {
-		d, err := time.ParseDuration(aux.TimeLeft)
-		if err != nil {
-			return err
-		}
-		c.TimeLeft = d
+	if !reflect.ValueOf(aux.TimeLeft).IsZero() {
+		l.TimeLeft = time.Duration(*aux.TimeLeft)
 	}
 
 	return nil
+}
+
+func (l *LiveServerGoAway) MarshalJSON() ([]byte, error) {
+	type Alias LiveServerGoAway
+	aux := &struct {
+		TimeLeft *durationJSON `json:"timeLeft,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(l),
+	}
+
+	if !reflect.ValueOf(l.TimeLeft).IsZero() {
+		aux.TimeLeft = (*durationJSON)(&l.TimeLeft)
+	}
+
+	return json.Marshal(aux)
 }
 
 // Update of the session resumption state.
@@ -4642,4 +4965,50 @@ type CreateAuthTokenConfig struct {
 	LiveConnectConstraints *LiveConnectConstraints `json:"liveConnectConstraints,omitempty"`
 	// Optional. Additional fields to lock in the effective LiveConnectParameters.
 	LockAdditionalFields []string `json:"lockAdditionalFields,omitempty"`
+}
+
+func (c *CreateAuthTokenConfig) UnmarshalJSON(data []byte) error {
+	type Alias CreateAuthTokenConfig
+	aux := &struct {
+		ExpireTime           *time.Time `json:"expireTime,omitempty"`
+		NewSessionExpireTime *time.Time `json:"newSessionExpireTime,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(c),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	if !reflect.ValueOf(aux.ExpireTime).IsZero() {
+		c.ExpireTime = time.Time(*aux.ExpireTime)
+	}
+
+	if !reflect.ValueOf(aux.NewSessionExpireTime).IsZero() {
+		c.NewSessionExpireTime = time.Time(*aux.NewSessionExpireTime)
+	}
+
+	return nil
+}
+
+func (c *CreateAuthTokenConfig) MarshalJSON() ([]byte, error) {
+	type Alias CreateAuthTokenConfig
+	aux := &struct {
+		ExpireTime           *time.Time `json:"expireTime,omitempty"`
+		NewSessionExpireTime *time.Time `json:"newSessionExpireTime,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(c),
+	}
+
+	if !reflect.ValueOf(c.ExpireTime).IsZero() {
+		aux.ExpireTime = (*time.Time)(&c.ExpireTime)
+	}
+
+	if !reflect.ValueOf(c.NewSessionExpireTime).IsZero() {
+		aux.NewSessionExpireTime = (*time.Time)(&c.NewSessionExpireTime)
+	}
+
+	return json.Marshal(aux)
 }
