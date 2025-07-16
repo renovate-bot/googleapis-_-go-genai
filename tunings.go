@@ -20,8 +20,10 @@ import (
 	"context"
 	"fmt"
 	"iter"
+	"log"
 	"net/http"
 	"strings"
+	"sync"
 )
 
 func getTuningJobParametersToMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
@@ -1025,8 +1027,13 @@ func (m Tunings) tuneMldev(ctx context.Context, baseModel string, trainingDatase
 	return response, nil
 }
 
+var experimentalWarningTuningsCreateOperation sync.Once
+
 // Tune creates a tuning job resource.
 func (t Tunings) Tune(ctx context.Context, baseModel string, trainingDataset *TuningDataset, config *CreateTuningJobConfig) (*TuningJob, error) {
+	experimentalWarningTuningsCreateOperation.Do(func() {
+		log.Println("The SDK's tuning implementation is experimental, and may change in future versions.")
+	})
 	if t.apiClient.clientConfig.Backend == BackendVertexAI {
 		return t.tune(ctx, baseModel, trainingDataset, config)
 	} else {
