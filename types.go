@@ -2307,6 +2307,9 @@ type GenerateImagesConfig struct {
 	OutputCompressionQuality *int32 `json:"outputCompressionQuality,omitempty"`
 	// Optional. Whether to add a watermark to the generated images.
 	AddWatermark bool `json:"addWatermark,omitempty"`
+	// Optional. The size of the largest dimension of the generated image.
+	// Supported sizes are 1K and 2K (not supported for Imagen 3 models).
+	ImageSize string `json:"imageSize,omitempty"`
 	// Optional. Whether to use the prompt rewriting logic.
 	EnhancePrompt bool `json:"enhancePrompt,omitempty"`
 }
