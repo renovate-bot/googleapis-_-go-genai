@@ -1,10 +1,12 @@
 package genai
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -1650,6 +1652,97 @@ func TestInferTimeout(t *testing.T) {
 			} else {
 				if got != tt.want {
 					t.Errorf("inferTimeout() got = %v, want %v", got, tt.want)
+				}
+			}
+		})
+	}
+}
+
+func TestRecursiveMapMerge(t *testing.T) {
+	tests := []struct {
+		name        string
+		dest        map[string]any
+		src         map[string]any
+		want        map[string]any
+		wantWarning string
+	}{
+		{
+			name: "simple merge with new keys",
+			dest: map[string]any{"a": 1},
+			src:  map[string]any{"b": 2},
+			want: map[string]any{"a": 1, "b": 2},
+		},
+		{
+			name: "overwrite existing value",
+			dest: map[string]any{"a": 1},
+			src:  map[string]any{"a": 2},
+			want: map[string]any{"a": 2},
+		},
+		{
+			name: "recursive merge of nested maps",
+			dest: map[string]any{"nested": map[string]any{"x": 10, "z": 30}},
+			src:  map[string]any{"nested": map[string]any{"y": 20, "x": 100}},
+			want: map[string]any{"nested": map[string]any{"x": 100, "y": 20, "z": 30}},
+		},
+		{
+			name:        "type mismatch overwrite",
+			dest:        map[string]any{"key": "string value"},
+			src:         map[string]any{"key": 123},
+			want:        map[string]any{"key": 123},
+			wantWarning: "Warning: Type mismatch for key 'key'. Existing type: string, new type: int. Overwriting.",
+		},
+		{
+			name:        "overwrite non-map with map",
+			dest:        map[string]any{"key": "a string"},
+			src:         map[string]any{"key": map[string]any{"nested": true}},
+			want:        map[string]any{"key": map[string]any{"nested": true}},
+			wantWarning: "Warning: Type mismatch for key 'key'. Existing type: string, new type: map[string]interface {}. Overwriting.",
+		},
+		{
+			name:        "overwrite map with non-map",
+			dest:        map[string]any{"key": map[string]any{"nested": true}},
+			src:         map[string]any{"key": "a string"},
+			want:        map[string]any{"key": "a string"},
+			wantWarning: "Warning: Type mismatch for key 'key'. Existing type: map[string]interface {}, new type: string. Overwriting.",
+		},
+		{
+			name: "dest is nil",
+			dest: nil,
+			src:  map[string]any{"a": 1},
+			want: nil,
+		},
+		{
+			name: "src is nil",
+			dest: map[string]any{"a": 1},
+			src:  nil,
+			want: map[string]any{"a": 1},
+		},
+		{
+			name: "overwrite with nil value",
+			dest: map[string]any{"a": 1},
+			src:  map[string]any{"a": nil},
+			want: map[string]any{"a": nil},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var logBuf bytes.Buffer
+			if tt.wantWarning != "" {
+				// Redirect log output
+				originalOutput := log.Writer()
+				log.SetOutput(&logBuf)
+				defer log.SetOutput(originalOutput)
+			}
+
+			recursiveMapMerge(tt.dest, tt.src)
+			if diff := cmp.Diff(tt.want, tt.dest); diff != "" {
+				t.Errorf("recursiveMapMerge() mismatch (-want +got):\n%s", diff)
+			}
+
+			if tt.wantWarning != "" {
+				if !strings.Contains(logBuf.String(), tt.wantWarning) {
+					t.Errorf("recursiveMapMerge() log output = %q, want to contain %q", logBuf.String(), tt.wantWarning)
 				}
 			}
 		})

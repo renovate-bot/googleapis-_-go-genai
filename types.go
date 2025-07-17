@@ -1010,13 +1010,22 @@ type HTTPOptions struct {
 	Headers http.Header `json:"headers,omitempty"`
 	// Optional. Timeout for the request in milliseconds.
 	Timeout *time.Duration `json:"timeout,omitempty"`
-	// Optional. [Experimental] No forward compatibility is guaranteed for this feature.
-	// Usage of this field is strongly discouraged.
+	// Optional. Extra parameters to add to the request body.
+	// The structure must match the backend API's request structure.
+	//   - VertexAI backend API docs: https://cloud.google.com/vertex-ai/docs/reference/rest
+	//   - GeminiAPI backend API docs: https://ai.google.dev/api/rest
+	ExtraBody map[string]any `json:"extraBody,omitempty"`
+	// Optional. A function that allows for request body customization.
+	// It is executed after ExtraBody has been merged, offering more advanced
+	// control over the request body than the static ExtraBody.
 	ExtrasRequestProvider ExtrasRequestProvider `json:"-"`
 }
 
-// [Experimental] No forward compatibility is guaranteed for this feature.
-// Usage of this field is strongly discouraged.
+// ExtrasRequestProvider provides a way to dynamically modify the request body
+// before it is sent. It is a function that takes the request body and returns
+// the modified body. This is useful for advanced scenarios where request
+// parameters need to be added based on logic that cannot
+// be handled by a static map.
 type ExtrasRequestProvider = func(body map[string]any) map[string]any
 
 type UrlRetrievalStatus = URLRetrievalStatus
