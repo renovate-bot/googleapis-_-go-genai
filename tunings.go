@@ -389,6 +389,11 @@ func tunedModelFromMldev(fromObject map[string]any, parentObject map[string]any)
 func tuningJobFromMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
+	fromSdkHttpResponse := getValueByPath(fromObject, []string{"sdkHttpResponse"})
+	if fromSdkHttpResponse != nil {
+		setValueByPath(toObject, []string{"sdkHttpResponse"}, fromSdkHttpResponse)
+	}
+
 	fromName := getValueByPath(fromObject, []string{"name"})
 	if fromName != nil {
 		setValueByPath(toObject, []string{"name"}, fromName)
@@ -490,6 +495,11 @@ func tuningJobFromMldev(fromObject map[string]any, parentObject map[string]any) 
 func listTuningJobsResponseFromMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
+	fromSdkHttpResponse := getValueByPath(fromObject, []string{"sdkHttpResponse"})
+	if fromSdkHttpResponse != nil {
+		setValueByPath(toObject, []string{"sdkHttpResponse"}, fromSdkHttpResponse)
+	}
+
 	fromNextPageToken := getValueByPath(fromObject, []string{"nextPageToken"})
 	if fromNextPageToken != nil {
 		setValueByPath(toObject, []string{"nextPageToken"}, fromNextPageToken)
@@ -510,6 +520,11 @@ func listTuningJobsResponseFromMldev(fromObject map[string]any, parentObject map
 
 func tuningOperationFromMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
+
+	fromSdkHttpResponse := getValueByPath(fromObject, []string{"sdkHttpResponse"})
+	if fromSdkHttpResponse != nil {
+		setValueByPath(toObject, []string{"sdkHttpResponse"}, fromSdkHttpResponse)
+	}
 
 	fromName := getValueByPath(fromObject, []string{"name"})
 	if fromName != nil {
@@ -588,6 +603,11 @@ func tunedModelFromVertex(fromObject map[string]any, parentObject map[string]any
 
 func tuningJobFromVertex(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
+
+	fromSdkHttpResponse := getValueByPath(fromObject, []string{"sdkHttpResponse"})
+	if fromSdkHttpResponse != nil {
+		setValueByPath(toObject, []string{"sdkHttpResponse"}, fromSdkHttpResponse)
+	}
 
 	fromName := getValueByPath(fromObject, []string{"name"})
 	if fromName != nil {
@@ -715,6 +735,11 @@ func tuningJobFromVertex(fromObject map[string]any, parentObject map[string]any)
 func listTuningJobsResponseFromVertex(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
+	fromSdkHttpResponse := getValueByPath(fromObject, []string{"sdkHttpResponse"})
+	if fromSdkHttpResponse != nil {
+		setValueByPath(toObject, []string{"sdkHttpResponse"}, fromSdkHttpResponse)
+	}
+
 	fromNextPageToken := getValueByPath(fromObject, []string{"nextPageToken"})
 	if fromNextPageToken != nil {
 		setValueByPath(toObject, []string{"nextPageToken"}, fromNextPageToken)
@@ -806,6 +831,7 @@ func (m Tunings) get(ctx context.Context, name string, config *GetTuningJobConfi
 	if err != nil {
 		return nil, err
 	}
+
 	return response, nil
 }
 
@@ -878,6 +904,7 @@ func (m Tunings) list(ctx context.Context, config *ListTuningJobsConfig) (*ListT
 	if err != nil {
 		return nil, err
 	}
+
 	return response, nil
 }
 
@@ -951,6 +978,7 @@ func (m Tunings) tune(ctx context.Context, baseModel string, trainingDataset *Tu
 	if err != nil {
 		return nil, err
 	}
+
 	return response, nil
 }
 
@@ -1024,6 +1052,7 @@ func (m Tunings) tuneMldev(ctx context.Context, baseModel string, trainingDatase
 	if err != nil {
 		return nil, err
 	}
+
 	return response, nil
 }
 
@@ -1073,16 +1102,16 @@ func (t Tunings) Get(ctx context.Context, name string, config *GetTuningJobConfi
 
 // List retrieves a paginated list of tuning job resources.
 func (t Tunings) List(ctx context.Context, config *ListTuningJobsConfig) (Page[TuningJob], error) {
-	listFunc := func(ctx context.Context, config map[string]any) ([]*TuningJob, string, error) {
+	listFunc := func(ctx context.Context, config map[string]any) ([]*TuningJob, string, *HTTPResponse, error) {
 		var c ListTuningJobsConfig
 		if err := mapToStruct(config, &c); err != nil {
-			return nil, "", err
+			return nil, "", nil, err
 		}
 		resp, err := t.list(ctx, &c)
 		if err != nil {
-			return nil, "", err
+			return nil, "", nil, err
 		}
-		return resp.TuningJobs, resp.NextPageToken, nil
+		return resp.TuningJobs, resp.NextPageToken, resp.SDKHTTPResponse, nil
 	}
 	c := make(map[string]any)
 	deepMarshal(config, &c)
@@ -1096,16 +1125,16 @@ func (t Tunings) List(ctx context.Context, config *ListTuningJobsConfig) (Page[T
 // entry one by one. You do not need to manage pagination
 // tokens or make multiple calls to retrieve all data.
 func (t Tunings) All(ctx context.Context) iter.Seq2[*TuningJob, error] {
-	listFunc := func(ctx context.Context, config map[string]any) ([]*TuningJob, string, error) {
+	listFunc := func(ctx context.Context, config map[string]any) ([]*TuningJob, string, *HTTPResponse, error) {
 		var c ListTuningJobsConfig
 		if err := mapToStruct(config, &c); err != nil {
-			return nil, "", err
+			return nil, "", nil, err
 		}
 		resp, err := t.list(ctx, &c)
 		if err != nil {
-			return nil, "", err
+			return nil, "", nil, err
 		}
-		return resp.TuningJobs, resp.NextPageToken, nil
+		return resp.TuningJobs, resp.NextPageToken, resp.SDKHTTPResponse, nil
 	}
 	p, err := newPage(ctx, "tuningJobs", map[string]any{}, listFunc)
 	if err != nil {

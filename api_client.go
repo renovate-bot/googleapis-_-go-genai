@@ -366,7 +366,6 @@ func deserializeUnaryResponse(resp *http.Response) (map[string]any, error) {
 
 	httpResponse := map[string]any{
 		"headers": resp.Header,
-		"body":    respBody,
 	}
 	output["sdkHttpResponse"] = httpResponse
 	return output, nil
@@ -375,6 +374,7 @@ func deserializeUnaryResponse(resp *http.Response) (map[string]any, error) {
 type responseStream[R any] struct {
 	r  *bufio.Scanner
 	rc io.ReadCloser
+	h  http.Header
 }
 
 func iterateResponseStream[R any](rs *responseStream[R], responseConverter func(responseMap map[string]any) (*R, error)) iter.Seq2[*R, error] {
@@ -413,7 +413,19 @@ func iterateResponseStream[R any](rs *responseStream[R], responseConverter func(
 					}
 				}
 
-				// Step 3: yield the response.
+				// Step 3: Add the sdkHttpResponse to the response.
+				v := reflect.ValueOf(resp).Elem()
+				if v.Kind() == reflect.Struct {
+					field := v.FieldByName("SDKHTTPResponse")
+					if field.IsValid() && field.CanSet() {
+						if field.IsNil() {
+							field.Set(reflect.ValueOf(&HTTPResponse{}))
+						}
+						field.Interface().(*HTTPResponse).Headers = rs.h
+					}
+				}
+
+				// Step 4: yield the response.
 				if !yield(resp, nil) {
 					return
 				}
@@ -505,6 +517,7 @@ func deserializeStreamResponse[T responseStream[R], R any](resp *http.Response, 
 
 	output.r.Split(scan)
 	output.rc = resp.Body
+	output.h = resp.Header
 	return nil
 }
 
