@@ -2588,6 +2588,57 @@ type UpscaleImageResponse struct {
 	GeneratedImages []*GeneratedImage `json:"generatedImages,omitempty"`
 }
 
+// An image of the product.
+type ProductImage struct {
+	// Optional. An image of the product to be recontextualized.
+	ProductImage *Image `json:"productImage,omitempty"`
+}
+
+// A set of source input(s) for image recontextualization.
+type RecontextImageSource struct {
+	// Optional. A text prompt for guiding the model during image
+	// recontextualization. Not supported for Virtual Try-On.
+	Prompt string `json:"prompt,omitempty"`
+	// Image of the person or subject who will be wearing the
+	// product(s).
+	PersonImage *Image `json:"personImage,omitempty"`
+	// Optional. A list of product images.
+	ProductImages []*ProductImage `json:"productImages,omitempty"`
+}
+
+// Configuration for recontextualizing an image.
+type RecontextImageConfig struct {
+	// Optional. Used to override HTTP request options.
+	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
+	// Optional. Number of images to generate.
+	NumberOfImages *int32 `json:"numberOfImages,omitempty"`
+	// Optional. The number of sampling steps. A higher value has better image
+	// quality, while a lower value has better latency.
+	BaseSteps *int32 `json:"baseSteps,omitempty"`
+	// Optional. Cloud Storage URI used to store the generated images.
+	OutputGCSURI string `json:"outputGcsUri,omitempty"`
+	// Optional. Random seed for image generation.
+	Seed *int32 `json:"seed,omitempty"`
+	// Optional. Filter level for safety filtering.
+	SafetyFilterLevel SafetyFilterLevel `json:"safetyFilterLevel,omitempty"`
+	// Optional. Whether allow to generate person images, and restrict to specific
+	// ages.
+	PersonGeneration PersonGeneration `json:"personGeneration,omitempty"`
+	// Optional. MIME type of the generated image.
+	OutputMIMEType string `json:"outputMimeType,omitempty"`
+	// Optional. Compression quality of the generated image (for ``image/jpeg``
+	// only).
+	OutputCompressionQuality *int32 `json:"outputCompressionQuality,omitempty"`
+	// Optional. Whether to use the prompt rewriting logic.
+	EnhancePrompt *bool `json:"enhancePrompt,omitempty"`
+}
+
+// The output images response.
+type RecontextImageResponse struct {
+	// List of generated images.
+	GeneratedImages []*GeneratedImage `json:"generatedImages,omitempty"`
+}
+
 // Optional parameters for models.get method.
 type GetModelConfig struct {
 	// Optional. Used to override HTTP request options.

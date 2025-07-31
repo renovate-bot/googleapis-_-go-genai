@@ -2982,6 +2982,140 @@ func upscaleImageAPIParametersToVertex(ac *apiClient, fromObject map[string]any,
 	return toObject, nil
 }
 
+func productImageToVertex(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromProductImage := getValueByPath(fromObject, []string{"productImage"})
+	if fromProductImage != nil {
+		fromProductImage, err = imageToVertex(fromProductImage.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"image"}, fromProductImage)
+	}
+
+	return toObject, nil
+}
+
+func recontextImageSourceToVertex(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromPrompt := getValueByPath(fromObject, []string{"prompt"})
+	if fromPrompt != nil {
+		setValueByPath(parentObject, []string{"instances[0]", "prompt"}, fromPrompt)
+	}
+
+	fromPersonImage := getValueByPath(fromObject, []string{"personImage"})
+	if fromPersonImage != nil {
+		fromPersonImage, err = imageToVertex(fromPersonImage.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(parentObject, []string{"instances[0]", "personImage", "image"}, fromPersonImage)
+	}
+
+	fromProductImages := getValueByPath(fromObject, []string{"productImages"})
+	if fromProductImages != nil {
+		fromProductImages, err = applyConverterToSlice(fromProductImages.([]any), productImageToVertex)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(parentObject, []string{"instances[0]", "productImages"}, fromProductImages)
+	}
+
+	return toObject, nil
+}
+
+func recontextImageConfigToVertex(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromNumberOfImages := getValueByPath(fromObject, []string{"numberOfImages"})
+	if fromNumberOfImages != nil {
+		setValueByPath(parentObject, []string{"parameters", "sampleCount"}, fromNumberOfImages)
+	}
+
+	fromBaseSteps := getValueByPath(fromObject, []string{"baseSteps"})
+	if fromBaseSteps != nil {
+		setValueByPath(parentObject, []string{"parameters", "editConfig", "baseSteps"}, fromBaseSteps)
+	}
+
+	fromOutputGcsUri := getValueByPath(fromObject, []string{"outputGcsUri"})
+	if fromOutputGcsUri != nil {
+		setValueByPath(parentObject, []string{"parameters", "storageUri"}, fromOutputGcsUri)
+	}
+
+	fromSeed := getValueByPath(fromObject, []string{"seed"})
+	if fromSeed != nil {
+		setValueByPath(parentObject, []string{"parameters", "seed"}, fromSeed)
+	}
+
+	fromSafetyFilterLevel := getValueByPath(fromObject, []string{"safetyFilterLevel"})
+	if fromSafetyFilterLevel != nil {
+		setValueByPath(parentObject, []string{"parameters", "safetySetting"}, fromSafetyFilterLevel)
+	}
+
+	fromPersonGeneration := getValueByPath(fromObject, []string{"personGeneration"})
+	if fromPersonGeneration != nil {
+		setValueByPath(parentObject, []string{"parameters", "personGeneration"}, fromPersonGeneration)
+	}
+
+	fromOutputMimeType := getValueByPath(fromObject, []string{"outputMimeType"})
+	if fromOutputMimeType != nil {
+		setValueByPath(parentObject, []string{"parameters", "outputOptions", "mimeType"}, fromOutputMimeType)
+	}
+
+	fromOutputCompressionQuality := getValueByPath(fromObject, []string{"outputCompressionQuality"})
+	if fromOutputCompressionQuality != nil {
+		setValueByPath(parentObject, []string{"parameters", "outputOptions", "compressionQuality"}, fromOutputCompressionQuality)
+	}
+
+	fromEnhancePrompt := getValueByPath(fromObject, []string{"enhancePrompt"})
+	if fromEnhancePrompt != nil {
+		setValueByPath(parentObject, []string{"parameters", "enhancePrompt"}, fromEnhancePrompt)
+	}
+
+	return toObject, nil
+}
+
+func recontextImageParametersToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromModel := getValueByPath(fromObject, []string{"model"})
+	if fromModel != nil {
+		fromModel, err = tModel(ac, fromModel)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"_url", "model"}, fromModel)
+	}
+
+	fromSource := getValueByPath(fromObject, []string{"source"})
+	if fromSource != nil {
+		fromSource, err = recontextImageSourceToVertex(fromSource.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"config"}, fromSource)
+	}
+
+	fromConfig := getValueByPath(fromObject, []string{"config"})
+	if fromConfig != nil {
+		fromConfig, err = recontextImageConfigToVertex(fromConfig.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"config"}, fromConfig)
+	}
+
+	return toObject, nil
+}
+
 func getModelParametersToVertex(ac *apiClient, fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -4661,6 +4795,22 @@ func upscaleImageResponseFromVertex(fromObject map[string]any, parentObject map[
 	return toObject, nil
 }
 
+func recontextImageResponseFromVertex(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromGeneratedImages := getValueByPath(fromObject, []string{"predictions"})
+	if fromGeneratedImages != nil {
+		fromGeneratedImages, err = applyConverterToSlice(fromGeneratedImages.([]any), generatedImageFromVertex)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"generatedImages"}, fromGeneratedImages)
+	}
+
+	return toObject, nil
+}
+
 func endpointFromVertex(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -5392,6 +5542,95 @@ func (m Models) upscaleImage(ctx context.Context, model string, image *Image, up
 	err = mapToStruct(responseMap, response)
 	if err != nil {
 		return nil, err
+	}
+
+	return response, nil
+}
+
+// RecontextImage recontextualizes an image.
+// There are two types of recontextualization currently supported:
+// 1) Imagen Product Recontext - Generate images of products in new scenes
+// and contexts.
+// 2) Virtual Try-On: Generate images of persons modeling fashion products.
+func (m Models) RecontextImage(ctx context.Context, model string, source *RecontextImageSource, config *RecontextImageConfig) (*RecontextImageResponse, error) {
+	parameterMap := make(map[string]any)
+
+	kwargs := map[string]any{"model": model, "source": source, "config": config}
+	deepMarshal(kwargs, &parameterMap)
+
+	var httpOptions *HTTPOptions
+	if config == nil || config.HTTPOptions == nil {
+		httpOptions = &HTTPOptions{}
+	} else {
+		httpOptions = config.HTTPOptions
+	}
+	if httpOptions.Headers == nil {
+		httpOptions.Headers = http.Header{}
+	}
+	var response = new(RecontextImageResponse)
+	var responseMap map[string]any
+	var fromConverter func(map[string]any, map[string]any) (map[string]any, error)
+	var toConverter func(*apiClient, map[string]any, map[string]any) (map[string]any, error)
+	if m.apiClient.clientConfig.Backend == BackendVertexAI {
+		toConverter = recontextImageParametersToVertex
+		fromConverter = recontextImageResponseFromVertex
+	} else {
+
+		return nil, fmt.Errorf("method RecontextImage is only supported in the Vertex AI client. You can choose to use Vertex AI by setting ClientConfig.Backend to BackendVertexAI.")
+
+	}
+
+	body, err := toConverter(m.apiClient, parameterMap, nil)
+	if err != nil {
+		return nil, err
+	}
+	var path string
+	var urlParams map[string]any
+	if _, ok := body["_url"]; ok {
+		urlParams = body["_url"].(map[string]any)
+		delete(body, "_url")
+	}
+	if m.apiClient.clientConfig.Backend == BackendVertexAI {
+		path, err = formatMap("{model}:predict", urlParams)
+	} else {
+		path, err = formatMap("None", urlParams)
+	}
+	if err != nil {
+		return nil, fmt.Errorf("invalid url params: %#v.\n%w", urlParams, err)
+	}
+	if _, ok := body["_query"]; ok {
+		query, err := createURLQuery(body["_query"].(map[string]any))
+		if err != nil {
+			return nil, err
+		}
+		path += "?" + query
+		delete(body, "_query")
+	}
+
+	if _, ok := body["config"]; ok {
+		delete(body, "config")
+	}
+	responseMap, err = sendRequest(ctx, m.apiClient, path, http.MethodPost, body, httpOptions)
+	if err != nil {
+		return nil, err
+	}
+	responseMap, err = fromConverter(responseMap, nil)
+	if err != nil {
+		return nil, err
+	}
+	err = mapToStruct(responseMap, response)
+	if err != nil {
+		return nil, err
+	}
+
+	if field, ok := reflect.TypeOf(response).Elem().FieldByName("SDKHTTPResponse"); ok {
+		{
+			if reflect.ValueOf(response).Elem().FieldByName("SDKHTTPResponse").IsValid() {
+				{
+					reflect.ValueOf(response).Elem().FieldByName("SDKHTTPResponse").Set(reflect.Zero(field.Type))
+				}
+			}
+		}
 	}
 
 	return response, nil
