@@ -4239,6 +4239,8 @@ type DeleteBatchJobConfig struct {
 
 // The return value of delete operation.
 type DeleteResourceJob struct {
+	// Optional. Used to retain the full HTTP response.
+	SDKHTTPResponse *HTTPResponse `json:"sdkHttpResponse,omitempty"`
 	// Optional.
 	Name string `json:"name,omitempty"`
 	// Optional.

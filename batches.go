@@ -630,6 +630,11 @@ func listBatchJobsResponseFromMldev(fromObject map[string]any, parentObject map[
 func deleteResourceJobFromMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
+	fromSdkHttpResponse := getValueByPath(fromObject, []string{"sdkHttpResponse"})
+	if fromSdkHttpResponse != nil {
+		setValueByPath(toObject, []string{"sdkHttpResponse"}, fromSdkHttpResponse)
+	}
+
 	fromName := getValueByPath(fromObject, []string{"name"})
 	if fromName != nil {
 		setValueByPath(toObject, []string{"name"}, fromName)
@@ -825,6 +830,11 @@ func listBatchJobsResponseFromVertex(fromObject map[string]any, parentObject map
 
 func deleteResourceJobFromVertex(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
+
+	fromSdkHttpResponse := getValueByPath(fromObject, []string{"sdkHttpResponse"})
+	if fromSdkHttpResponse != nil {
+		setValueByPath(toObject, []string{"sdkHttpResponse"}, fromSdkHttpResponse)
+	}
 
 	fromName := getValueByPath(fromObject, []string{"name"})
 	if fromName != nil {
@@ -1227,16 +1237,6 @@ func (m Batches) Delete(ctx context.Context, name string, config *DeleteBatchJob
 	err = mapToStruct(responseMap, response)
 	if err != nil {
 		return nil, err
-	}
-
-	if field, ok := reflect.TypeOf(response).Elem().FieldByName("SDKHTTPResponse"); ok {
-		{
-			if reflect.ValueOf(response).Elem().FieldByName("SDKHTTPResponse").IsValid() {
-				{
-					reflect.ValueOf(response).Elem().FieldByName("SDKHTTPResponse").Set(reflect.Zero(field.Type))
-				}
-			}
-		}
 	}
 
 	return response, nil
