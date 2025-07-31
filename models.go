@@ -3851,6 +3851,11 @@ func generateContentResponseFromMldev(fromObject map[string]any, parentObject ma
 		setValueByPath(toObject, []string{"promptFeedback"}, fromPromptFeedback)
 	}
 
+	fromResponseId := getValueByPath(fromObject, []string{"responseId"})
+	if fromResponseId != nil {
+		setValueByPath(toObject, []string{"responseId"}, fromResponseId)
+	}
+
 	fromUsageMetadata := getValueByPath(fromObject, []string{"usageMetadata"})
 	if fromUsageMetadata != nil {
 		setValueByPath(toObject, []string{"usageMetadata"}, fromUsageMetadata)
@@ -4537,11 +4542,6 @@ func generateContentResponseFromVertex(fromObject map[string]any, parentObject m
 		setValueByPath(toObject, []string{"createTime"}, fromCreateTime)
 	}
 
-	fromResponseId := getValueByPath(fromObject, []string{"responseId"})
-	if fromResponseId != nil {
-		setValueByPath(toObject, []string{"responseId"}, fromResponseId)
-	}
-
 	fromModelVersion := getValueByPath(fromObject, []string{"modelVersion"})
 	if fromModelVersion != nil {
 		setValueByPath(toObject, []string{"modelVersion"}, fromModelVersion)
@@ -4550,6 +4550,11 @@ func generateContentResponseFromVertex(fromObject map[string]any, parentObject m
 	fromPromptFeedback := getValueByPath(fromObject, []string{"promptFeedback"})
 	if fromPromptFeedback != nil {
 		setValueByPath(toObject, []string{"promptFeedback"}, fromPromptFeedback)
+	}
+
+	fromResponseId := getValueByPath(fromObject, []string{"responseId"})
+	if fromResponseId != nil {
+		setValueByPath(toObject, []string{"responseId"}, fromResponseId)
 	}
 
 	fromUsageMetadata := getValueByPath(fromObject, []string{"usageMetadata"})

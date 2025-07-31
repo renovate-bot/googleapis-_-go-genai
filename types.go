@@ -2059,14 +2059,15 @@ type GenerateContentResponse struct {
 	Candidates []*Candidate `json:"candidates,omitempty"`
 	// Timestamp when the request is made to the server.
 	CreateTime time.Time `json:"createTime,omitempty"`
-	// Identifier for each response.
-	ResponseID string `json:"responseId,omitempty"`
 	// Output only. The model version used to generate the response.
 	ModelVersion string `json:"modelVersion,omitempty"`
 	// Output only. Content filter results for a prompt sent in the request. Note: Sent
 	// only in the first stream chunk. Only happens when no candidates were generated due
 	// to content violations.
 	PromptFeedback *GenerateContentResponsePromptFeedback `json:"promptFeedback,omitempty"`
+	// Output only. response_id is used to identify each response. It is the encoding of
+	// the event_id.
+	ResponseID string `json:"responseId,omitempty"`
 	// Usage metadata about the response(s).
 	UsageMetadata *GenerateContentResponseUsageMetadata `json:"usageMetadata,omitempty"`
 }
