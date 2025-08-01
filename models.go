@@ -1058,8 +1058,9 @@ func generateImagesConfigToMldev(fromObject map[string]any, parentObject map[str
 		return nil, fmt.Errorf("addWatermark parameter is not supported in Gemini API")
 	}
 
-	if getValueByPath(fromObject, []string{"imageSize"}) != nil {
-		return nil, fmt.Errorf("imageSize parameter is not supported in Gemini API")
+	fromImageSize := getValueByPath(fromObject, []string{"imageSize"})
+	if fromImageSize != nil {
+		setValueByPath(parentObject, []string{"parameters", "sampleImageSize"}, fromImageSize)
 	}
 
 	if getValueByPath(fromObject, []string{"enhancePrompt"}) != nil {
