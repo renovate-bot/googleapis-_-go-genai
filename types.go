@@ -192,6 +192,10 @@ const (
 	URLRetrievalStatusSuccess URLRetrievalStatus = "URL_RETRIEVAL_STATUS_SUCCESS"
 	// URL retrieval is failed due to error.
 	URLRetrievalStatusError URLRetrievalStatus = "URL_RETRIEVAL_STATUS_ERROR"
+	// URL retrieval is failed because the content is behind paywall.
+	URLRetrievalStatusPaywall URLRetrievalStatus = "URL_RETRIEVAL_STATUS_PAYWALL"
+	// URL retrieval is failed because the content is unsafe.
+	URLRetrievalStatusUnsafe URLRetrievalStatus = "URL_RETRIEVAL_STATUS_UNSAFE"
 )
 
 // The reason why the model stopped generating tokens.
