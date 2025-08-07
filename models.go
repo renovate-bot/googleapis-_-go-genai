@@ -481,11 +481,6 @@ func toolToMldev(fromObject map[string]any, parentObject map[string]any) (toObje
 		setValueByPath(toObject, []string{"codeExecution"}, fromCodeExecution)
 	}
 
-	fromComputerUse := getValueByPath(fromObject, []string{"computerUse"})
-	if fromComputerUse != nil {
-		setValueByPath(toObject, []string{"computerUse"}, fromComputerUse)
-	}
-
 	return toObject, nil
 }
 
@@ -2025,11 +2020,6 @@ func toolToVertex(fromObject map[string]any, parentObject map[string]any) (toObj
 	fromCodeExecution := getValueByPath(fromObject, []string{"codeExecution"})
 	if fromCodeExecution != nil {
 		setValueByPath(toObject, []string{"codeExecution"}, fromCodeExecution)
-	}
-
-	fromComputerUse := getValueByPath(fromObject, []string{"computerUse"})
-	if fromComputerUse != nil {
-		setValueByPath(toObject, []string{"computerUse"}, fromComputerUse)
 	}
 
 	return toObject, nil

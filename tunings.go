@@ -449,6 +449,11 @@ func tuningJobFromMldev(fromObject map[string]any, parentObject map[string]any) 
 		setValueByPath(toObject, []string{"tunedModel"}, fromTunedModel)
 	}
 
+	fromCustomBaseModel := getValueByPath(fromObject, []string{"customBaseModel"})
+	if fromCustomBaseModel != nil {
+		setValueByPath(toObject, []string{"customBaseModel"}, fromCustomBaseModel)
+	}
+
 	fromDistillationSpec := getValueByPath(fromObject, []string{"distillationSpec"})
 	if fromDistillationSpec != nil {
 		setValueByPath(toObject, []string{"distillationSpec"}, fromDistillationSpec)
@@ -464,9 +469,24 @@ func tuningJobFromMldev(fromObject map[string]any, parentObject map[string]any) 
 		setValueByPath(toObject, []string{"labels"}, fromLabels)
 	}
 
+	fromOutputUri := getValueByPath(fromObject, []string{"outputUri"})
+	if fromOutputUri != nil {
+		setValueByPath(toObject, []string{"outputUri"}, fromOutputUri)
+	}
+
 	fromPipelineJob := getValueByPath(fromObject, []string{"pipelineJob"})
 	if fromPipelineJob != nil {
 		setValueByPath(toObject, []string{"pipelineJob"}, fromPipelineJob)
+	}
+
+	fromPreTunedModel := getValueByPath(fromObject, []string{"preTunedModel"})
+	if fromPreTunedModel != nil {
+		setValueByPath(toObject, []string{"preTunedModel"}, fromPreTunedModel)
+	}
+
+	fromPreferenceOptimizationSpec := getValueByPath(fromObject, []string{"preferenceOptimizationSpec"})
+	if fromPreferenceOptimizationSpec != nil {
+		setValueByPath(toObject, []string{"preferenceOptimizationSpec"}, fromPreferenceOptimizationSpec)
 	}
 
 	fromSatisfiesPzi := getValueByPath(fromObject, []string{"satisfiesPzi"})
@@ -487,6 +507,11 @@ func tuningJobFromMldev(fromObject map[string]any, parentObject map[string]any) 
 	fromTunedModelDisplayName := getValueByPath(fromObject, []string{"tunedModelDisplayName"})
 	if fromTunedModelDisplayName != nil {
 		setValueByPath(toObject, []string{"tunedModelDisplayName"}, fromTunedModelDisplayName)
+	}
+
+	fromVeoTuningSpec := getValueByPath(fromObject, []string{"veoTuningSpec"})
+	if fromVeoTuningSpec != nil {
+		setValueByPath(toObject, []string{"veoTuningSpec"}, fromVeoTuningSpec)
 	}
 
 	return toObject, nil
@@ -689,6 +714,11 @@ func tuningJobFromVertex(fromObject map[string]any, parentObject map[string]any)
 		setValueByPath(toObject, []string{"partnerModelTuningSpec"}, fromPartnerModelTuningSpec)
 	}
 
+	fromCustomBaseModel := getValueByPath(fromObject, []string{"customBaseModel"})
+	if fromCustomBaseModel != nil {
+		setValueByPath(toObject, []string{"customBaseModel"}, fromCustomBaseModel)
+	}
+
 	fromDistillationSpec := getValueByPath(fromObject, []string{"distillationSpec"})
 	if fromDistillationSpec != nil {
 		setValueByPath(toObject, []string{"distillationSpec"}, fromDistillationSpec)
@@ -704,9 +734,24 @@ func tuningJobFromVertex(fromObject map[string]any, parentObject map[string]any)
 		setValueByPath(toObject, []string{"labels"}, fromLabels)
 	}
 
+	fromOutputUri := getValueByPath(fromObject, []string{"outputUri"})
+	if fromOutputUri != nil {
+		setValueByPath(toObject, []string{"outputUri"}, fromOutputUri)
+	}
+
 	fromPipelineJob := getValueByPath(fromObject, []string{"pipelineJob"})
 	if fromPipelineJob != nil {
 		setValueByPath(toObject, []string{"pipelineJob"}, fromPipelineJob)
+	}
+
+	fromPreTunedModel := getValueByPath(fromObject, []string{"preTunedModel"})
+	if fromPreTunedModel != nil {
+		setValueByPath(toObject, []string{"preTunedModel"}, fromPreTunedModel)
+	}
+
+	fromPreferenceOptimizationSpec := getValueByPath(fromObject, []string{"preferenceOptimizationSpec"})
+	if fromPreferenceOptimizationSpec != nil {
+		setValueByPath(toObject, []string{"preferenceOptimizationSpec"}, fromPreferenceOptimizationSpec)
 	}
 
 	fromSatisfiesPzi := getValueByPath(fromObject, []string{"satisfiesPzi"})
@@ -727,6 +772,11 @@ func tuningJobFromVertex(fromObject map[string]any, parentObject map[string]any)
 	fromTunedModelDisplayName := getValueByPath(fromObject, []string{"tunedModelDisplayName"})
 	if fromTunedModelDisplayName != nil {
 		setValueByPath(toObject, []string{"tunedModelDisplayName"}, fromTunedModelDisplayName)
+	}
+
+	fromVeoTuningSpec := getValueByPath(fromObject, []string{"veoTuningSpec"})
+	if fromVeoTuningSpec != nil {
+		setValueByPath(toObject, []string{"veoTuningSpec"}, fromVeoTuningSpec)
 	}
 
 	return toObject, nil

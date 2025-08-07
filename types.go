@@ -172,16 +172,6 @@ const (
 	APISpecElasticSearch APISpec = "ELASTIC_SEARCH"
 )
 
-// The environment being operated.
-type Environment string
-
-const (
-	// Defaults to browser.
-	EnvironmentUnspecified Environment = "ENVIRONMENT_UNSPECIFIED"
-	// Operates in a web browser.
-	EnvironmentBrowser Environment = "ENVIRONMENT_BROWSER"
-)
-
 // Status of the URL retrieval.
 type URLRetrievalStatus string
 
@@ -356,6 +346,18 @@ const (
 	JobStatePartiallySucceeded JobState = "JOB_STATE_PARTIALLY_SUCCEEDED"
 )
 
+// Tuning mode.
+type TuningMode string
+
+const (
+	// Tuning mode is unspecified.
+	TuningModeUnspecified TuningMode = "TUNING_MODE_UNSPECIFIED"
+	// Full fine-tuning mode.
+	TuningModeFull TuningMode = "TUNING_MODE_FULL"
+	// PEFT adapter tuning mode.
+	TuningModePeftAdapter TuningMode = "TUNING_MODE_PEFT_ADAPTER"
+)
+
 // Adapter size for tuning.
 type AdapterSize string
 
@@ -374,6 +376,18 @@ const (
 	AdapterSizeSixteen AdapterSize = "ADAPTER_SIZE_SIXTEEN"
 	// Adapter size 32.
 	AdapterSizeThirtyTwo AdapterSize = "ADAPTER_SIZE_THIRTY_TWO"
+)
+
+// The tuning task. Either I2V or T2V.
+type TuningTask string
+
+const (
+	// Default value. This value is unused.
+	TuningTaskUnspecified TuningTask = "TUNING_TASK_UNSPECIFIED"
+	// Tuning task for image to video.
+	TuningTaskI2v TuningTask = "TUNING_TASK_I2V"
+	// Tuning task for text to video.
+	TuningTaskT2v TuningTask = "TUNING_TASK_T2V"
 )
 
 // Options for feature selection preference.
@@ -1487,12 +1501,6 @@ type Retrieval struct {
 type ToolCodeExecution struct {
 }
 
-// Tool to support computer use.
-type ToolComputerUse struct {
-	// Required. The environment being operated.
-	Environment Environment `json:"environment,omitempty"`
-}
-
 // Tool details of a tool that the model may use to generate a response.
 type Tool struct {
 	// Optional. List of function declarations that the tool supports.
@@ -1517,9 +1525,6 @@ type Tool struct {
 	URLContext *URLContext `json:"urlContext,omitempty"`
 	// Optional. CodeExecution tool type. Enables the model to execute code as part of generation.
 	CodeExecution *ToolCodeExecution `json:"codeExecution,omitempty"`
-	// Optional. Tool to support the model interacting directly with the computer. If enabled,
-	// it automatically populates computer-use specific Function Declarations.
-	ComputerUse *ToolComputerUse `json:"computerUse,omitempty"`
 }
 
 // Function calling config.
@@ -1826,6 +1831,56 @@ type URLContextMetadata struct {
 	URLMetadata []*URLMetadata `json:"urlMetadata,omitempty"`
 }
 
+// Author attribution for a photo or review.
+type GroundingChunkMapsPlaceAnswerSourcesAuthorAttribution struct {
+	// Name of the author of the Photo or Review.
+	DisplayName string `json:"displayName,omitempty"`
+	// Profile photo URI of the author of the Photo or Review.
+	PhotoURI string `json:"photoUri,omitempty"`
+	// URI of the author of the Photo or Review.
+	URI string `json:"uri,omitempty"`
+}
+
+// Encapsulates a review snippet.
+type GroundingChunkMapsPlaceAnswerSourcesReviewSnippet struct {
+	// This review's author.
+	AuthorAttribution *GroundingChunkMapsPlaceAnswerSourcesAuthorAttribution `json:"authorAttribution,omitempty"`
+	// A link where users can flag a problem with the review.
+	FlagContentURI string `json:"flagContentUri,omitempty"`
+	// A link to show the review on Google Maps.
+	GoogleMapsURI string `json:"googleMapsUri,omitempty"`
+	// A string of formatted recent time, expressing the review time relative to the current
+	// time in a form appropriate for the language and country.
+	RelativePublishTimeDescription string `json:"relativePublishTimeDescription,omitempty"`
+	// A reference representing this place review which may be used to look up this place
+	// review again.
+	Review string `json:"review,omitempty"`
+}
+
+// Sources used to generate the place answer.
+type GroundingChunkMapsPlaceAnswerSources struct {
+	// A link where users can flag a problem with the generated answer.
+	FlagContentURI string `json:"flagContentUri,omitempty"`
+	// Snippets of reviews that are used to generate the answer.
+	ReviewSnippets []*GroundingChunkMapsPlaceAnswerSourcesReviewSnippet `json:"reviewSnippets,omitempty"`
+}
+
+// Chunk from Google Maps.
+type GroundingChunkMaps struct {
+	// Sources used to generate the place answer. This includes review snippets and photos
+	// that were used to generate the answer, as well as uris to flag content.
+	PlaceAnswerSources *GroundingChunkMapsPlaceAnswerSources `json:"placeAnswerSources,omitempty"`
+	// This Place's resource name, in `places/{place_id}` format. Can be used to look up
+	// the Place.
+	PlaceID string `json:"placeId,omitempty"`
+	// Text of the chunk.
+	Text string `json:"text,omitempty"`
+	// Title of the chunk.
+	Title string `json:"title,omitempty"`
+	// URI reference of the chunk.
+	URI string `json:"uri,omitempty"`
+}
+
 // Represents where the chunk starts and ends in the document.
 type RAGChunkPageSpan struct {
 	// Page where chunk starts in the document. Inclusive. 1-indexed.
@@ -1867,6 +1922,8 @@ type GroundingChunkWeb struct {
 
 // Grounding chunk.
 type GroundingChunk struct {
+	// Grounding chunk from Google Maps.
+	Maps *GroundingChunkMaps `json:"maps,omitempty"`
 	// Grounding chunk from context retrieved by the retrieval tools.
 	RetrievedContext *GroundingChunkRetrievedContext `json:"retrievedContext,omitempty"`
 	// Grounding chunk from the web.
@@ -1921,6 +1978,10 @@ type SearchEntryPoint struct {
 
 // Metadata returned to client when grounding is enabled.
 type GroundingMetadata struct {
+	// Optional. Output only. Resource name of the Google Maps widget context token to be
+	// used with the PlacesContextElement widget to render contextual data. This is populated
+	// only for Google Maps grounding.
+	GoogleMapsWidgetContextToken string `json:"googleMapsWidgetContextToken,omitempty"`
 	// List of supporting references retrieved from specified grounding source.
 	GroundingChunks []*GroundingChunk `json:"groundingChunks,omitempty"`
 	// Optional. List of grounding support.
@@ -3107,7 +3168,11 @@ type TunedModelCheckpoint struct {
 }
 
 type TunedModel struct {
-	// Output only. The resource name of the TunedModel. Format: `projects/{project}/locations/{location}/models/{model}`.
+	// Output only. The resource name of the TunedModel. Format: `projects/{project}/locations/{location}/models/{model}@{version_id}`
+	// When tuning from a base model, the version_id will be 1. For continuous tuning, the
+	// version ID will be incremented by 1 from the last version ID in the parent model.
+	// E.g., `projects/{project}/locations/{location}/models/{model}@{last_version_id +
+	// 1}`
 	Model string `json:"model,omitempty"`
 	// Output only. A resource name of an Endpoint. Format: `projects/{project}/locations/{location}/endpoints/{endpoint}`.
 	Endpoint string `json:"endpoint,omitempty"`
@@ -3138,11 +3203,16 @@ type GoogleRpcStatus struct {
 type SupervisedHyperParameters struct {
 	// Optional. Adapter size for tuning.
 	AdapterSize AdapterSize `json:"adapterSize,omitempty"`
+	// Optional. Batch size for tuning. This feature is only available for open source models.
+	BatchSize int64 `json:"batchSize,omitempty,string"`
 	// Optional. Number of complete passes the model makes over the entire training dataset
 	// during training.
 	EpochCount int64 `json:"epochCount,omitempty,string"`
+	// Optional. Learning rate for tuning. Mutually exclusive with `learning_rate_multiplier`.
+	// This feature is only available for open source models.
+	LearningRate float64 `json:"learningRate,omitempty"`
 	// Optional. Multiplier for adjusting the default learning rate. Mutually exclusive
-	// with `learning_rate`.
+	// with `learning_rate`. This feature is only available for 1P models.
 	LearningRateMultiplier float64 `json:"learningRateMultiplier,omitempty"`
 }
 
@@ -3158,6 +3228,8 @@ type SupervisedTuningSpec struct {
 	// a Cloud Storage path to a JSONL file or as the resource name of a Vertex Multimodal
 	// Dataset.
 	TrainingDatasetURI string `json:"trainingDatasetUri,omitempty"`
+	// Tuning mode.
+	TuningMode TuningMode `json:"tuningMode,omitempty"`
 	// Optional. Validation dataset used for tuning. The dataset can be specified as either
 	// a Cloud Storage path to a JSONL file or as the resource name of a Vertex Multimodal
 	// Dataset.
@@ -3219,6 +3291,42 @@ type DatasetStats struct {
 type DistillationDataStats struct {
 	// Output only. Statistics computed for the training dataset.
 	TrainingDatasetStats *DatasetStats `json:"trainingDatasetStats,omitempty"`
+}
+
+// Completion and its preference score.
+type GeminiPreferenceExampleCompletion struct {
+	// Single turn completion for the given prompt.
+	Completion *Content `json:"completion,omitempty"`
+	// The score for the given completion.
+	Score float32 `json:"score,omitempty"`
+}
+
+// Input example for preference optimization.
+type GeminiPreferenceExample struct {
+	// List of completions for a given prompt.
+	Completions []*GeminiPreferenceExampleCompletion `json:"completions,omitempty"`
+	// Multi-turn contents that represents the Prompt.
+	Contents []*Content `json:"contents,omitempty"`
+}
+
+// Statistics computed for datasets used for preference optimization.
+type PreferenceOptimizationDataStats struct {
+	// Output only. Dataset distributions for scores variance per example.
+	ScoreVariancePerExampleDistribution *DatasetDistribution `json:"scoreVariancePerExampleDistribution,omitempty"`
+	// Output only. Dataset distributions for scores.
+	ScoresDistribution *DatasetDistribution `json:"scoresDistribution,omitempty"`
+	// Output only. Number of billable tokens in the tuning dataset.
+	TotalBillableTokenCount int64 `json:"totalBillableTokenCount,omitempty,string"`
+	// Output only. Number of examples in the tuning dataset.
+	TuningDatasetExampleCount int64 `json:"tuningDatasetExampleCount,omitempty,string"`
+	// Output only. Number of tuning steps for this Tuning Job.
+	TuningStepCount int64 `json:"tuningStepCount,omitempty,string"`
+	// Output only. Sample user examples in the training dataset.
+	UserDatasetExamples []*GeminiPreferenceExample `json:"userDatasetExamples,omitempty"`
+	// Output only. Dataset distributions for the user input tokens.
+	UserInputTokenDistribution *DatasetDistribution `json:"userInputTokenDistribution,omitempty"`
+	// Output only. Dataset distributions for the user output tokens.
+	UserOutputTokenDistribution *DatasetDistribution `json:"userOutputTokenDistribution,omitempty"`
 }
 
 // Dataset bucket used to create a histogram for the distribution given a population
@@ -3325,6 +3433,8 @@ func (s *SupervisedTuningDataStats) MarshalJSON() ([]byte, error) {
 type TuningDataStats struct {
 	// Output only. Statistics for distillation.
 	DistillationDataStats *DistillationDataStats `json:"distillationDataStats,omitempty"`
+	// Output only. Statistics for preference optimization.
+	PreferenceOptimizationDataStats *PreferenceOptimizationDataStats `json:"preferenceOptimizationDataStats,omitempty"`
 	// The SFT Tuning data stats.
 	SupervisedTuningDataStats *SupervisedTuningDataStats `json:"supervisedTuningDataStats,omitempty"`
 }
@@ -3385,6 +3495,70 @@ type DistillationSpec struct {
 	ValidationDatasetURI string `json:"validationDatasetUri,omitempty"`
 }
 
+// A pre-tuned model for continuous tuning.
+type PreTunedModel struct {
+	// Output only. The name of the base model this PreTunedModel was tuned from.
+	BaseModel string `json:"baseModel,omitempty"`
+	// Optional. The source checkpoint id. If not specified, the default checkpoint will
+	// be used.
+	CheckpointID string `json:"checkpointId,omitempty"`
+	// The resource name of the Model. E.g., a model resource name with a specified version
+	// ID or alias: `projects/{project}/locations/{location}/models/{model}@{version_id}`
+	// `projects/{project}/locations/{location}/models/{model}@{alias}` Or, omit the version
+	// ID to use the default version: `projects/{project}/locations/{location}/models/{model}`
+	TunedModelName string `json:"tunedModelName,omitempty"`
+}
+
+// Hyperparameters for Preference Optimization.
+type PreferenceOptimizationHyperParameters struct {
+	// Optional. Adapter size for preference optimization.
+	AdapterSize AdapterSize `json:"adapterSize,omitempty"`
+	// Optional. Weight for KL Divergence regularization.
+	Beta float64 `json:"beta,omitempty"`
+	// Optional. Number of complete passes the model makes over the entire training dataset
+	// during training.
+	EpochCount int64 `json:"epochCount,omitempty,string"`
+	// Optional. Multiplier for adjusting the default learning rate.
+	LearningRateMultiplier float64 `json:"learningRateMultiplier,omitempty"`
+}
+
+// Tuning Spec for Preference Optimization.
+type PreferenceOptimizationSpec struct {
+	// Optional. Hyperparameters for Preference Optimization.
+	HyperParameters *PreferenceOptimizationHyperParameters `json:"hyperParameters,omitempty"`
+	// Required. Cloud Storage path to file containing training dataset for preference optimization
+	// tuning. The dataset must be formatted as a JSONL file.
+	TrainingDatasetURI string `json:"trainingDatasetUri,omitempty"`
+	// Optional. Cloud Storage path to file containing validation dataset for preference
+	// optimization tuning. The dataset must be formatted as a JSONL file.
+	ValidationDatasetURI string `json:"validationDatasetUri,omitempty"`
+}
+
+// Hyperparameters for Veo.
+type VeoHyperParameters struct {
+	// Optional. Number of complete passes the model makes over the entire training dataset
+	// during training.
+	EpochCount int64 `json:"epochCount,omitempty,string"`
+	// Optional. Multiplier for adjusting the default learning rate.
+	LearningRateMultiplier float64 `json:"learningRateMultiplier,omitempty"`
+	// Optional. The tuning task. Either I2V or T2V.
+	TuningTask TuningTask `json:"tuningTask,omitempty"`
+}
+
+// Tuning Spec for Veo Model Tuning.
+type VeoTuningSpec struct {
+	// Optional. Hyperparameters for Veo.
+	HyperParameters *VeoHyperParameters `json:"hyperParameters,omitempty"`
+	// Required. Training dataset used for tuning. The dataset can be specified as either
+	// a Cloud Storage path to a JSONL file or as the resource name of a Vertex Multimodal
+	// Dataset.
+	TrainingDatasetURI string `json:"trainingDatasetUri,omitempty"`
+	// Optional. Validation dataset used for tuning. The dataset can be specified as either
+	// a Cloud Storage path to a JSONL file or as the resource name of a Vertex Multimodal
+	// Dataset.
+	ValidationDatasetURI string `json:"validationDatasetUri,omitempty"`
+}
+
 // A tuning job.
 type TuningJob struct {
 	// Optional. Used to retain the full HTTP response.
@@ -3421,6 +3595,13 @@ type TuningJob struct {
 	EncryptionSpec *EncryptionSpec `json:"encryptionSpec,omitempty"`
 	// Tuning Spec for open sourced and third party Partner models.
 	PartnerModelTuningSpec *PartnerModelTuningSpec `json:"partnerModelTuningSpec,omitempty"`
+	// Optional. The user-provided path to custom model weights. Set this field to tune
+	// a custom model. The path must be a Cloud Storage directory that contains the model
+	// weights in .safetensors format along with associated model metadata files. If this
+	// field is set, the base_model field must still be set to indicate which base model
+	// the custom model is derived from. This feature is only available for open source
+	// models.
+	CustomBaseModel string `json:"customBaseModel,omitempty"`
 	// Tuning Spec for Distillation.
 	DistillationSpec *DistillationSpec `json:"distillationSpec,omitempty"`
 	// Output only. The Experiment associated with this TuningJob.
@@ -3431,9 +3612,16 @@ type TuningJob struct {
 	// underscores and dashes. International characters are allowed. See https://goo.gl/xmQnxf
 	// for more information and examples of labels.
 	Labels map[string]string `json:"labels,omitempty"`
+	// Optional. Cloud Storage path to the directory where tuning job outputs are written
+	// to. This field is only available and required for open source models.
+	OutputURI string `json:"outputUri,omitempty"`
 	// Output only. The resource name of the PipelineJob associated with the TuningJob.
 	// Format: `projects/{project}/locations/{location}/pipelineJobs/{pipeline_job}`.
 	PipelineJob string `json:"pipelineJob,omitempty"`
+	// The pre-tuned model for continuous tuning.
+	PreTunedModel *PreTunedModel `json:"preTunedModel,omitempty"`
+	// Tuning Spec for Preference Optimization.
+	PreferenceOptimizationSpec *PreferenceOptimizationSpec `json:"preferenceOptimizationSpec,omitempty"`
 	// Output only. Reserved for future use.
 	SatisfiesPzi bool `json:"satisfiesPzi,omitempty"`
 	// Output only. Reserved for future use.
@@ -3446,6 +3634,8 @@ type TuningJob struct {
 	// Optional. The display name of the TunedModel. The name can be up to 128 characters
 	// long and can consist of any UTF-8 characters.
 	TunedModelDisplayName string `json:"tunedModelDisplayName,omitempty"`
+	// Tuning Spec for Veo Tuning.
+	VeoTuningSpec *VeoTuningSpec `json:"veoTuningSpec,omitempty"`
 }
 
 func (t *TuningJob) UnmarshalJSON(data []byte) error {
