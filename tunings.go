@@ -165,7 +165,7 @@ func createTuningJobConfigToMldev(fromObject map[string]any, parentObject map[st
 	return toObject, nil
 }
 
-func createTuningJobParametersToMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+func createTuningJobParametersPrivateToMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
 	fromBaseModel := getValueByPath(fromObject, []string{"baseModel"})
@@ -339,7 +339,7 @@ func createTuningJobConfigToVertex(fromObject map[string]any, parentObject map[s
 	return toObject, nil
 }
 
-func createTuningJobParametersToVertex(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+func createTuningJobParametersPrivateToVertex(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
 	fromBaseModel := getValueByPath(fromObject, []string{"baseModel"})
@@ -477,11 +477,6 @@ func tuningJobFromMldev(fromObject map[string]any, parentObject map[string]any) 
 	fromPipelineJob := getValueByPath(fromObject, []string{"pipelineJob"})
 	if fromPipelineJob != nil {
 		setValueByPath(toObject, []string{"pipelineJob"}, fromPipelineJob)
-	}
-
-	fromPreTunedModel := getValueByPath(fromObject, []string{"preTunedModel"})
-	if fromPreTunedModel != nil {
-		setValueByPath(toObject, []string{"preTunedModel"}, fromPreTunedModel)
 	}
 
 	fromPreferenceOptimizationSpec := getValueByPath(fromObject, []string{"preferenceOptimizationSpec"})
@@ -694,6 +689,11 @@ func tuningJobFromVertex(fromObject map[string]any, parentObject map[string]any)
 		setValueByPath(toObject, []string{"tunedModel"}, fromTunedModel)
 	}
 
+	fromPreTunedModel := getValueByPath(fromObject, []string{"preTunedModel"})
+	if fromPreTunedModel != nil {
+		setValueByPath(toObject, []string{"preTunedModel"}, fromPreTunedModel)
+	}
+
 	fromSupervisedTuningSpec := getValueByPath(fromObject, []string{"supervisedTuningSpec"})
 	if fromSupervisedTuningSpec != nil {
 		setValueByPath(toObject, []string{"supervisedTuningSpec"}, fromSupervisedTuningSpec)
@@ -742,11 +742,6 @@ func tuningJobFromVertex(fromObject map[string]any, parentObject map[string]any)
 	fromPipelineJob := getValueByPath(fromObject, []string{"pipelineJob"})
 	if fromPipelineJob != nil {
 		setValueByPath(toObject, []string{"pipelineJob"}, fromPipelineJob)
-	}
-
-	fromPreTunedModel := getValueByPath(fromObject, []string{"preTunedModel"})
-	if fromPreTunedModel != nil {
-		setValueByPath(toObject, []string{"preTunedModel"}, fromPreTunedModel)
 	}
 
 	fromPreferenceOptimizationSpec := getValueByPath(fromObject, []string{"preferenceOptimizationSpec"})
@@ -978,7 +973,7 @@ func (m Tunings) tune(ctx context.Context, baseModel string, trainingDataset *Tu
 	var fromConverter func(map[string]any, map[string]any) (map[string]any, error)
 	var toConverter func(map[string]any, map[string]any) (map[string]any, error)
 	if m.apiClient.clientConfig.Backend == BackendVertexAI {
-		toConverter = createTuningJobParametersToVertex
+		toConverter = createTuningJobParametersPrivateToVertex
 		fromConverter = tuningJobFromVertex
 	} else {
 
@@ -1056,7 +1051,7 @@ func (m Tunings) tuneMldev(ctx context.Context, baseModel string, trainingDatase
 		return nil, fmt.Errorf("method TuneMldev is only supported in the Gemini Developer client. You can choose to use Gemini Developer client by setting ClientConfig.Backend to BackendGeminiAPI.")
 
 	} else {
-		toConverter = createTuningJobParametersToMldev
+		toConverter = createTuningJobParametersPrivateToMldev
 		fromConverter = tuningOperationFromMldev
 	}
 

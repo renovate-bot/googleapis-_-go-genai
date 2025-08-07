@@ -3199,6 +3199,20 @@ type GoogleRpcStatus struct {
 	Message string `json:"message,omitempty"`
 }
 
+// A pre-tuned model for continuous tuning.
+type PreTunedModel struct {
+	// Output only. The name of the base model this PreTunedModel was tuned from.
+	BaseModel string `json:"baseModel,omitempty"`
+	// Optional. The source checkpoint id. If not specified, the default checkpoint will
+	// be used.
+	CheckpointID string `json:"checkpointId,omitempty"`
+	// The resource name of the Model. E.g., a model resource name with a specified version
+	// ID or alias: `projects/{project}/locations/{location}/models/{model}@{version_id}`
+	// `projects/{project}/locations/{location}/models/{model}@{alias}` Or, omit the version
+	// ID to use the default version: `projects/{project}/locations/{location}/models/{model}`
+	TunedModelName string `json:"tunedModelName,omitempty"`
+}
+
 // Hyperparameters for SFT.
 type SupervisedHyperParameters struct {
 	// Optional. Adapter size for tuning.
@@ -3495,20 +3509,6 @@ type DistillationSpec struct {
 	ValidationDatasetURI string `json:"validationDatasetUri,omitempty"`
 }
 
-// A pre-tuned model for continuous tuning.
-type PreTunedModel struct {
-	// Output only. The name of the base model this PreTunedModel was tuned from.
-	BaseModel string `json:"baseModel,omitempty"`
-	// Optional. The source checkpoint id. If not specified, the default checkpoint will
-	// be used.
-	CheckpointID string `json:"checkpointId,omitempty"`
-	// The resource name of the Model. E.g., a model resource name with a specified version
-	// ID or alias: `projects/{project}/locations/{location}/models/{model}@{version_id}`
-	// `projects/{project}/locations/{location}/models/{model}@{alias}` Or, omit the version
-	// ID to use the default version: `projects/{project}/locations/{location}/models/{model}`
-	TunedModelName string `json:"tunedModelName,omitempty"`
-}
-
 // Hyperparameters for Preference Optimization.
 type PreferenceOptimizationHyperParameters struct {
 	// Optional. Adapter size for preference optimization.
@@ -3585,6 +3585,8 @@ type TuningJob struct {
 	BaseModel string `json:"baseModel,omitempty"`
 	// Output only. The tuned model resources associated with this TuningJob.
 	TunedModel *TunedModel `json:"tunedModel,omitempty"`
+	// The pre-tuned model for continuous tuning.
+	PreTunedModel *PreTunedModel `json:"preTunedModel,omitempty"`
 	// Tuning Spec for Supervised Fine Tuning.
 	SupervisedTuningSpec *SupervisedTuningSpec `json:"supervisedTuningSpec,omitempty"`
 	// Output only. The tuning data statistics associated with this TuningJob.
@@ -3618,8 +3620,6 @@ type TuningJob struct {
 	// Output only. The resource name of the PipelineJob associated with the TuningJob.
 	// Format: `projects/{project}/locations/{location}/pipelineJobs/{pipeline_job}`.
 	PipelineJob string `json:"pipelineJob,omitempty"`
-	// The pre-tuned model for continuous tuning.
-	PreTunedModel *PreTunedModel `json:"preTunedModel,omitempty"`
 	// Tuning Spec for Preference Optimization.
 	PreferenceOptimizationSpec *PreferenceOptimizationSpec `json:"preferenceOptimizationSpec,omitempty"`
 	// Output only. Reserved for future use.
@@ -5093,6 +5093,18 @@ type LiveClientRealtimeInput struct {
 	ActivityEnd *ActivityEnd `json:"activityEnd,omitempty"`
 }
 
+// Client generated response to a `ToolCall` received from the server.
+// Individual `FunctionResponse` objects are matched to the respective
+// `FunctionCall` objects by the `id` field.
+// Note that in the unary and server-streaming GenerateContent APIs function
+// calling happens by exchanging the `Content` parts, while in the bidi
+// GenerateContent APIs function calling happens over this dedicated set of
+// messages.
+type LiveClientToolResponse struct {
+	// Optional. The response to the function calls.
+	FunctionResponses []*FunctionResponse `json:"functionResponses,omitempty"`
+}
+
 // Parameters for sending realtime input to the live API.
 type LiveSendRealtimeInputParameters struct {
 	// Optional. Realtime input to send to the session.
@@ -5114,18 +5126,6 @@ type LiveSendRealtimeInputParameters struct {
 	ActivityStart *ActivityStart `json:"activityStart,omitempty"`
 	// Optional. Marks the end of user activity.
 	ActivityEnd *ActivityEnd `json:"activityEnd,omitempty"`
-}
-
-// Client generated response to a `ToolCall` received from the server.
-// Individual `FunctionResponse` objects are matched to the respective
-// `FunctionCall` objects by the `id` field.
-// Note that in the unary and server-streaming GenerateContent APIs function
-// calling happens by exchanging the `Content` parts, while in the bidi
-// GenerateContent APIs function calling happens over this dedicated set of
-// messages.
-type LiveClientToolResponse struct {
-	// Optional. The response to the function calls.
-	FunctionResponses []*FunctionResponse `json:"functionResponses,omitempty"`
 }
 
 // Messages sent by the client in the API call.
@@ -5234,85 +5234,4 @@ func (p LiveSendToolResponseParameters) toLiveClientMessage() *LiveClientMessage
 	return &LiveClientMessage{
 		ToolResponse: &LiveClientToolResponse{FunctionResponses: p.FunctionResponses},
 	}
-}
-
-// Config for LiveConnectConstraints for Auth Token creation.
-type LiveConnectConstraints struct {
-	// Optional. ID of the model to configure in the ephemeral token for Live API.
-	// For a list of models, see `Gemini models
-	// <https://ai.google.dev/gemini-api/docs/models>`.
-	Model string `json:"model,omitempty"`
-	// Optional. Configuration specific to Live API connections created using this token.
-	Config *LiveConnectConfig `json:"config,omitempty"`
-}
-
-// Optional parameters.
-type CreateAuthTokenConfig struct {
-	// Optional. Used to override HTTP request options.
-	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
-	// Optional. An optional time after which, when using the resulting token,
-	// messages in Live API sessions will be rejected. (Gemini may
-	// preemptively close the session after this time.)
-	// If not set then this defaults to 30 minutes in the future. If set, this
-	// value must be less than 20 hours in the future.
-	ExpireTime time.Time `json:"expireTime,omitempty"`
-	// Optional. The time after which new Live API sessions using the token
-	// resulting from this request will be rejected.
-	// If not set this defaults to 60 seconds in the future. If set, this value
-	// must be less than 20 hours in the future.
-	NewSessionExpireTime time.Time `json:"newSessionExpireTime,omitempty"`
-	// Optional. The number of times the token can be used. If this value is zero
-	// then no limit is applied. Default is 1. Resuming a Live API session does
-	// not count as a use.
-	Uses int32 `json:"uses,omitempty"`
-	// Optional. Configuration specific to Live API connections created using this token.
-	LiveConnectConstraints *LiveConnectConstraints `json:"liveConnectConstraints,omitempty"`
-	// Optional. Additional fields to lock in the effective LiveConnectParameters.
-	LockAdditionalFields []string `json:"lockAdditionalFields,omitempty"`
-}
-
-func (c *CreateAuthTokenConfig) UnmarshalJSON(data []byte) error {
-	type Alias CreateAuthTokenConfig
-	aux := &struct {
-		ExpireTime           *time.Time `json:"expireTime,omitempty"`
-		NewSessionExpireTime *time.Time `json:"newSessionExpireTime,omitempty"`
-		*Alias
-	}{
-		Alias: (*Alias)(c),
-	}
-
-	if err := json.Unmarshal(data, &aux); err != nil {
-		return err
-	}
-
-	if !reflect.ValueOf(aux.ExpireTime).IsZero() {
-		c.ExpireTime = time.Time(*aux.ExpireTime)
-	}
-
-	if !reflect.ValueOf(aux.NewSessionExpireTime).IsZero() {
-		c.NewSessionExpireTime = time.Time(*aux.NewSessionExpireTime)
-	}
-
-	return nil
-}
-
-func (c *CreateAuthTokenConfig) MarshalJSON() ([]byte, error) {
-	type Alias CreateAuthTokenConfig
-	aux := &struct {
-		ExpireTime           *time.Time `json:"expireTime,omitempty"`
-		NewSessionExpireTime *time.Time `json:"newSessionExpireTime,omitempty"`
-		*Alias
-	}{
-		Alias: (*Alias)(c),
-	}
-
-	if !reflect.ValueOf(c.ExpireTime).IsZero() {
-		aux.ExpireTime = (*time.Time)(&c.ExpireTime)
-	}
-
-	if !reflect.ValueOf(c.NewSessionExpireTime).IsZero() {
-		aux.NewSessionExpireTime = (*time.Time)(&c.NewSessionExpireTime)
-	}
-
-	return json.Marshal(aux)
 }
