@@ -425,6 +425,16 @@ const (
 	DynamicRetrievalConfigModeDynamic DynamicRetrievalConfigMode = "MODE_DYNAMIC"
 )
 
+// The environment being operated.
+type Environment string
+
+const (
+	// Defaults to browser.
+	EnvironmentUnspecified Environment = "ENVIRONMENT_UNSPECIFIED"
+	// Operates in a web browser.
+	EnvironmentBrowser Environment = "ENVIRONMENT_BROWSER"
+)
+
 // Config for the function calling config mode.
 type FunctionCallingConfigMode string
 
@@ -1324,6 +1334,12 @@ type GoogleMaps struct {
 type URLContext struct {
 }
 
+// Tool to support computer use.
+type ToolComputerUse struct {
+	// Optional. Required. The environment being operated.
+	Environment Environment `json:"environment,omitempty"`
+}
+
 // The API secret.
 type APIAuthAPIKeyConfig struct {
 	// Required. The SecretManager secret version resource name storing API key. e.g. projects/{project}/secrets/{secret}/versions/{version}
@@ -1523,6 +1539,10 @@ type Tool struct {
 	GoogleMaps *GoogleMaps `json:"googleMaps,omitempty"`
 	// Optional. Tool to support URL context retrieval.
 	URLContext *URLContext `json:"urlContext,omitempty"`
+	// Optional. Tool to support the model interacting directly with the
+	// computer. If enabled, it automatically populates computer-use specific
+	// Function Declarations.
+	ComputerUse *ToolComputerUse `json:"computerUse,omitempty"`
 	// Optional. CodeExecution tool type. Enables the model to execute code as part of generation.
 	CodeExecution *ToolCodeExecution `json:"codeExecution,omitempty"`
 }
