@@ -1919,6 +1919,8 @@ type RAGChunk struct {
 
 // Chunk from context retrieved by the retrieval tools.
 type GroundingChunkRetrievedContext struct {
+	// Output only. The full document name for the referenced Vertex AI Search document.
+	DocumentName string `json:"documentName,omitempty"`
 	// Additional context for the RAG retrieval result. This is only populated when using
 	// the RAG retrieval tool.
 	RAGChunk *RAGChunk `json:"ragChunk,omitempty"`
