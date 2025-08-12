@@ -3799,6 +3799,9 @@ type CreateTuningJobConfig struct {
 	// Optional. If set to true, disable intermediate checkpoints for SFT and only the last
 	// checkpoint will be exported. Otherwise, enable intermediate checkpoints for SFT.
 	ExportLastCheckpointOnly *bool `json:"exportLastCheckpointOnly,omitempty"`
+	// Optional. The optional checkpoint ID of the pre-tuned model to use for tuning, if
+	// applicable.
+	PreTunedModelCheckpointID string `json:"preTunedModelCheckpointId,omitempty"`
 	// Optional. Adapter size for tuning.
 	AdapterSize AdapterSize `json:"adapterSize,omitempty"`
 	// Optional. The batch size hyperparameter for tuning. If not set, a default of 4 or
