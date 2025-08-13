@@ -1235,6 +1235,9 @@ type GoogleSearch struct {
 	// Optional. Filter search results to a specific time range.
 	// If customers set a start time, they must set an end time (and vice versa).
 	TimeRangeFilter *Interval `json:"timeRangeFilter,omitempty"`
+	// Optional. List of domains to be excluded from the search results.
+	// The default limit is 2000 domains.
+	ExcludeDomains []string `json:"excludeDomains,omitempty"`
 }
 
 // Describes the options to customize dynamic retrieval.
@@ -1254,6 +1257,9 @@ type GoogleSearchRetrieval struct {
 
 // Tool to search public web data, powered by Vertex AI Search and Sec4 compliance.
 type EnterpriseWebSearch struct {
+	// Optional. List of domains to be excluded from the search results. The default limit
+	// is 2000 domains.
+	ExcludeDomains []string `json:"excludeDomains,omitempty"`
 }
 
 // Config for authentication with API key.

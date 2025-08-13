@@ -380,6 +380,10 @@ func googleSearchToMldev(fromObject map[string]any, parentObject map[string]any)
 		setValueByPath(toObject, []string{"timeRangeFilter"}, fromTimeRangeFilter)
 	}
 
+	if getValueByPath(fromObject, []string{"excludeDomains"}) != nil {
+		return nil, fmt.Errorf("excludeDomains parameter is not supported in Gemini API")
+	}
+
 	return toObject, nil
 }
 
@@ -1855,6 +1859,11 @@ func googleSearchToVertex(fromObject map[string]any, parentObject map[string]any
 		setValueByPath(toObject, []string{"timeRangeFilter"}, fromTimeRangeFilter)
 	}
 
+	fromExcludeDomains := getValueByPath(fromObject, []string{"excludeDomains"})
+	if fromExcludeDomains != nil {
+		setValueByPath(toObject, []string{"excludeDomains"}, fromExcludeDomains)
+	}
+
 	return toObject, nil
 }
 
@@ -1892,6 +1901,11 @@ func googleSearchRetrievalToVertex(fromObject map[string]any, parentObject map[s
 
 func enterpriseWebSearchToVertex(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
+
+	fromExcludeDomains := getValueByPath(fromObject, []string{"excludeDomains"})
+	if fromExcludeDomains != nil {
+		setValueByPath(toObject, []string{"excludeDomains"}, fromExcludeDomains)
+	}
 
 	return toObject, nil
 }
