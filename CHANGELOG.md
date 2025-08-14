@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.20.0](https://github.com/googleapis/go-genai/compare/v1.19.0...v1.20.0) (2025-08-13)
+
+
+### Features
+
+* enable continuous fine-tuning on a pre-tuned model in the SDK. ([1f20493](https://github.com/googleapis/go-genai/commit/1f204939b8d68d8f5c9d739ade69716a03be28f1))
+* support document name in grounding metadata ([f673e20](https://github.com/googleapis/go-genai/commit/f673e200ce5663de3f62b832a4bafc756494da75))
+* Support exclude_domains in Google Search and Enterprise Web Search ([2547ad1](https://github.com/googleapis/go-genai/commit/2547ad1a4f07ac1111b14a6352a64bc4d7bea5a5))
+
 ## [1.19.0](https://github.com/googleapis/go-genai/compare/v1.18.0...v1.19.0) (2025-08-06)
 
 
