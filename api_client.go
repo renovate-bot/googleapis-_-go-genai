@@ -509,6 +509,7 @@ func httpStatusOk(resp *http.Response) bool {
 
 func deserializeStreamResponse[T responseStream[R], R any](resp *http.Response, output *responseStream[R]) error {
 	if !httpStatusOk(resp) {
+		defer resp.Body.Close()
 		return newAPIError(resp)
 	}
 	output.r = bufio.NewScanner(resp.Body)
