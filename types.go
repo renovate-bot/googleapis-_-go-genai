@@ -3069,9 +3069,9 @@ type ComputeTokensConfig struct {
 type TokensInfo struct {
 	// Optional. Optional fields for the role from the corresponding Content.
 	Role string `json:"role,omitempty"`
-	// A list of token IDs from the input.
+	// Optional. A list of token IDs from the input.
 	TokenIDs []int64 `json:"tokenIds,omitempty"`
-	// A list of tokens from the input.
+	// Optional. A list of tokens from the input.
 	Tokens [][]byte `json:"tokens,omitempty"`
 }
 
