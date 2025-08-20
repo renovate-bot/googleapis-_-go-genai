@@ -6460,7 +6460,7 @@ func (m Models) ComputeTokens(ctx context.Context, model string, contents []*Con
 }
 
 // GenerateVideos creates a long-running video generation operation.
-func (m Models) generateVideos(ctx context.Context, model string, prompt string, image *Image, video *Video, source *GenerateVideosSource, config *GenerateVideosConfig) (*GenerateVideosOperation, error) {
+func (m Models) generateVideos(ctx context.Context, model string, prompt *string, image *Image, video *Video, source *GenerateVideosSource, config *GenerateVideosConfig) (*GenerateVideosOperation, error) {
 	parameterMap := make(map[string]any)
 
 	kwargs := map[string]any{"model": model, "prompt": prompt, "image": image, "video": video, "source": source, "config": config}
@@ -6673,7 +6673,7 @@ func (m Models) EditImage(ctx context.Context, model, prompt string, referenceIm
 // This method is kept for backward compatibility. Use GenerateVideosFromSource instead.
 func (m Models) GenerateVideos(ctx context.Context, model string, prompt string, image *Image, config *GenerateVideosConfig) (*GenerateVideosOperation, error) {
 	// Does not support Video or GenerateVideosSource.
-	return m.generateVideos(ctx, model, prompt, image, nil, nil, config)
+	return m.generateVideos(ctx, model, &prompt, image, nil, nil, config)
 }
 
 // GenerateVideos creates a long-running video generation operation.
@@ -6682,5 +6682,5 @@ func (m Models) GenerateVideosFromSource(ctx context.Context, model string, sour
 		return nil, fmt.Errorf("source is required")
 	}
 	// Rely on backend validation for combinations of prompt, image, and video.
-	return m.generateVideos(ctx, model, "", nil, nil, source, config)
+	return m.generateVideos(ctx, model, nil, nil, nil, source, config)
 }

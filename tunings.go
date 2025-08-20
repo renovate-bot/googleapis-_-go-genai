@@ -357,7 +357,7 @@ func createTuningJobParametersPrivateToVertex(fromObject map[string]any, parentO
 	toObject = make(map[string]any)
 
 	fromBaseModel := getValueByPath(fromObject, []string{"baseModel"})
-	if fromBaseModel != nil && fromBaseModel != "" {
+	if fromBaseModel != nil {
 		setValueByPath(toObject, []string{"baseModel"}, fromBaseModel)
 	}
 
@@ -922,7 +922,7 @@ func (m Tunings) list(ctx context.Context, config *ListTuningJobsConfig) (*ListT
 	return response, nil
 }
 
-func (m Tunings) tune(ctx context.Context, baseModel string, preTunedModel *PreTunedModel, trainingDataset *TuningDataset, config *CreateTuningJobConfig) (*TuningJob, error) {
+func (m Tunings) tune(ctx context.Context, baseModel *string, preTunedModel *PreTunedModel, trainingDataset *TuningDataset, config *CreateTuningJobConfig) (*TuningJob, error) {
 	parameterMap := make(map[string]any)
 
 	kwargs := map[string]any{"baseModel": baseModel, "preTunedModel": preTunedModel, "trainingDataset": trainingDataset, "config": config}
@@ -996,7 +996,7 @@ func (m Tunings) tune(ctx context.Context, baseModel string, preTunedModel *PreT
 	return response, nil
 }
 
-func (m Tunings) tuneMldev(ctx context.Context, baseModel string, preTunedModel *PreTunedModel, trainingDataset *TuningDataset, config *CreateTuningJobConfig) (*TuningOperation, error) {
+func (m Tunings) tuneMldev(ctx context.Context, baseModel *string, preTunedModel *PreTunedModel, trainingDataset *TuningDataset, config *CreateTuningJobConfig) (*TuningOperation, error) {
 	parameterMap := make(map[string]any)
 
 	kwargs := map[string]any{"baseModel": baseModel, "preTunedModel": preTunedModel, "trainingDataset": trainingDataset, "config": config}
@@ -1080,15 +1080,12 @@ func (t Tunings) Tune(ctx context.Context, baseModel string, trainingDataset *Tu
 	if t.apiClient.clientConfig.Backend == BackendVertexAI {
 		if strings.HasPrefix(baseModel, "projects/") {
 			preTunedModel := &PreTunedModel{TunedModelName: baseModel}
-
-			// We use "" instead of nil, because Go doesn't accept nil for a string.
-			// The converter treats "" the same as nil for this parameter.
-			return t.tune(ctx, "", preTunedModel, trainingDataset, config)
+			return t.tune(ctx, nil, preTunedModel, trainingDataset, config)
 		} else {
-			return t.tune(ctx, baseModel, nil, trainingDataset, config)
+			return t.tune(ctx, &baseModel, nil, trainingDataset, config)
 		}
 	} else {
-		operation, err := t.tuneMldev(ctx, baseModel, nil, trainingDataset, config)
+		operation, err := t.tuneMldev(ctx, &baseModel, nil, trainingDataset, config)
 		if err != nil {
 			return nil, err
 		}
