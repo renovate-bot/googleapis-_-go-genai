@@ -2954,6 +2954,11 @@ func editImageParametersToVertex(ac *apiClient, fromObject map[string]any, paren
 func upscaleImageAPIConfigToVertex(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
+	fromOutputGcsUri := getValueByPath(fromObject, []string{"outputGcsUri"})
+	if fromOutputGcsUri != nil {
+		setValueByPath(parentObject, []string{"parameters", "storageUri"}, fromOutputGcsUri)
+	}
+
 	fromIncludeRaiReason := getValueByPath(fromObject, []string{"includeRaiReason"})
 	if fromIncludeRaiReason != nil {
 		setValueByPath(parentObject, []string{"parameters", "includeRaiReason"}, fromIncludeRaiReason)
@@ -6650,6 +6655,7 @@ func (m Models) UpscaleImage(ctx context.Context, model string, image *Image, up
 	apiConfig := &upscaleImageAPIConfig{Mode: "upscale", NumberOfImages: 1}
 
 	if config != nil {
+		apiConfig.OutputGCSURI = config.OutputGCSURI
 		apiConfig.OutputMIMEType = config.OutputMIMEType
 		apiConfig.OutputCompressionQuality = config.OutputCompressionQuality
 		apiConfig.IncludeRAIReason = config.IncludeRAIReason

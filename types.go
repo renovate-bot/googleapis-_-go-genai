@@ -2656,6 +2656,8 @@ type EditImageResponse struct {
 type upscaleImageAPIConfig struct {
 	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
+	// Optional. Cloud Storage URI used to store the generated images.
+	OutputGCSURI string `json:"outputGcsUri,omitempty"`
 	// Optional. Whether to include a reason for filtered-out images in the
 	// response.
 	IncludeRAIReason bool `json:"includeRaiReason,omitempty"`
@@ -4630,6 +4632,8 @@ type DownloadFileConfig struct {
 type UpscaleImageConfig struct {
 	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
+	// Optional. Cloud Storage URI used to store the generated images.
+	OutputGCSURI string `json:"outputGcsUri,omitempty"`
 	// Optional. Whether to include a reason for filtered-out images in the
 	// response.
 	IncludeRAIReason bool `json:"includeRaiReason,omitempty"`
