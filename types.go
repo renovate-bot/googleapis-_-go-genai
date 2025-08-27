@@ -546,6 +546,19 @@ const (
 	SegmentModeInteractive SegmentMode = "INTERACTIVE"
 )
 
+// Enum for the reference type of a video generation reference image.
+type VideoGenerationReferenceType string
+
+const (
+	// A reference image that provides assets to the generated video,
+	// such as the scene, an object, a character, etc.
+	VideoGenerationReferenceTypeAsset VideoGenerationReferenceType = "ASSET"
+	// A reference image that provides aesthetics including colors,
+	// lighting, texture, etc., to be used as the style of the generated video,
+	// such as 'anime', 'photography', 'origami', etc.
+	VideoGenerationReferenceTypeStyle VideoGenerationReferenceType = "STYLE"
+)
+
 // Enum that controls the compression quality of the generated videos.
 type VideoCompressionQuality string
 
@@ -3169,9 +3182,8 @@ type VideoGenerationReferenceImage struct {
 	// The reference image.
 	Image *Image `json:"image,omitempty"`
 	// The type of the reference image, which defines how the reference
-	// image will be used to generate the video. Supported values are 'asset'
-	// or 'style'.
-	ReferenceType string `json:"referenceType,omitempty"`
+	// image will be used to generate the video.
+	ReferenceType VideoGenerationReferenceType `json:"referenceType,omitempty"`
 }
 
 // You can find API default values and more details at VertexAI: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/veo-video-generation.
