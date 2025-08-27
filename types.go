@@ -3754,6 +3754,12 @@ type ListTuningJobsResponse struct {
 	TuningJobs []*TuningJob `json:"tuningJobs,omitempty"`
 }
 
+// Optional parameters for tunings.cancel method.
+type CancelTuningJobConfig struct {
+	// Optional. Used to override HTTP request options.
+	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
+}
+
 type TuningExample struct {
 	// Optional. Text model input.
 	TextInput string `json:"textInput,omitempty"`
