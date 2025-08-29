@@ -521,7 +521,7 @@ const (
 	SubjectReferenceTypeSubjectTypeProduct SubjectReferenceType = "SUBJECT_TYPE_PRODUCT"
 )
 
-// Enum representing the Imagen 3 Edit mode.
+// Enum representing the editing mode.
 type EditMode string
 
 const (
@@ -2399,8 +2399,8 @@ type GenerateImagesConfig struct {
 	OutputGCSURI string `json:"outputGcsUri,omitempty"`
 	// Optional. Description of what to discourage in the generated images.
 	NegativePrompt string `json:"negativePrompt,omitempty"`
-	// Optional. Number of images to generate.
-	// If empty, the system will choose a default value (currently 4).
+	// Optional. Number of images to generate. If empty, the system will choose a default
+	// value (currently 4).
 	NumberOfImages int32 `json:"numberOfImages,omitempty"`
 	// Optional. Aspect ratio of the generated images. Supported values are
 	// "1:1", "3:4", "4:3", "9:16", and "16:9".
@@ -2616,8 +2616,8 @@ type EditImageConfig struct {
 	OutputGCSURI string `json:"outputGcsUri,omitempty"`
 	// Optional. Description of what to discourage in the generated images.
 	NegativePrompt string `json:"negativePrompt,omitempty"`
-	// Optional. Number of images to generate.
-	// If empty, the system will choose a default value (currently 4).
+	// Optional. Number of images to generate. If empty, the system will choose a default
+	// value (currently 4).
 	NumberOfImages int32 `json:"numberOfImages,omitempty"`
 	// Optional. Aspect ratio of the generated images. Supported values are
 	// "1:1", "3:4", "4:3", "9:16", and "16:9".
@@ -2676,8 +2676,8 @@ type upscaleImageAPIConfig struct {
 	IncludeRAIReason bool `json:"includeRaiReason,omitempty"`
 	// Optional. The image format that the output should be saved as.
 	OutputMIMEType string `json:"outputMimeType,omitempty"`
-	// Optional. The level of compression if the ``output_mime_type`` is
-	// ``image/jpeg``.
+	// Optional. The level of compression. Only applicable if the
+	// ``output_mime_type`` is ``image/jpeg``.
 	OutputCompressionQuality *int32 `json:"outputCompressionQuality,omitempty"`
 	// Optional. Whether to add an image enhancing step before upscaling.
 	// It is expected to suppress the noise and JPEG compression artifacts
@@ -3151,7 +3151,7 @@ type Video struct {
 	URI string `json:"uri,omitempty"`
 	// Optional. Video bytes.
 	VideoBytes []byte `json:"videoBytes,omitempty"`
-	// Optional. Video encoding, for example "video/mp4".
+	// Optional. Video encoding, for example ``video/mp4``.
 	MIMEType string `json:"mimeType,omitempty"`
 }
 
@@ -3170,10 +3170,10 @@ type GenerateVideosSource struct {
 	// Optional if image or video is provided.
 	Prompt string `json:"prompt,omitempty"`
 	// Optional. The input image for generating the videos.
-	// Optional if prompt or video is provided.
+	// Optional if prompt is provided. Not allowed if video is provided.
 	Image *Image `json:"image,omitempty"`
 	// Optional. The input video for video extension use cases.
-	// Optional if prompt or image is provided.
+	// Optional if prompt is provided. Not allowed if image is provided.
 	Video *Video `json:"video,omitempty"`
 }
 
@@ -3198,29 +3198,32 @@ type GenerateVideosConfig struct {
 	FPS *int32 `json:"fps,omitempty"`
 	// Optional. Duration of the clip for video generation in seconds.
 	DurationSeconds *int32 `json:"durationSeconds,omitempty"`
-	// Optional. The RNG seed. If RNG seed is exactly same for each request with unchanged
-	// inputs, the prediction results will be consistent. Otherwise, a random RNG seed will
-	// be used each time to produce a different result.
+	// Optional. The RNG seed. If RNG seed is exactly same for each request with
+	// unchanged inputs, the prediction results will be consistent. Otherwise,
+	// a random RNG seed will be used each time to produce a different
+	// result.
 	Seed *int32 `json:"seed,omitempty"`
-	// Optional. The aspect ratio for the generated video. 16:9 (landscape) and 9:16 (portrait)
-	// are supported.
+	// Optional. The aspect ratio for the generated video. 16:9 (landscape) and
+	// 9:16 (portrait) are supported.
 	AspectRatio string `json:"aspectRatio,omitempty"`
-	// Optional. The resolution for the generated video. 720p and 1080p are supported.
+	// Optional. The resolution for the generated video. 720p and 1080p are
+	// supported.
 	Resolution string `json:"resolution,omitempty"`
-	// Optional. Whether allow to generate person videos, and restrict to specific ages.
-	// Supported values are: dont_allow, allow_adult.
+	// Optional. Whether allow to generate person videos, and restrict to specific
+	// ages. Supported values are: dont_allow, allow_adult.
 	PersonGeneration string `json:"personGeneration,omitempty"`
-	// Optional. The pubsub topic where to publish the video generation progress.
+	// Optional. The pubsub topic where to publish the video generation
+	// progress.
 	PubsubTopic string `json:"pubsubTopic,omitempty"`
-	// Optional. Optional field in addition to the text content. Negative prompts can be
-	// explicitly stated here to help generate the video.
+	// Optional. Explicitly state what should not be included in the generated
+	// videos.
 	NegativePrompt string `json:"negativePrompt,omitempty"`
 	// Optional. Whether to use the prompt rewriting logic.
 	EnhancePrompt bool `json:"enhancePrompt,omitempty"`
 	// Optional. Whether to generate audio along with the video.
 	GenerateAudio *bool `json:"generateAudio,omitempty"`
-	// Optional. Image to use as the last frame of generated videos. Only supported for
-	// image to video use cases.
+	// Optional. Image to use as the last frame of generated videos.
+	// Only supported for image to video use cases.
 	LastFrame *Image `json:"lastFrame,omitempty"`
 	// Optional. The images to use as the references to generate the videos.
 	// If this field is provided, the text prompt field must also be provided.

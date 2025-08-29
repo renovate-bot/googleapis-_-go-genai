@@ -5605,6 +5605,7 @@ func (m Models) EmbedContent(ctx context.Context, model string, contents []*Cont
 	return response, nil
 }
 
+// generateImages private method for generating images.
 func (m Models) generateImages(ctx context.Context, model string, prompt string, config *GenerateImagesConfig) (*GenerateImagesResponse, error) {
 	parameterMap := make(map[string]any)
 
@@ -5678,6 +5679,7 @@ func (m Models) generateImages(ctx context.Context, model string, prompt string,
 	return response, nil
 }
 
+// editImage private method for editing an image.
 func (m Models) editImage(ctx context.Context, model string, prompt string, referenceImages []*referenceImageAPI, config *EditImageConfig) (*EditImageResponse, error) {
 	parameterMap := make(map[string]any)
 
@@ -5752,6 +5754,7 @@ func (m Models) editImage(ctx context.Context, model string, prompt string, refe
 	return response, nil
 }
 
+// upscaleImage private method for upscaling an image.
 func (m Models) upscaleImage(ctx context.Context, model string, image *Image, upscaleFactor string, config *upscaleImageAPIConfig) (*UpscaleImageResponse, error) {
 	parameterMap := make(map[string]any)
 
@@ -6464,7 +6467,7 @@ func (m Models) ComputeTokens(ctx context.Context, model string, contents []*Con
 	return response, nil
 }
 
-// GenerateVideos creates a long-running video generation operation.
+// generateVideos private method for generating videos.
 func (m Models) generateVideos(ctx context.Context, model string, prompt *string, image *Image, video *Video, source *GenerateVideosSource, config *GenerateVideosConfig) (*GenerateVideosOperation, error) {
 	parameterMap := make(map[string]any)
 
