@@ -294,6 +294,13 @@ func TestSetValueByPath(t *testing.T) {
 			value: nil,
 			want:  map[string]any{"a": map[string]any{"b": []map[string]any{{"c": "v1"}, {"c": "v2"}}}},
 		},
+		{
+			name:  "Self_key",
+			data:  map[string]any{"a": map[string]any{"b": map[string]any{}}},
+			keys:  []string{"_self"},
+			value: map[string]any{"c": "v"},
+			want:  map[string]any{"a": map[string]any{"b": map[string]any{}}, "c": "v"},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
