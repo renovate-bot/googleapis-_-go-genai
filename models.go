@@ -1588,8 +1588,10 @@ func fileDataToVertex(fromObject map[string]any, parentObject map[string]any) (t
 
 func functionCallToVertex(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
-	if getValueByPath(fromObject, []string{"id"}) != nil {
-		return nil, fmt.Errorf("id parameter is not supported in Vertex AI")
+
+	fromId := getValueByPath(fromObject, []string{"id"})
+	if fromId != nil {
+		setValueByPath(toObject, []string{"id"}, fromId)
 	}
 
 	fromArgs := getValueByPath(fromObject, []string{"args"})
@@ -4638,6 +4640,11 @@ func fileDataFromVertex(fromObject map[string]any, parentObject map[string]any) 
 
 func functionCallFromVertex(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
+
+	fromId := getValueByPath(fromObject, []string{"id"})
+	if fromId != nil {
+		setValueByPath(toObject, []string{"id"}, fromId)
+	}
 
 	fromArgs := getValueByPath(fromObject, []string{"args"})
 	if fromArgs != nil {
