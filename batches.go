@@ -524,6 +524,53 @@ func inlinedResponseFromMldev(fromObject map[string]any, parentObject map[string
 	return toObject, nil
 }
 
+func singleEmbedContentResponseFromMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromEmbedding := getValueByPath(fromObject, []string{"embedding"})
+	if fromEmbedding != nil {
+		fromEmbedding, err = contentEmbeddingFromMldev(fromEmbedding.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"embedding"}, fromEmbedding)
+	}
+
+	fromTokenCount := getValueByPath(fromObject, []string{"tokenCount"})
+	if fromTokenCount != nil {
+		setValueByPath(toObject, []string{"tokenCount"}, fromTokenCount)
+	}
+
+	return toObject, nil
+}
+
+func inlinedEmbedContentResponseFromMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromResponse := getValueByPath(fromObject, []string{"response"})
+	if fromResponse != nil {
+		fromResponse, err = singleEmbedContentResponseFromMldev(fromResponse.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"response"}, fromResponse)
+	}
+
+	fromError := getValueByPath(fromObject, []string{"error"})
+	if fromError != nil {
+		fromError, err = jobErrorFromMldev(fromError.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"error"}, fromError)
+	}
+
+	return toObject, nil
+}
+
 func batchJobDestinationFromMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -590,6 +637,11 @@ func batchJobFromMldev(fromObject map[string]any, parentObject map[string]any) (
 
 	fromDest := getValueByPath(fromObject, []string{"metadata", "output"})
 	if fromDest != nil {
+		fromDest, err = tRecvBatchJobDestination(fromDest)
+		if err != nil {
+			return nil, err
+		}
+
 		fromDest, err = batchJobDestinationFromMldev(fromDest.(map[string]any), toObject)
 		if err != nil {
 			return nil, err
@@ -791,6 +843,11 @@ func batchJobFromVertex(fromObject map[string]any, parentObject map[string]any) 
 
 	fromDest := getValueByPath(fromObject, []string{"outputConfig"})
 	if fromDest != nil {
+		fromDest, err = tRecvBatchJobDestination(fromDest)
+		if err != nil {
+			return nil, err
+		}
+
 		fromDest, err = batchJobDestinationFromVertex(fromDest.(map[string]any), toObject)
 		if err != nil {
 			return nil, err
@@ -1262,7 +1319,7 @@ func (b Batches) Create(ctx context.Context, model string, src *BatchJobSource, 
 			return nil, fmt.Errorf("Only one of FileName and InlinedRequests can be set.")
 		}
 		if src.FileName == "" && len(src.InlinedRequests) == 0 {
-			return nil, fmt.Errorf("One of FileName and InlinedRequests must be set.")
+			return nil, fmt.Errorf("one of FileName and InlinedRequests must be set.")
 		}
 	}
 	return b.create(ctx, &model, src, config)

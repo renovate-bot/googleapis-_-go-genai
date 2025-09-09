@@ -4365,6 +4365,22 @@ type InlinedResponse struct {
 	Error *JobError `json:"error,omitempty"`
 }
 
+// Config for `response` parameter.
+type SingleEmbedContentResponse struct {
+	// The response to the request.
+	Embedding *ContentEmbedding `json:"embedding,omitempty"`
+	// Optional. The error encountered while processing the request.
+	TokenCount int64 `json:"tokenCount,omitempty,string"`
+}
+
+// Config for `inlined_embedding_responses` parameter.
+type InlinedEmbedContentResponse struct {
+	// The response to the request.
+	Response *SingleEmbedContentResponse `json:"response,omitempty"`
+	// Optional. The error encountered while processing the request.
+	Error *JobError `json:"error,omitempty"`
+}
+
 // Config for `des` parameter.
 type BatchJobDestination struct {
 	// Storage format of the output files. Must be one of:
@@ -4792,6 +4808,14 @@ func (r *SubjectReferenceImage) referenceImageAPI() *referenceImageAPI {
 		ReferenceType:      "REFERENCE_TYPE_CONTROL",
 		SubjectImageConfig: r.Config,
 	}
+}
+
+// Parameters for the embed_content method.
+type EmbedContentBatch struct {
+	// The content to embed. Only the `parts.text` fields will be counted.
+	Contents []*Content `json:"contents,omitempty"`
+	// Optional. Configuration that contains optional parameters.
+	Config *EmbedContentConfig `json:"config,omitempty"`
 }
 
 // Sent in response to a `LiveGenerateContentSetup` message from the client.
