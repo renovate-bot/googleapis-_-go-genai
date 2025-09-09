@@ -182,6 +182,10 @@ func createTuningJobConfigToMldev(fromObject map[string]any, parentObject map[st
 		setValueByPath(parentObject, []string{"tuningTask", "hyperparameters", "learningRate"}, fromLearningRate)
 	}
 
+	if getValueByPath(fromObject, []string{"labels"}) != nil {
+		return nil, fmt.Errorf("labels parameter is not supported in Gemini API")
+	}
+
 	return toObject, nil
 }
 
@@ -380,6 +384,11 @@ func createTuningJobConfigToVertex(fromObject map[string]any, parentObject map[s
 
 	if getValueByPath(fromObject, []string{"learningRate"}) != nil {
 		return nil, fmt.Errorf("learningRate parameter is not supported in Vertex AI")
+	}
+
+	fromLabels := getValueByPath(fromObject, []string{"labels"})
+	if fromLabels != nil {
+		setValueByPath(parentObject, []string{"labels"}, fromLabels)
 	}
 
 	return toObject, nil

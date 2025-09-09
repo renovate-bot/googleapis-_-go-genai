@@ -3844,6 +3844,12 @@ type CreateTuningJobConfig struct {
 	// Optional. The learning rate hyperparameter for tuning. If not set, a default of 0.001
 	// or 0.0002 will be calculated based on the number of training examples.
 	LearningRate *float32 `json:"learningRate,omitempty"`
+	// Optional. The labels with user-defined metadata to organize TuningJob and generated
+	// resources such as Model and Endpoint. Label keys and values can be no longer than
+	// 64 characters (Unicode codepoints), can only contain lowercase letters, numeric characters,
+	// underscores and dashes. International characters are allowed. See https://goo.gl/xmQnxf
+	// for more information and examples of labels.
+	Labels map[string]string `json:"labels,omitempty"`
 }
 
 // A long-running operation.
