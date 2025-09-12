@@ -559,6 +559,27 @@ const (
 	VideoGenerationReferenceTypeStyle VideoGenerationReferenceType = "STYLE"
 )
 
+// Enum for the mask mode of a video generation mask.
+type VideoGenerationMaskMode string
+
+const (
+	// The image mask contains a masked rectangular region which is
+	// applied on the first frame of the input video. The object described in
+	// the prompt is inserted into this region and will appear in subsequent
+	// frames.
+	VideoGenerationMaskModeInsert VideoGenerationMaskMode = "INSERT"
+	// The image mask is used to determine an object in the
+	// first video frame to track. This object is removed from the video.
+	VideoGenerationMaskModeRemove VideoGenerationMaskMode = "REMOVE"
+	// The image mask is used to determine a region in the
+	// video. Objects in this region will be removed.
+	VideoGenerationMaskModeRemoveStatic VideoGenerationMaskMode = "REMOVE_STATIC"
+	// The image mask contains a masked rectangular region where
+	// the input video will go. The remaining area will be generated. Video
+	// masks are not supported.
+	VideoGenerationMaskModeOutpaint VideoGenerationMaskMode = "OUTPAINT"
+)
+
 // Enum that controls the compression quality of the generated videos.
 type VideoCompressionQuality string
 
@@ -3193,7 +3214,7 @@ type VideoGenerationMask struct {
 	// Describes how the mask will be used. Inpainting masks must
 	// match the aspect ratio of the input video. Outpainting masks can be
 	// either 9:16 or 16:9.
-	MaskMode string `json:"maskMode,omitempty"`
+	MaskMode VideoGenerationMaskMode `json:"maskMode,omitempty"`
 }
 
 // You can find API default values and more details at VertexAI: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/veo-video-generation.
