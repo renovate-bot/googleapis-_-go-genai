@@ -1377,6 +1377,16 @@ func liveServerContentFromMldev(fromObject map[string]any, parentObject map[stri
 		setValueByPath(toObject, []string{"urlContextMetadata"}, fromUrlContextMetadata)
 	}
 
+	fromTurnCompleteReason := getValueByPath(fromObject, []string{"turnCompleteReason"})
+	if fromTurnCompleteReason != nil {
+		setValueByPath(toObject, []string{"turnCompleteReason"}, fromTurnCompleteReason)
+	}
+
+	fromWaitingForInput := getValueByPath(fromObject, []string{"waitingForInput"})
+	if fromWaitingForInput != nil {
+		setValueByPath(toObject, []string{"waitingForInput"}, fromWaitingForInput)
+	}
+
 	return toObject, nil
 }
 
@@ -1685,6 +1695,16 @@ func liveServerContentFromVertex(fromObject map[string]any, parentObject map[str
 		}
 
 		setValueByPath(toObject, []string{"outputTranscription"}, fromOutputTranscription)
+	}
+
+	fromTurnCompleteReason := getValueByPath(fromObject, []string{"turnCompleteReason"})
+	if fromTurnCompleteReason != nil {
+		setValueByPath(toObject, []string{"turnCompleteReason"}, fromTurnCompleteReason)
+	}
+
+	fromWaitingForInput := getValueByPath(fromObject, []string{"waitingForInput"})
+	if fromWaitingForInput != nil {
+		setValueByPath(toObject, []string{"waitingForInput"}, fromWaitingForInput)
 	}
 
 	return toObject, nil
