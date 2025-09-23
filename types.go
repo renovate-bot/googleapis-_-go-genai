@@ -834,38 +834,6 @@ type ExecutableCode struct {
 	Language Language `json:"language,omitempty"`
 }
 
-// Raw media bytes for function response.
-// Text should not be sent as raw bytes, use the FunctionResponse.response
-// field.
-type FunctionResponseBlob struct {
-	// Required. The IANA standard MIME type of the source data.
-	MIMEType string `json:"mimeType,omitempty"`
-	// Required. Inline media bytes.
-	Data []byte `json:"data,omitempty"`
-}
-
-// URI based data for function response.
-type FunctionResponseFileData struct {
-	// Required. URI.
-	FileURI string `json:"fileUri,omitempty"`
-	// Required. The IANA standard MIME type of the source data.
-	MIMEType string `json:"mimeType,omitempty"`
-}
-
-// A datatype containing media that is part of a `FunctionResponse` message.
-// A `FunctionResponsePart` consists of data which has an associated datatype. A
-// `FunctionResponsePart` can only contain one of the accepted types in
-// `FunctionResponsePart.data`.
-// A `FunctionResponsePart` must have a fixed IANA MIME type identifying the
-// type and subtype of the media if the `inline_data` field is filled with raw
-// bytes.
-type FunctionResponsePart struct {
-	// Optional. Inline media bytes.
-	InlineData *FunctionResponseBlob `json:"inlineData,omitempty"`
-	// Optional. URI based data.
-	FileData *FunctionResponseFileData `json:"fileData,omitempty"`
-}
-
 // A function response.
 type FunctionResponse struct {
 	// Optional. Signals that function call continues, and more responses will be returned,
@@ -879,9 +847,6 @@ type FunctionResponse struct {
 	// Optional. Specifies how the response should be scheduled in the conversation. Only
 	// applicable to NON_BLOCKING function calls, is ignored otherwise. Defaults to WHEN_IDLE.
 	Scheduling FunctionResponseScheduling `json:"scheduling,omitempty"`
-	// Optional. List of parts that constitute a function response. Each part may
-	// have a different IANA MIME type.
-	Parts []*FunctionResponsePart `json:"parts,omitempty"`
 	// Optional. The ID of the function call this response is for. Populated by the client
 	// to match the corresponding function call `id`.
 	ID string `json:"id,omitempty"`
@@ -1431,12 +1396,6 @@ type URLContext struct {
 type ToolComputerUse struct {
 	// Optional. Required. The environment being operated.
 	Environment Environment `json:"environment,omitempty"`
-	// Optional. By default, predefined functions are included in the final model call.
-	// Some of them can be explicitly excluded from being automatically included.
-	// This can serve two purposes:
-	// 1. Using a more restricted / different action space.
-	// 2. Improving the definitions / instructions of predefined functions.
-	ExcludedPredefinedFunctions []string `json:"excludedPredefinedFunctions,omitempty"`
 }
 
 // The API secret.
