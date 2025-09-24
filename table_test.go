@@ -410,8 +410,6 @@ func TestTable(t *testing.T) {
 								for _, v := range got {
 									_ = convertFloat64ToString(v)
 								}
-								omitEmptyValues(want)
-								omitEmptyValues(got)
 								opts := cmp.Options{stringComparator, floatComparator}
 								if diff := cmp.Diff(got, want, opts); diff != "" {
 									t.Errorf("Responses had diff (-got +want):\n%v\n %v\n\n %v", diff, got, want)

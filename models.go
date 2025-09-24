@@ -4687,11 +4687,6 @@ func toolComputerUseToMldev(fromObject map[string]any, parentObject map[string]a
 		setValueByPath(toObject, []string{"environment"}, fromEnvironment)
 	}
 
-	fromExcludedPredefinedFunctions := getValueByPath(fromObject, []string{"excludedPredefinedFunctions"})
-	if fromExcludedPredefinedFunctions != nil {
-		setValueByPath(toObject, []string{"excludedPredefinedFunctions"}, fromExcludedPredefinedFunctions)
-	}
-
 	return toObject, nil
 }
 
@@ -4701,11 +4696,6 @@ func toolComputerUseToVertex(fromObject map[string]any, parentObject map[string]
 	fromEnvironment := getValueByPath(fromObject, []string{"environment"})
 	if fromEnvironment != nil {
 		setValueByPath(toObject, []string{"environment"}, fromEnvironment)
-	}
-
-	fromExcludedPredefinedFunctions := getValueByPath(fromObject, []string{"excludedPredefinedFunctions"})
-	if fromExcludedPredefinedFunctions != nil {
-		setValueByPath(toObject, []string{"excludedPredefinedFunctions"}, fromExcludedPredefinedFunctions)
 	}
 
 	return toObject, nil

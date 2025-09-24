@@ -160,122 +160,6 @@ func contextWindowCompressionConfigToVertex(fromObject map[string]any, parentObj
 	return toObject, nil
 }
 
-func functionResponseBlobToMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-
-	fromMimeType := getValueByPath(fromObject, []string{"mimeType"})
-	if fromMimeType != nil {
-		setValueByPath(toObject, []string{"mimeType"}, fromMimeType)
-	}
-
-	fromData := getValueByPath(fromObject, []string{"data"})
-	if fromData != nil {
-		setValueByPath(toObject, []string{"data"}, fromData)
-	}
-
-	return toObject, nil
-}
-
-func functionResponseBlobToVertex(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-
-	fromMimeType := getValueByPath(fromObject, []string{"mimeType"})
-	if fromMimeType != nil {
-		setValueByPath(toObject, []string{"mimeType"}, fromMimeType)
-	}
-
-	fromData := getValueByPath(fromObject, []string{"data"})
-	if fromData != nil {
-		setValueByPath(toObject, []string{"data"}, fromData)
-	}
-
-	return toObject, nil
-}
-
-func functionResponseFileDataToMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-
-	fromFileUri := getValueByPath(fromObject, []string{"fileUri"})
-	if fromFileUri != nil {
-		setValueByPath(toObject, []string{"fileUri"}, fromFileUri)
-	}
-
-	fromMimeType := getValueByPath(fromObject, []string{"mimeType"})
-	if fromMimeType != nil {
-		setValueByPath(toObject, []string{"mimeType"}, fromMimeType)
-	}
-
-	return toObject, nil
-}
-
-func functionResponseFileDataToVertex(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-
-	fromFileUri := getValueByPath(fromObject, []string{"fileUri"})
-	if fromFileUri != nil {
-		setValueByPath(toObject, []string{"fileUri"}, fromFileUri)
-	}
-
-	fromMimeType := getValueByPath(fromObject, []string{"mimeType"})
-	if fromMimeType != nil {
-		setValueByPath(toObject, []string{"mimeType"}, fromMimeType)
-	}
-
-	return toObject, nil
-}
-
-func functionResponsePartToMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-
-	fromInlineData := getValueByPath(fromObject, []string{"inlineData"})
-	if fromInlineData != nil {
-		fromInlineData, err = functionResponseBlobToMldev(fromInlineData.(map[string]any), toObject)
-		if err != nil {
-			return nil, err
-		}
-
-		setValueByPath(toObject, []string{"inlineData"}, fromInlineData)
-	}
-
-	fromFileData := getValueByPath(fromObject, []string{"fileData"})
-	if fromFileData != nil {
-		fromFileData, err = functionResponseFileDataToMldev(fromFileData.(map[string]any), toObject)
-		if err != nil {
-			return nil, err
-		}
-
-		setValueByPath(toObject, []string{"fileData"}, fromFileData)
-	}
-
-	return toObject, nil
-}
-
-func functionResponsePartToVertex(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-
-	fromInlineData := getValueByPath(fromObject, []string{"inlineData"})
-	if fromInlineData != nil {
-		fromInlineData, err = functionResponseBlobToVertex(fromInlineData.(map[string]any), toObject)
-		if err != nil {
-			return nil, err
-		}
-
-		setValueByPath(toObject, []string{"inlineData"}, fromInlineData)
-	}
-
-	fromFileData := getValueByPath(fromObject, []string{"fileData"})
-	if fromFileData != nil {
-		fromFileData, err = functionResponseFileDataToVertex(fromFileData.(map[string]any), toObject)
-		if err != nil {
-			return nil, err
-		}
-
-		setValueByPath(toObject, []string{"fileData"}, fromFileData)
-	}
-
-	return toObject, nil
-}
-
 func functionResponseToMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -287,16 +171,6 @@ func functionResponseToMldev(fromObject map[string]any, parentObject map[string]
 	fromScheduling := getValueByPath(fromObject, []string{"scheduling"})
 	if fromScheduling != nil {
 		setValueByPath(toObject, []string{"scheduling"}, fromScheduling)
-	}
-
-	fromParts := getValueByPath(fromObject, []string{"parts"})
-	if fromParts != nil {
-		fromParts, err = applyConverterToSlice(fromParts.([]any), functionResponsePartToMldev)
-		if err != nil {
-			return nil, err
-		}
-
-		setValueByPath(toObject, []string{"parts"}, fromParts)
 	}
 
 	fromId := getValueByPath(fromObject, []string{"id"})
@@ -325,16 +199,6 @@ func functionResponseToVertex(fromObject map[string]any, parentObject map[string
 
 	if getValueByPath(fromObject, []string{"scheduling"}) != nil {
 		return nil, fmt.Errorf("scheduling parameter is not supported in Vertex AI")
-	}
-
-	fromParts := getValueByPath(fromObject, []string{"parts"})
-	if fromParts != nil {
-		fromParts, err = applyConverterToSlice(fromParts.([]any), functionResponsePartToVertex)
-		if err != nil {
-			return nil, err
-		}
-
-		setValueByPath(toObject, []string{"parts"}, fromParts)
 	}
 
 	fromId := getValueByPath(fromObject, []string{"id"})
