@@ -141,11 +141,6 @@ func createTuningJobConfigToVertex(fromObject map[string]any, parentObject map[s
 		setValueByPath(parentObject, []string{"supervisedTuningSpec", "exportLastCheckpointOnly"}, fromExportLastCheckpointOnly)
 	}
 
-	fromPreTunedModelCheckpointId := getValueByPath(fromObject, []string{"preTunedModelCheckpointId"})
-	if fromPreTunedModelCheckpointId != nil {
-		setValueByPath(toObject, []string{"preTunedModel", "checkpointId"}, fromPreTunedModelCheckpointId)
-	}
-
 	fromAdapterSize := getValueByPath(fromObject, []string{"adapterSize"})
 	if fromAdapterSize != nil {
 		setValueByPath(parentObject, []string{"supervisedTuningSpec", "hyperParameters", "adapterSize"}, fromAdapterSize)
@@ -1139,6 +1134,9 @@ func (t Tunings) Tune(ctx context.Context, baseModel string, trainingDataset *Tu
 	if t.apiClient.clientConfig.Backend == BackendVertexAI {
 		if strings.HasPrefix(baseModel, "projects/") {
 			preTunedModel := &PreTunedModel{TunedModelName: baseModel}
+			if config != nil && config.PreTunedModelCheckpointID != "" {
+				preTunedModel.CheckpointID = config.PreTunedModelCheckpointID
+			}
 			return t.tune(ctx, nil, preTunedModel, trainingDataset, config)
 		} else {
 			return t.tune(ctx, &baseModel, nil, trainingDataset, config)
