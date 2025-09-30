@@ -385,6 +385,38 @@ func computeTokensResponseFromVertex(fromObject map[string]any, parentObject map
 	return toObject, nil
 }
 
+func computerUseToMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromEnvironment := getValueByPath(fromObject, []string{"environment"})
+	if fromEnvironment != nil {
+		setValueByPath(toObject, []string{"environment"}, fromEnvironment)
+	}
+
+	fromExcludedPredefinedFunctions := getValueByPath(fromObject, []string{"excludedPredefinedFunctions"})
+	if fromExcludedPredefinedFunctions != nil {
+		setValueByPath(toObject, []string{"excludedPredefinedFunctions"}, fromExcludedPredefinedFunctions)
+	}
+
+	return toObject, nil
+}
+
+func computerUseToVertex(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromEnvironment := getValueByPath(fromObject, []string{"environment"})
+	if fromEnvironment != nil {
+		setValueByPath(toObject, []string{"environment"}, fromEnvironment)
+	}
+
+	fromExcludedPredefinedFunctions := getValueByPath(fromObject, []string{"excludedPredefinedFunctions"})
+	if fromExcludedPredefinedFunctions != nil {
+		setValueByPath(toObject, []string{"excludedPredefinedFunctions"}, fromExcludedPredefinedFunctions)
+	}
+
+	return toObject, nil
+}
+
 func contentEmbeddingFromMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -4679,38 +4711,6 @@ func thinkingConfigToVertex(fromObject map[string]any, parentObject map[string]a
 	return toObject, nil
 }
 
-func toolComputerUseToMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-
-	fromEnvironment := getValueByPath(fromObject, []string{"environment"})
-	if fromEnvironment != nil {
-		setValueByPath(toObject, []string{"environment"}, fromEnvironment)
-	}
-
-	fromExcludedPredefinedFunctions := getValueByPath(fromObject, []string{"excludedPredefinedFunctions"})
-	if fromExcludedPredefinedFunctions != nil {
-		setValueByPath(toObject, []string{"excludedPredefinedFunctions"}, fromExcludedPredefinedFunctions)
-	}
-
-	return toObject, nil
-}
-
-func toolComputerUseToVertex(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-
-	fromEnvironment := getValueByPath(fromObject, []string{"environment"})
-	if fromEnvironment != nil {
-		setValueByPath(toObject, []string{"environment"}, fromEnvironment)
-	}
-
-	fromExcludedPredefinedFunctions := getValueByPath(fromObject, []string{"excludedPredefinedFunctions"})
-	if fromExcludedPredefinedFunctions != nil {
-		setValueByPath(toObject, []string{"excludedPredefinedFunctions"}, fromExcludedPredefinedFunctions)
-	}
-
-	return toObject, nil
-}
-
 func toolConfigToMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -4820,7 +4820,7 @@ func toolToMldev(fromObject map[string]any, parentObject map[string]any) (toObje
 
 	fromComputerUse := getValueByPath(fromObject, []string{"computerUse"})
 	if fromComputerUse != nil {
-		fromComputerUse, err = toolComputerUseToMldev(fromComputerUse.(map[string]any), toObject)
+		fromComputerUse, err = computerUseToMldev(fromComputerUse.(map[string]any), toObject)
 		if err != nil {
 			return nil, err
 		}
@@ -4906,7 +4906,7 @@ func toolToVertex(fromObject map[string]any, parentObject map[string]any) (toObj
 
 	fromComputerUse := getValueByPath(fromObject, []string{"computerUse"})
 	if fromComputerUse != nil {
-		fromComputerUse, err = toolComputerUseToVertex(fromComputerUse.(map[string]any), toObject)
+		fromComputerUse, err = computerUseToVertex(fromComputerUse.(map[string]any), toObject)
 		if err != nil {
 			return nil, err
 		}

@@ -1428,7 +1428,7 @@ type URLContext struct {
 }
 
 // Tool to support computer use.
-type ToolComputerUse struct {
+type ComputerUse struct {
 	// Optional. Required. The environment being operated.
 	Environment Environment `json:"environment,omitempty"`
 	// Optional. By default, predefined functions are included in the final model call.
@@ -1641,7 +1641,7 @@ type Tool struct {
 	// Optional. Tool to support the model interacting directly with the
 	// computer. If enabled, it automatically populates computer-use specific
 	// Function Declarations.
-	ComputerUse *ToolComputerUse `json:"computerUse,omitempty"`
+	ComputerUse *ComputerUse `json:"computerUse,omitempty"`
 	// Optional. CodeExecution tool type. Enables the model to execute code as part of generation.
 	CodeExecution *ToolCodeExecution `json:"codeExecution,omitempty"`
 }
