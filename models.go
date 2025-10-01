@@ -1690,6 +1690,16 @@ func generateContentConfigToMldev(ac *apiClient, fromObject map[string]any, pare
 		setValueByPath(toObject, []string{"thinkingConfig"}, fromThinkingConfig)
 	}
 
+	fromImageConfig := getValueByPath(fromObject, []string{"imageConfig"})
+	if fromImageConfig != nil {
+		fromImageConfig, err = imageConfigToMldev(fromImageConfig.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"imageConfig"}, fromImageConfig)
+	}
+
 	return toObject, nil
 }
 
@@ -1899,6 +1909,16 @@ func generateContentConfigToVertex(ac *apiClient, fromObject map[string]any, par
 		}
 
 		setValueByPath(toObject, []string{"thinkingConfig"}, fromThinkingConfig)
+	}
+
+	fromImageConfig := getValueByPath(fromObject, []string{"imageConfig"})
+	if fromImageConfig != nil {
+		fromImageConfig, err = imageConfigToVertex(fromImageConfig.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"imageConfig"}, fromImageConfig)
 	}
 
 	return toObject, nil
@@ -3067,6 +3087,28 @@ func googleSearchToVertex(fromObject map[string]any, parentObject map[string]any
 	fromExcludeDomains := getValueByPath(fromObject, []string{"excludeDomains"})
 	if fromExcludeDomains != nil {
 		setValueByPath(toObject, []string{"excludeDomains"}, fromExcludeDomains)
+	}
+
+	return toObject, nil
+}
+
+func imageConfigToMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromAspectRatio := getValueByPath(fromObject, []string{"aspectRatio"})
+	if fromAspectRatio != nil {
+		setValueByPath(toObject, []string{"aspectRatio"}, fromAspectRatio)
+	}
+
+	return toObject, nil
+}
+
+func imageConfigToVertex(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromAspectRatio := getValueByPath(fromObject, []string{"aspectRatio"})
+	if fromAspectRatio != nil {
+		setValueByPath(toObject, []string{"aspectRatio"}, fromAspectRatio)
 	}
 
 	return toObject, nil
