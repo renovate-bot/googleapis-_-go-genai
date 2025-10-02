@@ -5432,6 +5432,10 @@ type LiveConnectConfig struct {
 	Seed *int32 `json:"seed,omitempty"`
 	// Optional. The speech generation configuration.
 	SpeechConfig *SpeechConfig `json:"speechConfig,omitempty"`
+	// Optional. Config for thinking features.
+	// An error will be returned if this field is set for models that don't
+	// support thinking.
+	ThinkingConfig *ThinkingConfig `json:"thinkingConfig,omitempty"`
 	// Optional. If enabled, the model will detect emotions and adapt its responses accordingly.
 	EnableAffectiveDialog *bool `json:"enableAffectiveDialog,omitempty"`
 	// Optional. The user provided system instructions for the model.

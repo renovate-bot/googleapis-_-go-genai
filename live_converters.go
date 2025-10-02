@@ -858,6 +858,16 @@ func liveConnectConfigToMldev(fromObject map[string]any, parentObject map[string
 		setValueByPath(parentObject, []string{"setup", "generationConfig", "speechConfig"}, fromSpeechConfig)
 	}
 
+	fromThinkingConfig := getValueByPath(fromObject, []string{"thinkingConfig"})
+	if fromThinkingConfig != nil {
+		fromThinkingConfig, err = thinkingConfigToMldev(fromThinkingConfig.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(parentObject, []string{"setup", "generationConfig", "thinkingConfig"}, fromThinkingConfig)
+	}
+
 	fromEnableAffectiveDialog := getValueByPath(fromObject, []string{"enableAffectiveDialog"})
 	if fromEnableAffectiveDialog != nil {
 		setValueByPath(parentObject, []string{"setup", "generationConfig", "enableAffectiveDialog"}, fromEnableAffectiveDialog)
@@ -1012,6 +1022,16 @@ func liveConnectConfigToVertex(fromObject map[string]any, parentObject map[strin
 		}
 
 		setValueByPath(parentObject, []string{"setup", "generationConfig", "speechConfig"}, fromSpeechConfig)
+	}
+
+	fromThinkingConfig := getValueByPath(fromObject, []string{"thinkingConfig"})
+	if fromThinkingConfig != nil {
+		fromThinkingConfig, err = thinkingConfigToVertex(fromThinkingConfig.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(parentObject, []string{"setup", "generationConfig", "thinkingConfig"}, fromThinkingConfig)
 	}
 
 	fromEnableAffectiveDialog := getValueByPath(fromObject, []string{"enableAffectiveDialog"})
