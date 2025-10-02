@@ -380,6 +380,18 @@ const (
 	AdapterSizeThirtyTwo AdapterSize = "ADAPTER_SIZE_THIRTY_TWO"
 )
 
+// The tuning task. Either I2V or T2V.
+type TuningTask string
+
+const (
+	// Default value. This value is unused.
+	TuningTaskUnspecified TuningTask = "TUNING_TASK_UNSPECIFIED"
+	// Tuning task for image to video.
+	TuningTaskI2v TuningTask = "TUNING_TASK_I2V"
+	// Tuning task for text to video.
+	TuningTaskT2v TuningTask = "TUNING_TASK_T2V"
+)
+
 // Options for feature selection preference.
 type FeatureSelectionPreference string
 
@@ -3716,6 +3728,31 @@ type PartnerModelTuningSpec struct {
 	ValidationDatasetURI string `json:"validationDatasetUri,omitempty"`
 }
 
+// Hyperparameters for Veo.
+type VeoHyperParameters struct {
+	// Optional. Number of complete passes the model makes over the entire training dataset
+	// during training.
+	EpochCount int64 `json:"epochCount,omitempty,string"`
+	// Optional. Multiplier for adjusting the default learning rate.
+	LearningRateMultiplier float64 `json:"learningRateMultiplier,omitempty"`
+	// Optional. The tuning task. Either I2V or T2V.
+	TuningTask TuningTask `json:"tuningTask,omitempty"`
+}
+
+// Tuning Spec for Veo Model Tuning.
+type VeoTuningSpec struct {
+	// Optional. Hyperparameters for Veo.
+	HyperParameters *VeoHyperParameters `json:"hyperParameters,omitempty"`
+	// Required. Training dataset used for tuning. The dataset can be specified as either
+	// a Cloud Storage path to a JSONL file or as the resource name of a Vertex Multimodal
+	// Dataset.
+	TrainingDatasetURI string `json:"trainingDatasetUri,omitempty"`
+	// Optional. Validation dataset used for tuning. The dataset can be specified as either
+	// a Cloud Storage path to a JSONL file or as the resource name of a Vertex Multimodal
+	// Dataset.
+	ValidationDatasetURI string `json:"validationDatasetUri,omitempty"`
+}
+
 // A tuning job.
 type TuningJob struct {
 	// Optional. Used to retain the full HTTP response.
@@ -3783,6 +3820,8 @@ type TuningJob struct {
 	// Optional. The display name of the TunedModel. The name can be up to 128 characters
 	// long and can consist of any UTF-8 characters.
 	TunedModelDisplayName string `json:"tunedModelDisplayName,omitempty"`
+	// Tuning Spec for Veo Tuning.
+	VeoTuningSpec *VeoTuningSpec `json:"veoTuningSpec,omitempty"`
 }
 
 func (t *TuningJob) UnmarshalJSON(data []byte) error {

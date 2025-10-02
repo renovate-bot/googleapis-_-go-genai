@@ -599,6 +599,11 @@ func tuningJobFromMldev(fromObject map[string]any, parentObject map[string]any) 
 		setValueByPath(toObject, []string{"tunedModelDisplayName"}, fromTunedModelDisplayName)
 	}
 
+	fromVeoTuningSpec := getValueByPath(fromObject, []string{"veoTuningSpec"})
+	if fromVeoTuningSpec != nil {
+		setValueByPath(toObject, []string{"veoTuningSpec"}, fromVeoTuningSpec)
+	}
+
 	return toObject, nil
 }
 
@@ -728,6 +733,11 @@ func tuningJobFromVertex(fromObject map[string]any, parentObject map[string]any)
 	fromTunedModelDisplayName := getValueByPath(fromObject, []string{"tunedModelDisplayName"})
 	if fromTunedModelDisplayName != nil {
 		setValueByPath(toObject, []string{"tunedModelDisplayName"}, fromTunedModelDisplayName)
+	}
+
+	fromVeoTuningSpec := getValueByPath(fromObject, []string{"veoTuningSpec"})
+	if fromVeoTuningSpec != nil {
+		setValueByPath(toObject, []string{"veoTuningSpec"}, fromVeoTuningSpec)
 	}
 
 	return toObject, nil
