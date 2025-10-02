@@ -223,6 +223,8 @@ const (
 	FinishReasonUnexpectedToolCall FinishReason = "UNEXPECTED_TOOL_CALL"
 	// Image generation stopped because the generated images have prohibited content.
 	FinishReasonImageProhibitedContent FinishReason = "IMAGE_PROHIBITED_CONTENT"
+	// The model was expected to generate an image, but none was generated.
+	FinishReasonNoImage FinishReason = "NO_IMAGE"
 )
 
 // Harm probability levels in the content.
