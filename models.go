@@ -522,6 +522,11 @@ func editImageConfigToVertex(fromObject map[string]any, parentObject map[string]
 		setValueByPath(parentObject, []string{"parameters", "addWatermark"}, fromAddWatermark)
 	}
 
+	fromLabels := getValueByPath(fromObject, []string{"labels"})
+	if fromLabels != nil {
+		setValueByPath(parentObject, []string{"labels"}, fromLabels)
+	}
+
 	fromEditMode := getValueByPath(fromObject, []string{"editMode"})
 	if fromEditMode != nil {
 		setValueByPath(parentObject, []string{"parameters", "editMode"}, fromEditMode)
@@ -1447,6 +1452,10 @@ func generateImagesConfigToMldev(fromObject map[string]any, parentObject map[str
 		return nil, fmt.Errorf("addWatermark parameter is not supported in Gemini API")
 	}
 
+	if getValueByPath(fromObject, []string{"labels"}) != nil {
+		return nil, fmt.Errorf("labels parameter is not supported in Gemini API")
+	}
+
 	fromImageSize := getValueByPath(fromObject, []string{"imageSize"})
 	if fromImageSize != nil {
 		setValueByPath(parentObject, []string{"parameters", "sampleImageSize"}, fromImageSize)
@@ -1530,6 +1539,11 @@ func generateImagesConfigToVertex(fromObject map[string]any, parentObject map[st
 	fromAddWatermark := getValueByPath(fromObject, []string{"addWatermark"})
 	if fromAddWatermark != nil {
 		setValueByPath(parentObject, []string{"parameters", "addWatermark"}, fromAddWatermark)
+	}
+
+	fromLabels := getValueByPath(fromObject, []string{"labels"})
+	if fromLabels != nil {
+		setValueByPath(parentObject, []string{"labels"}, fromLabels)
 	}
 
 	fromImageSize := getValueByPath(fromObject, []string{"imageSize"})
@@ -2955,6 +2969,11 @@ func recontextImageConfigToVertex(fromObject map[string]any, parentObject map[st
 		setValueByPath(parentObject, []string{"parameters", "enhancePrompt"}, fromEnhancePrompt)
 	}
 
+	fromLabels := getValueByPath(fromObject, []string{"labels"})
+	if fromLabels != nil {
+		setValueByPath(parentObject, []string{"labels"}, fromLabels)
+	}
+
 	return toObject, nil
 }
 
@@ -3196,6 +3215,11 @@ func segmentImageConfigToVertex(fromObject map[string]any, parentObject map[stri
 	fromBinaryColorThreshold := getValueByPath(fromObject, []string{"binaryColorThreshold"})
 	if fromBinaryColorThreshold != nil {
 		setValueByPath(parentObject, []string{"parameters", "binaryColorThreshold"}, fromBinaryColorThreshold)
+	}
+
+	fromLabels := getValueByPath(fromObject, []string{"labels"})
+	if fromLabels != nil {
+		setValueByPath(parentObject, []string{"labels"}, fromLabels)
 	}
 
 	return toObject, nil
@@ -3551,6 +3575,11 @@ func upscaleImageAPIConfigToVertex(fromObject map[string]any, parentObject map[s
 	fromImagePreservationFactor := getValueByPath(fromObject, []string{"imagePreservationFactor"})
 	if fromImagePreservationFactor != nil {
 		setValueByPath(parentObject, []string{"parameters", "upscaleConfig", "imagePreservationFactor"}, fromImagePreservationFactor)
+	}
+
+	fromLabels := getValueByPath(fromObject, []string{"labels"})
+	if fromLabels != nil {
+		setValueByPath(parentObject, []string{"labels"}, fromLabels)
 	}
 
 	fromNumberOfImages := getValueByPath(fromObject, []string{"numberOfImages"})
@@ -5042,6 +5071,7 @@ func (m Models) UpscaleImage(ctx context.Context, model string, image *Image, up
 		apiConfig.IncludeRAIReason = config.IncludeRAIReason
 		apiConfig.EnhanceInputImage = config.EnhanceInputImage
 		apiConfig.ImagePreservationFactor = config.ImagePreservationFactor
+		apiConfig.Labels = config.Labels
 	}
 
 	return m.upscaleImage(ctx, model, image, upscaleFactor, apiConfig)

@@ -2532,6 +2532,8 @@ type GenerateImagesConfig struct {
 	OutputCompressionQuality *int32 `json:"outputCompressionQuality,omitempty"`
 	// Optional. Whether to add a watermark to the generated images.
 	AddWatermark bool `json:"addWatermark,omitempty"`
+	// Optional. User specified labels to track billing usage.
+	Labels map[string]string `json:"labels,omitempty"`
 	// Optional. The size of the largest dimension of the generated image.
 	// Supported sizes are 1K and 2K (not supported for Imagen 3 models).
 	ImageSize string `json:"imageSize,omitempty"`
@@ -2759,6 +2761,8 @@ type EditImageConfig struct {
 	OutputCompressionQuality *int32 `json:"outputCompressionQuality,omitempty"`
 	// Optional. Whether to add a watermark to the generated images.
 	AddWatermark *bool `json:"addWatermark,omitempty"`
+	// Optional. User specified labels to track billing usage.
+	Labels map[string]string `json:"labels,omitempty"`
 	// Optional. Describes the editing mode for the request.
 	EditMode EditMode `json:"editMode,omitempty"`
 	// Optional. The number of sampling steps. A higher value has better image
@@ -2799,6 +2803,8 @@ type upscaleImageAPIConfig struct {
 	// output image will have be more different from the input image, but
 	// with finer details and less noise.
 	ImagePreservationFactor *float32 `json:"imagePreservationFactor,omitempty"`
+	// Optional. User specified labels to track billing usage.
+	Labels map[string]string `json:"labels,omitempty"`
 	// Optional.
 	NumberOfImages int32 `json:"numberOfImages,omitempty"`
 	// Optional.
@@ -2857,6 +2863,8 @@ type RecontextImageConfig struct {
 	OutputCompressionQuality *int32 `json:"outputCompressionQuality,omitempty"`
 	// Optional. Whether to use the prompt rewriting logic.
 	EnhancePrompt *bool `json:"enhancePrompt,omitempty"`
+	// Optional. User specified labels to track billing usage.
+	Labels map[string]string `json:"labels,omitempty"`
 }
 
 // The output images response.
@@ -2904,6 +2912,8 @@ type SegmentImageConfig struct {
 	// can be set to a decimal value between 0 and 255 non-inclusive.
 	// Set to -1 for no binary color thresholding.
 	BinaryColorThreshold *float32 `json:"binaryColorThreshold,omitempty"`
+	// Optional. User specified labels to track billing usage.
+	Labels map[string]string `json:"labels,omitempty"`
 }
 
 // An entity representing the segmented area.
@@ -4843,6 +4853,8 @@ type UpscaleImageConfig struct {
 	// output image will have be more different from the input image, but
 	// with finer details and less noise.
 	ImagePreservationFactor *float32 `json:"imagePreservationFactor,omitempty"`
+	// Optional. User specified labels to track billing usage.
+	Labels map[string]string `json:"labels,omitempty"`
 }
 
 // A raw reference image.
