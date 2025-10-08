@@ -882,6 +882,26 @@ type FunctionResponsePart struct {
 	FileData *FunctionResponseFileData `json:"fileData,omitempty"`
 }
 
+// NewFunctionResponsePartFromURI builds a FunctionResponsePart from a given file URI and mime type.
+func NewFunctionResponsePartFromURI(fileURI, mimeType string) *FunctionResponsePart {
+	return &FunctionResponsePart{
+		FileData: &FunctionResponseFileData{
+			FileURI:  fileURI,
+			MIMEType: mimeType,
+		},
+	}
+}
+
+// NewFunctionResponsePartFromBytes builds a FunctionResponsePart from a given byte array and mime type.
+func NewFunctionResponsePartFromBytes(data []byte, mimeType string) *FunctionResponsePart {
+	return &FunctionResponsePart{
+		InlineData: &FunctionResponseBlob{
+			Data:     data,
+			MIMEType: mimeType,
+		},
+	}
+}
+
 // A function response.
 type FunctionResponse struct {
 	// Optional. Signals that function call continues, and more responses will be returned,
@@ -993,6 +1013,17 @@ func NewPartFromFunctionResponse(name string, response map[string]any) *Part {
 		FunctionResponse: &FunctionResponse{
 			Name:     name,
 			Response: response,
+		},
+	}
+}
+
+// NewPartFromFunctionResponseWithParts builds a [FunctionResponse] Part from the given function name, response and function response parts.
+func NewPartFromFunctionResponseWithParts(name string, response map[string]any, parts []*FunctionResponsePart) *Part {
+	return &Part{
+		FunctionResponse: &FunctionResponse{
+			Name:     name,
+			Response: response,
+			Parts:    parts,
 		},
 	}
 }
