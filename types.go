@@ -1468,6 +1468,8 @@ type AuthConfig struct {
 type GoogleMaps struct {
 	// Optional. Auth config for the Google Maps tool.
 	AuthConfig *AuthConfig `json:"authConfig,omitempty"`
+	// Optional. If true, include the widget context token in the response.
+	EnableWidget *bool `json:"enableWidget,omitempty"`
 }
 
 // Tool to support URL context retrieval.
@@ -2030,6 +2032,10 @@ type GroundingChunkMapsPlaceAnswerSourcesReviewSnippet struct {
 	// A reference representing this place review which may be used to look up this place
 	// review again.
 	Review string `json:"review,omitempty"`
+	// ID of the review referencing the place.
+	ReviewID string `json:"reviewId,omitempty"`
+	// Title of the review.
+	Title string `json:"title,omitempty"`
 }
 
 // Sources used to generate the place answer.
@@ -2153,6 +2159,15 @@ type SearchEntryPoint struct {
 	SDKBlob []byte `json:"sdkBlob,omitempty"`
 }
 
+// Source content flagging URI for a place or review. This is currently populated only
+// for Google Maps grounding.
+type GroundingMetadataSourceFlaggingURI struct {
+	// A link where users can flag a problem with the source (place or review).
+	FlagContentURI string `json:"flagContentUri,omitempty"`
+	// ID of the place or review.
+	SourceID string `json:"sourceId,omitempty"`
+}
+
 // Metadata returned to client when grounding is enabled.
 type GroundingMetadata struct {
 	// Optional. Output only. Resource name of the Google Maps widget context token to be
@@ -2169,6 +2184,9 @@ type GroundingMetadata struct {
 	RetrievalQueries []string `json:"retrievalQueries,omitempty"`
 	// Optional. Google search entry for the following-up web searches.
 	SearchEntryPoint *SearchEntryPoint `json:"searchEntryPoint,omitempty"`
+	// Optional. Output only. List of source flagging uris. This is currently populated
+	// only for Google Maps grounding.
+	SourceFlaggingUris []*GroundingMetadataSourceFlaggingURI `json:"sourceFlaggingUris,omitempty"`
 	// Optional. Web search queries for the following-up web search.
 	WebSearchQueries []string `json:"webSearchQueries,omitempty"`
 }

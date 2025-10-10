@@ -2448,6 +2448,11 @@ func googleMapsToMldev(fromObject map[string]any, parentObject map[string]any) (
 		return nil, fmt.Errorf("authConfig parameter is not supported in Gemini API")
 	}
 
+	fromEnableWidget := getValueByPath(fromObject, []string{"enableWidget"})
+	if fromEnableWidget != nil {
+		setValueByPath(toObject, []string{"enableWidget"}, fromEnableWidget)
+	}
+
 	return toObject, nil
 }
 
