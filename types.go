@@ -4540,6 +4540,8 @@ type InlinedRequest struct {
 	Model string `json:"model,omitempty"`
 	// Content of the request.
 	Contents []*Content `json:"contents,omitempty"`
+	// Optional. The metadata to be associated with the request.
+	Metadata map[string]string `json:"metadata,omitempty"`
 	// Optional. Configuration that contains optional model parameters.
 	Config *GenerateContentConfig `json:"config,omitempty"`
 }

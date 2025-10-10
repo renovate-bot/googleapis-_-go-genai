@@ -614,6 +614,11 @@ func inlinedRequestToMldev(ac *apiClient, fromObject map[string]any, parentObjec
 		setValueByPath(toObject, []string{"request", "contents"}, fromContents)
 	}
 
+	fromMetadata := getValueByPath(fromObject, []string{"metadata"})
+	if fromMetadata != nil {
+		setValueByPath(toObject, []string{"metadata"}, fromMetadata)
+	}
+
 	fromConfig := getValueByPath(fromObject, []string{"config"})
 	if fromConfig != nil {
 		fromConfig, err = generateContentConfigToMldev(ac, fromConfig.(map[string]any), getValueByPathOrDefault(toObject, []string{"request"}, map[string]any{}).(map[string]any))
