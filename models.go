@@ -2442,6 +2442,15 @@ func getModelParametersToVertex(ac *apiClient, fromObject map[string]any, parent
 	return toObject, nil
 }
 
+func googleMapsToMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+	if getValueByPath(fromObject, []string{"authConfig"}) != nil {
+		return nil, fmt.Errorf("authConfig parameter is not supported in Gemini API")
+	}
+
+	return toObject, nil
+}
+
 func googleSearchToMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -3355,8 +3364,14 @@ func toolToMldev(fromObject map[string]any, parentObject map[string]any) (toObje
 		return nil, fmt.Errorf("enterpriseWebSearch parameter is not supported in Gemini API")
 	}
 
-	if getValueByPath(fromObject, []string{"googleMaps"}) != nil {
-		return nil, fmt.Errorf("googleMaps parameter is not supported in Gemini API")
+	fromGoogleMaps := getValueByPath(fromObject, []string{"googleMaps"})
+	if fromGoogleMaps != nil {
+		fromGoogleMaps, err = googleMapsToMldev(fromGoogleMaps.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"googleMaps"}, fromGoogleMaps)
 	}
 
 	fromUrlContext := getValueByPath(fromObject, []string{"urlContext"})
