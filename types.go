@@ -4587,7 +4587,7 @@ type SingleEmbedContentResponse struct {
 	// The response to the request.
 	Embedding *ContentEmbedding `json:"embedding,omitempty"`
 	// Optional. The error encountered while processing the request.
-	TokenCount *int64 `json:"tokenCount,omitempty,string"`
+	TokenCount int64 `json:"tokenCount,omitempty,string"`
 }
 
 // Config for `inlined_embedding_responses` parameter.
