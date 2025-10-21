@@ -114,6 +114,8 @@ const (
 	HarmCategoryImageHarassment HarmCategory = "HARM_CATEGORY_IMAGE_HARASSMENT"
 	// The harm category is image sexually explicit content.
 	HarmCategoryImageSexuallyExplicit HarmCategory = "HARM_CATEGORY_IMAGE_SEXUALLY_EXPLICIT"
+	// The harm category is for jailbreak prompts.
+	HarmCategoryJailbreak HarmCategory = "HARM_CATEGORY_JAILBREAK"
 )
 
 // Specify if the threshold is used for probability or severity score. If not specified,
@@ -275,22 +277,27 @@ const (
 	HarmSeverityHigh HarmSeverity = "HARM_SEVERITY_HIGH"
 )
 
-// Blocked reason.
+// The reason why the prompt was blocked.
 type BlockedReason string
 
 const (
-	// Unspecified blocked reason.
+	// The blocked reason is unspecified.
 	BlockedReasonUnspecified BlockedReason = "BLOCKED_REASON_UNSPECIFIED"
-	// Candidates blocked due to safety.
+	// The prompt was blocked for safety reasons.
 	BlockedReasonSafety BlockedReason = "SAFETY"
-	// Candidates blocked due to other reason.
+	// The prompt was blocked for other reasons. For example, it may be due to the prompt's
+	// language, or because it contains other harmful content.
 	BlockedReasonOther BlockedReason = "OTHER"
-	// Candidates blocked due to the terms which are included from the terminology blocklist.
+	// The prompt was blocked because it contains a term from the terminology blocklist.
 	BlockedReasonBlocklist BlockedReason = "BLOCKLIST"
-	// Candidates blocked due to prohibited content.
+	// The prompt was blocked because it contains prohibited content.
 	BlockedReasonProhibitedContent BlockedReason = "PROHIBITED_CONTENT"
-	// Candidates blocked due to unsafe image generation content.
+	// The prompt was blocked because it contains content that is unsafe for image generation.
 	BlockedReasonImageSafety BlockedReason = "IMAGE_SAFETY"
+	// The prompt was blocked by Model Armor.
+	BlockedReasonModelArmor BlockedReason = "MODEL_ARMOR"
+	// The prompt was blocked as a jailbreak attempt.
+	BlockedReasonJailbreak BlockedReason = "JAILBREAK"
 )
 
 // Traffic type. This shows whether a request consumes Pay-As-You-Go or Provisioned
@@ -2272,13 +2279,15 @@ type Candidate struct {
 	SafetyRatings []*SafetyRating `json:"safetyRatings,omitempty"`
 }
 
-// Content filter results for a prompt sent in the request.
+// Content filter results for a prompt sent in the request. Note: This is sent only
+// in the first stream chunk and only if no candidates were generated due to content
+// violations.
 type GenerateContentResponsePromptFeedback struct {
-	// Output only. Blocked reason.
+	// Output only. The reason why the prompt was blocked.
 	BlockReason BlockedReason `json:"blockReason,omitempty"`
-	// Output only. A readable block reason message.
+	// Output only. A readable message that explains the reason why the prompt was blocked.
 	BlockReasonMessage string `json:"blockReasonMessage,omitempty"`
-	// Output only. Safety ratings.
+	// Output only. A list of safety ratings for the prompt. There is one rating per category.
 	SafetyRatings []*SafetyRating `json:"safetyRatings,omitempty"`
 }
 
