@@ -106,15 +106,19 @@ const (
 	HarmCategoryDangerousContent HarmCategory = "HARM_CATEGORY_DANGEROUS_CONTENT"
 	// Deprecated: Election filter is not longer supported. The harm category is civic integrity.
 	HarmCategoryCivicIntegrity HarmCategory = "HARM_CATEGORY_CIVIC_INTEGRITY"
-	// The harm category is image hate.
+	// The harm category is image hate. This enum value is not supported in Gemini API.
 	HarmCategoryImageHate HarmCategory = "HARM_CATEGORY_IMAGE_HATE"
-	// The harm category is image dangerous content.
+	// The harm category is image dangerous content. This enum value is not supported in
+	// Gemini API.
 	HarmCategoryImageDangerousContent HarmCategory = "HARM_CATEGORY_IMAGE_DANGEROUS_CONTENT"
-	// The harm category is image harassment.
+	// The harm category is image harassment. This enum value is not supported in Gemini
+	// API.
 	HarmCategoryImageHarassment HarmCategory = "HARM_CATEGORY_IMAGE_HARASSMENT"
-	// The harm category is image sexually explicit content.
+	// The harm category is image sexually explicit content. This enum value is not supported
+	// in Gemini API.
 	HarmCategoryImageSexuallyExplicit HarmCategory = "HARM_CATEGORY_IMAGE_SEXUALLY_EXPLICIT"
-	// The harm category is for jailbreak prompts.
+	// The harm category is for jailbreak prompts. This enum value is not supported in Gemini
+	// API.
 	HarmCategoryJailbreak HarmCategory = "HARM_CATEGORY_JAILBREAK"
 )
 
@@ -294,9 +298,11 @@ const (
 	BlockedReasonProhibitedContent BlockedReason = "PROHIBITED_CONTENT"
 	// The prompt was blocked because it contains content that is unsafe for image generation.
 	BlockedReasonImageSafety BlockedReason = "IMAGE_SAFETY"
-	// The prompt was blocked by Model Armor.
+	// The prompt was blocked by Model Armor. This enum value is not supported in Gemini
+	// API.
 	BlockedReasonModelArmor BlockedReason = "MODEL_ARMOR"
-	// The prompt was blocked as a jailbreak attempt.
+	// The prompt was blocked as a jailbreak attempt. This enum value is not supported in
+	// Gemini API.
 	BlockedReasonJailbreak BlockedReason = "JAILBREAK"
 )
 
@@ -1384,7 +1390,8 @@ type GoogleSearch struct {
 	// If customers set a start time, they must set an end time (and vice versa).
 	TimeRangeFilter *Interval `json:"timeRangeFilter,omitempty"`
 	// Optional. List of domains to be excluded from the search results. The default limit
-	// is 2000 domains. Example: ["amazon.com", "facebook.com"].
+	// is 2000 domains. Example: ["amazon.com", "facebook.com"]. This field is not supported
+	// in Gemini API.
 	ExcludeDomains []string `json:"excludeDomains,omitempty"`
 }
 
@@ -1416,7 +1423,8 @@ type APIKeyConfig struct {
 	APIKeyString string `json:"apiKeyString,omitempty"`
 }
 
-// Config for Google Service Account Authentication.
+// Config for Google Service Account Authentication. This data type is not supported
+// in Gemini API.
 type AuthConfigGoogleServiceAccountConfig struct {
 	// Optional. The service account that the extension execution service runs as. - If
 	// the service account is specified, the `iam.serviceAccounts.getAccessToken` permission
@@ -1426,7 +1434,7 @@ type AuthConfigGoogleServiceAccountConfig struct {
 	ServiceAccount string `json:"serviceAccount,omitempty"`
 }
 
-// Config for HTTP Basic Authentication.
+// Config for HTTP Basic Authentication. This data type is not supported in Gemini API.
 type AuthConfigHTTPBasicAuthConfig struct {
 	// Required. The name of the SecretManager secret version resource storing the base64
 	// encoded credentials. Format: `projects/{project}/secrets/{secrete}/versions/{version}`
@@ -1436,7 +1444,7 @@ type AuthConfigHTTPBasicAuthConfig struct {
 	CredentialSecret string `json:"credentialSecret,omitempty"`
 }
 
-// Config for user oauth.
+// Config for user oauth. This data type is not supported in Gemini API.
 type AuthConfigOauthConfig struct {
 	// Access token for extension endpoint. Only used to propagate token from [[ExecuteExtensionRequest.runtime_auth_config]]
 	// at request time.
@@ -1448,7 +1456,7 @@ type AuthConfigOauthConfig struct {
 	ServiceAccount string `json:"serviceAccount,omitempty"`
 }
 
-// Config for user OIDC auth.
+// Config for user OIDC auth. This data type is not supported in Gemini API.
 type AuthConfigOidcConfig struct {
 	// OpenID Connect formatted ID token for extension endpoint. Only used to propagate
 	// token from [[ExecuteExtensionRequest.runtime_auth_config]] at request time.
@@ -1502,7 +1510,7 @@ type ComputerUse struct {
 	ExcludedPredefinedFunctions []string `json:"excludedPredefinedFunctions,omitempty"`
 }
 
-// The API secret.
+// The API secret. This data type is not supported in Gemini API.
 type APIAuthAPIKeyConfig struct {
 	// Required. The SecretManager secret version resource name storing API key. e.g. projects/{project}/secrets/{secret}/versions/{version}
 	APIKeySecretVersion string `json:"apiKeySecretVersion,omitempty"`
@@ -1511,13 +1519,14 @@ type APIAuthAPIKeyConfig struct {
 }
 
 // The generic reusable API auth config. Deprecated. Please use AuthConfig (google/cloud/aiplatform/master/auth.proto)
-// instead.
+// instead. This data type is not supported in Gemini API.
 type APIAuth struct {
 	// The API secret.
 	APIKeyConfig *APIAuthAPIKeyConfig `json:"apiKeyConfig,omitempty"`
 }
 
-// The search parameters to use for the ELASTIC_SEARCH spec.
+// The search parameters to use for the ELASTIC_SEARCH spec. This data type is not supported
+// in Gemini API.
 type ExternalAPIElasticSearchParams struct {
 	// The ElasticSearch index to use.
 	Index string `json:"index,omitempty"`
@@ -1528,12 +1537,14 @@ type ExternalAPIElasticSearchParams struct {
 	SearchTemplate string `json:"searchTemplate,omitempty"`
 }
 
-// The search parameters to use for SIMPLE_SEARCH spec.
+// The search parameters to use for SIMPLE_SEARCH spec. This data type is not supported
+// in Gemini API.
 type ExternalAPISimpleSearchParams struct {
 }
 
 // Retrieve from data source powered by external API for grounding. The external API
-// is not owned by Google, but need to follow the pre-defined API spec.
+// is not owned by Google, but need to follow the pre-defined API spec. This data type
+// is not supported in Gemini API.
 type ExternalAPI struct {
 	// The authentication config to access the API. Deprecated. Please use auth_config instead.
 	APIAuth *APIAuth `json:"apiAuth,omitempty"`
@@ -1551,7 +1562,8 @@ type ExternalAPI struct {
 }
 
 // Define data stores within engine to filter on in a search call and configurations
-// for those data stores. For more information, see https://cloud.google.com/generative-ai-app-builder/docs/reference/rpc/google.cloud.discoveryengine.v1#datastorespec
+// for those data stores. For more information, see https://cloud.google.com/generative-ai-app-builder/docs/reference/rpc/google.cloud.discoveryengine.v1#datastorespec.
+// This data type is not supported in Gemini API.
 type VertexAISearchDataStoreSpec struct {
 	// Full resource name of DataStore, such as Format: `projects/{project}/locations/{location}/collections/{collection}/dataStores/{dataStore}`
 	DataStore string `json:"dataStore,omitempty"`
@@ -1561,7 +1573,8 @@ type VertexAISearchDataStoreSpec struct {
 }
 
 // Retrieve from Vertex AI Search datastore or engine for grounding. datastore and engine
-// are mutually exclusive. See https://cloud.google.com/products/agent-builder
+// are mutually exclusive. See https://cloud.google.com/products/agent-builder. This
+// data type is not supported in Gemini API.
 type VertexAISearch struct {
 	// Specifications that define the specific DataStores to be searched, along with configurations
 	// for those data stores. This is only considered for Engines with multiple data stores.
@@ -1578,7 +1591,7 @@ type VertexAISearch struct {
 	MaxResults *int32 `json:"maxResults,omitempty"`
 }
 
-// The definition of the RAG resource.
+// The definition of the RAG resource. This data type is not supported in Gemini API.
 type VertexRAGStoreRAGResource struct {
 	// Optional. RAGCorpora resource name. Format: `projects/{project}/locations/{location}/ragCorpora/{rag_corpus}`
 	RAGCorpus string `json:"ragCorpus,omitempty"`
@@ -1587,7 +1600,7 @@ type VertexRAGStoreRAGResource struct {
 	RAGFileIDs []string `json:"ragFileIds,omitempty"`
 }
 
-// Config for filters.
+// Config for filters. This data type is not supported in Gemini API.
 type RAGRetrievalConfigFilter struct {
 	// Optional. String for metadata filtering.
 	MetadataFilter string `json:"metadataFilter,omitempty"`
@@ -1597,7 +1610,7 @@ type RAGRetrievalConfigFilter struct {
 	VectorSimilarityThreshold *float64 `json:"vectorSimilarityThreshold,omitempty"`
 }
 
-// Config for Hybrid Search.
+// Config for Hybrid Search. This data type is not supported in Gemini API.
 type RAGRetrievalConfigHybridSearch struct {
 	// Optional. Alpha value controls the weight between dense and sparse vector search
 	// results. The range is [0, 1], while 0 means sparse vector search only and 1 means
@@ -1606,19 +1619,19 @@ type RAGRetrievalConfigHybridSearch struct {
 	Alpha *float32 `json:"alpha,omitempty"`
 }
 
-// Config for LlmRanker.
+// Config for LlmRanker. This data type is not supported in Gemini API.
 type RAGRetrievalConfigRankingLlmRanker struct {
 	// Optional. The model name used for ranking. See [Supported models](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/inference#supported-models).
 	ModelName string `json:"modelName,omitempty"`
 }
 
-// Config for Rank Service.
+// Config for Rank Service. This data type is not supported in Gemini API.
 type RAGRetrievalConfigRankingRankService struct {
 	// Optional. The model name of the rank service. Format: `semantic-ranker-512@latest`
 	ModelName string `json:"modelName,omitempty"`
 }
 
-// Config for ranking and reranking.
+// Config for ranking and reranking. This data type is not supported in Gemini API.
 type RAGRetrievalConfigRanking struct {
 	// Optional. Config for LlmRanker.
 	LlmRanker *RAGRetrievalConfigRankingLlmRanker `json:"llmRanker,omitempty"`
@@ -1626,7 +1639,8 @@ type RAGRetrievalConfigRanking struct {
 	RankService *RAGRetrievalConfigRankingRankService `json:"rankService,omitempty"`
 }
 
-// Specifies the context retrieval config.
+// Specifies the context retrieval config. This data type is not supported in Gemini
+// API.
 type RAGRetrievalConfig struct {
 	// Optional. Config for filters.
 	Filter *RAGRetrievalConfigFilter `json:"filter,omitempty"`
@@ -1638,8 +1652,8 @@ type RAGRetrievalConfig struct {
 	TopK *int32 `json:"topK,omitempty"`
 }
 
-// Retrieve from Vertex RAG Store for grounding. You can find API default values and
-// more details at https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/rag-api-v1#parameters-list
+// Retrieve from Vertex RAG Store for grounding. This data type is not supported in
+// Gemini API. You can find API default values and more details at https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/rag-api-v1#parameters-list
 type VertexRAGStore struct {
 	// Optional. Deprecated. Please use rag_resources instead.
 	RAGCorpora []string `json:"ragCorpora,omitempty"`
@@ -1660,7 +1674,8 @@ type VertexRAGStore struct {
 	VectorDistanceThreshold *float64 `json:"vectorDistanceThreshold,omitempty"`
 }
 
-// Defines a retrieval tool that model can call to access external knowledge.
+// Defines a retrieval tool that model can call to access external knowledge. This data
+// type is not supported in Gemini API.
 type Retrieval struct {
 	// Optional. Deprecated. This option is no longer supported.
 	DisableAttribution bool `json:"disableAttribution,omitempty"`
@@ -1675,7 +1690,7 @@ type Retrieval struct {
 
 // Tool that executes code generated by the model, and automatically returns the result
 // to the model. See also [ExecutableCode]and [CodeExecutionResult] which are input
-// and output to this tool.
+// and output to this tool. This data type is not supported in Gemini API.
 type ToolCodeExecution struct {
 }
 
@@ -1685,7 +1700,7 @@ type Tool struct {
 	FunctionDeclarations []*FunctionDeclaration `json:"functionDeclarations,omitempty"`
 	// Optional. Retrieval tool type. System will always execute the provided retrieval
 	// tool(s) to get external knowledge to answer the prompt. Retrieval results are presented
-	// to the model for generation.
+	// to the model for generation. This field is not supported in Gemini API.
 	Retrieval *Retrieval `json:"retrieval,omitempty"`
 	// Optional. Google Search tool type. Specialized retrieval tool
 	// that is powered by Google Search.
@@ -1804,19 +1819,22 @@ type ImageConfig struct {
 }
 
 // When automated routing is specified, the routing will be determined by the pretrained
-// routing model and customer provided model routing preference.
+// routing model and customer provided model routing preference. This data type is not
+// supported in Gemini API.
 type GenerationConfigRoutingConfigAutoRoutingMode struct {
 	// The model routing preference.
 	ModelRoutingPreference string `json:"modelRoutingPreference,omitempty"`
 }
 
-// When manual routing is set, the specified model will be used directly.
+// When manual routing is set, the specified model will be used directly. This data
+// type is not supported in Gemini API.
 type GenerationConfigRoutingConfigManualRoutingMode struct {
 	// The model name to use. Only the public LLM models are accepted. See [Supported models](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/inference#supported-models).
 	ModelName string `json:"modelName,omitempty"`
 }
 
-// The configuration for routing the request to a specific model.
+// The configuration for routing the request to a specific model. This data type is
+// not supported in Gemini API.
 type GenerationConfigRoutingConfig struct {
 	// Automated routing.
 	AutoMode *GenerationConfigRoutingConfigAutoRoutingMode `json:"autoMode,omitempty"`
@@ -1948,7 +1966,7 @@ type HTTPResponse struct {
 	Body string `json:"body,omitempty"`
 }
 
-// Source attributions for content.
+// Source attributions for content. This data type is not supported in Gemini API.
 type Citation struct {
 	// Output only. End index into the content.
 	EndIndex int32 `json:"endIndex,omitempty"`
@@ -2022,7 +2040,8 @@ type URLContextMetadata struct {
 	URLMetadata []*URLMetadata `json:"urlMetadata,omitempty"`
 }
 
-// Author attribution for a photo or review.
+// Author attribution for a photo or review. This data type is not supported in Gemini
+// API.
 type GroundingChunkMapsPlaceAnswerSourcesAuthorAttribution struct {
 	// Name of the author of the Photo or Review.
 	DisplayName string `json:"displayName,omitempty"`
@@ -2032,7 +2051,7 @@ type GroundingChunkMapsPlaceAnswerSourcesAuthorAttribution struct {
 	URI string `json:"uri,omitempty"`
 }
 
-// Encapsulates a review snippet.
+// Encapsulates a review snippet. This data type is not supported in Gemini API.
 type GroundingChunkMapsPlaceAnswerSourcesReviewSnippet struct {
 	// This review's author.
 	AuthorAttribution *GroundingChunkMapsPlaceAnswerSourcesAuthorAttribution `json:"authorAttribution,omitempty"`
@@ -2052,7 +2071,8 @@ type GroundingChunkMapsPlaceAnswerSourcesReviewSnippet struct {
 	Title string `json:"title,omitempty"`
 }
 
-// Sources used to generate the place answer.
+// Sources used to generate the place answer. This data type is not supported in Gemini
+// API.
 type GroundingChunkMapsPlaceAnswerSources struct {
 	// A link where users can flag a problem with the generated answer.
 	FlagContentURI string `json:"flagContentUri,omitempty"`
@@ -2060,7 +2080,7 @@ type GroundingChunkMapsPlaceAnswerSources struct {
 	ReviewSnippets []*GroundingChunkMapsPlaceAnswerSourcesReviewSnippet `json:"reviewSnippets,omitempty"`
 }
 
-// Chunk from Google Maps.
+// Chunk from Google Maps. This data type is not supported in Gemini API.
 type GroundingChunkMaps struct {
 	// Sources used to generate the place answer. This includes review snippets and photos
 	// that were used to generate the answer, as well as uris to flag content.
@@ -2076,7 +2096,8 @@ type GroundingChunkMaps struct {
 	URI string `json:"uri,omitempty"`
 }
 
-// Represents where the chunk starts and ends in the document.
+// Represents where the chunk starts and ends in the document. This data type is not
+// supported in Gemini API.
 type RAGChunkPageSpan struct {
 	// Page where chunk starts in the document. Inclusive. 1-indexed.
 	FirstPage int32 `json:"firstPage,omitempty"`
@@ -2085,6 +2106,7 @@ type RAGChunkPageSpan struct {
 }
 
 // A RAGChunk includes the content of a chunk of a RAGFile, and associated metadata.
+// This data type is not supported in Gemini API.
 type RAGChunk struct {
 	// If populated, represents where the chunk starts and ends in the document.
 	PageSpan *RAGChunkPageSpan `json:"pageSpan,omitempty"`
@@ -2092,7 +2114,8 @@ type RAGChunk struct {
 	Text string `json:"text,omitempty"`
 }
 
-// Chunk from context retrieved by the retrieval tools.
+// Chunk from context retrieved by the retrieval tools. This data type is not supported
+// in Gemini API.
 type GroundingChunkRetrievedContext struct {
 	// Output only. The full document name for the referenced Vertex AI Search document.
 	DocumentName string `json:"documentName,omitempty"`
@@ -2109,7 +2132,7 @@ type GroundingChunkRetrievedContext struct {
 
 // Chunk from the web.
 type GroundingChunkWeb struct {
-	// Domain of the (original) URI.
+	// Domain of the (original) URI. This field is not supported in Gemini API.
 	Domain string `json:"domain,omitempty"`
 	// Title of the chunk.
 	Title string `json:"title,omitempty"`
@@ -2119,9 +2142,10 @@ type GroundingChunkWeb struct {
 
 // Grounding chunk.
 type GroundingChunk struct {
-	// Grounding chunk from Google Maps.
+	// Grounding chunk from Google Maps. This field is not supported in Gemini API.
 	Maps *GroundingChunkMaps `json:"maps,omitempty"`
-	// Grounding chunk from context retrieved by the retrieval tools.
+	// Grounding chunk from context retrieved by the retrieval tools. This field is not
+	// supported in Gemini API.
 	RetrievedContext *GroundingChunkRetrievedContext `json:"retrievedContext,omitempty"`
 	// Grounding chunk from the web.
 	Web *GroundingChunkWeb `json:"web,omitempty"`
@@ -2174,7 +2198,7 @@ type SearchEntryPoint struct {
 }
 
 // Source content flagging URI for a place or review. This is currently populated only
-// for Google Maps grounding.
+// for Google Maps grounding. This data type is not supported in Gemini API.
 type GroundingMetadataSourceFlaggingURI struct {
 	// A link where users can flag a problem with the source (place or review).
 	FlagContentURI string `json:"flagContentUri,omitempty"`
@@ -2186,7 +2210,7 @@ type GroundingMetadataSourceFlaggingURI struct {
 type GroundingMetadata struct {
 	// Optional. Output only. Resource name of the Google Maps widget context token to be
 	// used with the PlacesContextElement widget to render contextual data. This is populated
-	// only for Google Maps grounding.
+	// only for Google Maps grounding. This field is not supported in Gemini API.
 	GoogleMapsWidgetContextToken string `json:"googleMapsWidgetContextToken,omitempty"`
 	// List of supporting references retrieved from specified grounding source.
 	GroundingChunks []*GroundingChunk `json:"groundingChunks,omitempty"`
@@ -2194,12 +2218,13 @@ type GroundingMetadata struct {
 	GroundingSupports []*GroundingSupport `json:"groundingSupports,omitempty"`
 	// Optional. Output only. Retrieval metadata.
 	RetrievalMetadata *RetrievalMetadata `json:"retrievalMetadata,omitempty"`
-	// Optional. Queries executed by the retrieval tools.
+	// Optional. Queries executed by the retrieval tools. This field is not supported in
+	// Gemini API.
 	RetrievalQueries []string `json:"retrievalQueries,omitempty"`
 	// Optional. Google search entry for the following-up web searches.
 	SearchEntryPoint *SearchEntryPoint `json:"searchEntryPoint,omitempty"`
 	// Optional. Output only. List of source flagging uris. This is currently populated
-	// only for Google Maps grounding.
+	// only for Google Maps grounding. This field is not supported in Gemini API.
 	SourceFlaggingUris []*GroundingMetadataSourceFlaggingURI `json:"sourceFlaggingUris,omitempty"`
 	// Optional. Web search queries for the following-up web search.
 	WebSearchQueries []string `json:"webSearchQueries,omitempty"`
@@ -2242,11 +2267,11 @@ type SafetyRating struct {
 	OverwrittenThreshold HarmBlockThreshold `json:"overwrittenThreshold,omitempty"`
 	// Output only. Harm probability levels in the content.
 	Probability HarmProbability `json:"probability,omitempty"`
-	// Output only. Harm probability score.
+	// Output only. Harm probability score. This field is not supported in Gemini API.
 	ProbabilityScore float32 `json:"probabilityScore,omitempty"`
 	// Output only. Harm severity levels in the content.
 	Severity HarmSeverity `json:"severity,omitempty"`
-	// Output only. Harm severity score.
+	// Output only. Harm severity score. This field is not supported in Gemini API.
 	SeverityScore float32 `json:"severityScore,omitempty"`
 }
 
@@ -2286,6 +2311,7 @@ type GenerateContentResponsePromptFeedback struct {
 	// Output only. The reason why the prompt was blocked.
 	BlockReason BlockedReason `json:"blockReason,omitempty"`
 	// Output only. A readable message that explains the reason why the prompt was blocked.
+	// This field is not supported in Gemini API.
 	BlockReasonMessage string `json:"blockReasonMessage,omitempty"`
 	// Output only. A list of safety ratings for the prompt. There is one rating per category.
 	SafetyRatings []*SafetyRating `json:"safetyRatings,omitempty"`
@@ -2299,7 +2325,7 @@ type ModalityTokenCount struct {
 	TokenCount int32 `json:"tokenCount,omitempty"`
 }
 
-// Usage metadata about response(s).
+// Usage metadata about response(s). This data type is not supported in Gemini API.
 type GenerateContentResponseUsageMetadata struct {
 	// Output only. List of modalities of the cached content in the request input.
 	CacheTokensDetails []*ModalityTokenCount `json:"cacheTokensDetails,omitempty"`
@@ -3171,11 +3197,13 @@ type GenerationConfig struct {
 	// Optional. Config for model selection.
 	ModelSelectionConfig *ModelSelectionConfig `json:"modelSelectionConfig,omitempty"`
 	// Optional. If enabled, audio timestamp will be included in the request to the model.
+	// This field is not supported in Gemini API.
 	AudioTimestamp bool `json:"audioTimestamp,omitempty"`
 	// Optional. Number of candidates to generate. If empty, the system will choose a default
 	// value (currently 1).
 	CandidateCount int32 `json:"candidateCount,omitempty"`
 	// Optional. If enabled, the model will detect emotions and adapt its responses accordingly.
+	// This field is not supported in Gemini API.
 	EnableAffectiveDialog *bool `json:"enableAffectiveDialog,omitempty"`
 	// Optional. Frequency penalties.
 	FrequencyPenalty *float32 `json:"frequencyPenalty,omitempty"`
@@ -3216,7 +3244,7 @@ type GenerationConfig struct {
 	// set, a compatible response_mime_type must also be set. Compatible mimetypes: `application/json`:
 	// Schema for JSON response.
 	ResponseSchema *Schema `json:"responseSchema,omitempty"`
-	// Optional. Routing configuration.
+	// Optional. Routing configuration. This field is not supported in Gemini API.
 	RoutingConfig *GenerationConfigRoutingConfig `json:"routingConfig,omitempty"`
 	// Optional. Seed.
 	Seed *int32 `json:"seed,omitempty"`
@@ -3234,6 +3262,7 @@ type GenerationConfig struct {
 	// Optional. If specified, nucleus sampling will be used.
 	TopP *float32 `json:"topP,omitempty"`
 	// Optional. Enables enhanced civic answers. It may not be available for all models.
+	// This field is not supported in Vertex AI.
 	EnableEnhancedCivicAnswers *bool `json:"enableEnhancedCivicAnswers,omitempty"`
 }
 
@@ -3512,7 +3541,8 @@ type TunedModel struct {
 // environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc).
 // Each `Status` message contains three pieces of data: error code, error message, and
 // error details. You can find out more about this error model and how to work with
-// it in the [API Design Guide](https://cloud.google.com/apis/design/errors).
+// it in the [API Design Guide](https://cloud.google.com/apis/design/errors). This data
+// type is not supported in Gemini API.
 type GoogleRpcStatus struct {
 	// The status code, which should be an enum value of google.rpc.Code.
 	Code int32 `json:"code,omitempty"`
@@ -3525,7 +3555,8 @@ type GoogleRpcStatus struct {
 	Message string `json:"message,omitempty"`
 }
 
-// A pre-tuned model for continuous tuning.
+// A pre-tuned model for continuous tuning. This data type is not supported in Gemini
+// API.
 type PreTunedModel struct {
 	// Output only. The name of the base model this PreTunedModel was tuned from.
 	BaseModel string `json:"baseModel,omitempty"`
@@ -3539,7 +3570,7 @@ type PreTunedModel struct {
 	TunedModelName string `json:"tunedModelName,omitempty"`
 }
 
-// Hyperparameters for SFT.
+// Hyperparameters for SFT. This data type is not supported in Gemini API.
 type SupervisedHyperParameters struct {
 	// Optional. Adapter size for tuning.
 	AdapterSize AdapterSize `json:"adapterSize,omitempty"`
@@ -3556,7 +3587,8 @@ type SupervisedHyperParameters struct {
 	LearningRateMultiplier float64 `json:"learningRateMultiplier,omitempty"`
 }
 
-// Tuning Spec for Supervised Tuning for first party models.
+// Tuning Spec for Supervised Tuning for first party models. This data type is not supported
+// in Gemini API.
 type SupervisedTuningSpec struct {
 	// Optional. If set to true, disable intermediate checkpoints for SFT and only the last
 	// checkpoint will be exported. Otherwise, enable intermediate checkpoints for SFT.
@@ -3577,7 +3609,7 @@ type SupervisedTuningSpec struct {
 }
 
 // Dataset bucket used to create a histogram for the distribution given a population
-// of values.
+// of values. This data type is not supported in Gemini API.
 type DatasetDistributionDistributionBucket struct {
 	// Output only. Number of values in the bucket.
 	Count int64 `json:"count,omitempty,string"`
@@ -3587,7 +3619,8 @@ type DatasetDistributionDistributionBucket struct {
 	Right float64 `json:"right,omitempty"`
 }
 
-// Distribution computed over a tuning dataset.
+// Distribution computed over a tuning dataset. This data type is not supported in Gemini
+// API.
 type DatasetDistribution struct {
 	// Output only. Defines the histogram bucket.
 	Buckets []*DatasetDistributionDistributionBucket `json:"buckets,omitempty"`
@@ -3607,7 +3640,8 @@ type DatasetDistribution struct {
 	Sum float64 `json:"sum,omitempty"`
 }
 
-// Statistics computed over a tuning dataset.
+// Statistics computed over a tuning dataset. This data type is not supported in Gemini
+// API.
 type DatasetStats struct {
 	// Output only. Number of billable characters in the tuning dataset.
 	TotalBillableCharacterCount int64 `json:"totalBillableCharacterCount,omitempty,string"`
@@ -3627,13 +3661,14 @@ type DatasetStats struct {
 	UserOutputTokenDistribution *DatasetDistribution `json:"userOutputTokenDistribution,omitempty"`
 }
 
-// Statistics computed for datasets used for distillation.
+// Statistics computed for datasets used for distillation. This data type is not supported
+// in Gemini API.
 type DistillationDataStats struct {
 	// Output only. Statistics computed for the training dataset.
 	TrainingDatasetStats *DatasetStats `json:"trainingDatasetStats,omitempty"`
 }
 
-// Completion and its preference score.
+// Completion and its preference score. This data type is not supported in Gemini API.
 type GeminiPreferenceExampleCompletion struct {
 	// Single turn completion for the given prompt.
 	Completion *Content `json:"completion,omitempty"`
@@ -3641,7 +3676,8 @@ type GeminiPreferenceExampleCompletion struct {
 	Score float32 `json:"score,omitempty"`
 }
 
-// Input example for preference optimization.
+// Input example for preference optimization. This data type is not supported in Gemini
+// API.
 type GeminiPreferenceExample struct {
 	// List of completions for a given prompt.
 	Completions []*GeminiPreferenceExampleCompletion `json:"completions,omitempty"`
@@ -3649,7 +3685,8 @@ type GeminiPreferenceExample struct {
 	Contents []*Content `json:"contents,omitempty"`
 }
 
-// Statistics computed for datasets used for preference optimization.
+// Statistics computed for datasets used for preference optimization. This data type
+// is not supported in Gemini API.
 type PreferenceOptimizationDataStats struct {
 	// Output only. Dataset distributions for scores variance per example.
 	ScoreVariancePerExampleDistribution *DatasetDistribution `json:"scoreVariancePerExampleDistribution,omitempty"`
@@ -3670,7 +3707,7 @@ type PreferenceOptimizationDataStats struct {
 }
 
 // Dataset bucket used to create a histogram for the distribution given a population
-// of values.
+// of values. This data type is not supported in Gemini API.
 type SupervisedTuningDatasetDistributionDatasetBucket struct {
 	// Output only. Number of values in the bucket.
 	Count float64 `json:"count,omitempty"`
@@ -3680,7 +3717,8 @@ type SupervisedTuningDatasetDistributionDatasetBucket struct {
 	Right float64 `json:"right,omitempty"`
 }
 
-// Dataset distribution for Supervised Tuning.
+// Dataset distribution for Supervised Tuning. This data type is not supported in Gemini
+// API.
 type SupervisedTuningDatasetDistribution struct {
 	// Output only. Sum of a given population of values that are billable.
 	BillableSum int64 `json:"billableSum,omitempty,string"`
@@ -3702,7 +3740,8 @@ type SupervisedTuningDatasetDistribution struct {
 	Sum int64 `json:"sum,omitempty,string"`
 }
 
-// Tuning data statistics for Supervised Tuning.
+// Tuning data statistics for Supervised Tuning. This data type is not supported in
+// Gemini API.
 type SupervisedTuningDataStats struct {
 	// Output only. For each index in `truncated_example_indices`, the user-facing reason
 	// why the example was dropped.
@@ -3769,7 +3808,8 @@ func (s *SupervisedTuningDataStats) MarshalJSON() ([]byte, error) {
 	return json.Marshal(aux)
 }
 
-// The tuning data statistic values for TuningJob.
+// The tuning data statistic values for TuningJob. This data type is not supported in
+// Gemini API.
 type TuningDataStats struct {
 	// Output only. Statistics for distillation.
 	DistillationDataStats *DistillationDataStats `json:"distillationDataStats,omitempty"`
@@ -3780,7 +3820,7 @@ type TuningDataStats struct {
 }
 
 // Represents a customer-managed encryption key spec that can be applied to a top-level
-// resource.
+// resource. This data type is not supported in Gemini API.
 type EncryptionSpec struct {
 	// Required. The Cloud KMS resource identifier of the customer managed encryption key
 	// used to protect a resource. Has the form: `projects/my-project/locations/my-region/keyRings/my-kr/cryptoKeys/my-key`.
@@ -3788,7 +3828,7 @@ type EncryptionSpec struct {
 	KmsKeyName string `json:"kmsKeyName,omitempty"`
 }
 
-// Tuning spec for Partner models.
+// Tuning spec for Partner models. This data type is not supported in Gemini API.
 type PartnerModelTuningSpec struct {
 	// Hyperparameters for tuning. The accepted hyper_parameters and their valid range of
 	// values will differ depending on the base model.
@@ -3801,7 +3841,7 @@ type PartnerModelTuningSpec struct {
 	ValidationDatasetURI string `json:"validationDatasetUri,omitempty"`
 }
 
-// Hyperparameters for Veo.
+// Hyperparameters for Veo. This data type is not supported in Gemini API.
 type VeoHyperParameters struct {
 	// Optional. Number of complete passes the model makes over the entire training dataset
 	// during training.
@@ -3812,7 +3852,7 @@ type VeoHyperParameters struct {
 	TuningTask TuningTask `json:"tuningTask,omitempty"`
 }
 
-// Tuning Spec for Veo Model Tuning.
+// Tuning Spec for Veo Model Tuning. This data type is not supported in Gemini API.
 type VeoTuningSpec struct {
 	// Optional. Hyperparameters for Veo.
 	HyperParameters *VeoHyperParameters `json:"hyperParameters,omitempty"`
@@ -3996,7 +4036,7 @@ type CancelTuningJobConfig struct {
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
 }
 
-// A single example for tuning.
+// A single example for tuning. This data type is not supported in Vertex AI.
 type TuningExample struct {
 	// Required. The expected model output.
 	Output string `json:"output,omitempty"`
@@ -4159,15 +4199,15 @@ func (c *CreateCachedContentConfig) MarshalJSON() ([]byte, error) {
 
 // Metadata on the usage of the cached content.
 type CachedContentUsageMetadata struct {
-	// Duration of audio in seconds.
+	// Duration of audio in seconds. This field is not supported in Gemini API.
 	AudioDurationSeconds int32 `json:"audioDurationSeconds,omitempty"`
-	// Number of images.
+	// Number of images. This field is not supported in Gemini API.
 	ImageCount int32 `json:"imageCount,omitempty"`
-	// Number of text characters.
+	// Number of text characters. This field is not supported in Gemini API.
 	TextCount int32 `json:"textCount,omitempty"`
 	// Total number of tokens that the cached content consumes.
 	TotalTokenCount int32 `json:"totalTokenCount,omitempty"`
-	// Duration of video in seconds.
+	// Duration of video in seconds. This field is not supported in Gemini API.
 	VideoDurationSeconds int32 `json:"videoDurationSeconds,omitempty"`
 }
 
