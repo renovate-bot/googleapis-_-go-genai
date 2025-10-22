@@ -666,7 +666,7 @@ func tuningValidationDatasetToVertex(fromObject map[string]any, parentObject map
 
 	fromVertexDatasetResource := getValueByPath(fromObject, []string{"vertexDatasetResource"})
 	if fromVertexDatasetResource != nil {
-		setValueByPath(parentObject, []string{"supervisedTuningSpec", "trainingDatasetUri"}, fromVertexDatasetResource)
+		setValueByPath(toObject, []string{"validationDatasetUri"}, fromVertexDatasetResource)
 	}
 
 	return toObject, nil

@@ -4018,7 +4018,7 @@ type TuningDataset struct {
 type TuningValidationDataset struct {
 	// Optional. GCS URI of the file containing validation dataset in JSONL format.
 	GCSURI string `json:"gcsUri,omitempty"`
-	// Optional. The resource name of the Vertex Multimodal Dataset that is used as training
+	// Optional. The resource name of the Vertex Multimodal Dataset that is used as validation
 	// dataset. Example: 'projects/my-project-id-or-number/locations/my-location/datasets/my-dataset-id'.
 	VertexDatasetResource string `json:"vertexDatasetResource,omitempty"`
 }
@@ -4027,8 +4027,8 @@ type TuningValidationDataset struct {
 type CreateTuningJobConfig struct {
 	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
-	// Optional. Cloud Storage path to file containing training dataset for tuning. The
-	// dataset must be formatted as a JSONL file.
+	// Optional. Validation dataset for tuning. The dataset must be formatted as a JSONL
+	// file.
 	ValidationDataset *TuningValidationDataset `json:"validationDataset,omitempty"`
 	// Optional. The display name of the tuned Model. The name can be up to 128 characters
 	// long and can consist of any UTF-8 characters.
