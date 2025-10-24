@@ -123,7 +123,8 @@ const (
 )
 
 // Specify if the threshold is used for probability or severity score. If not specified,
-// the threshold is used for probability score.
+// the threshold is used for probability score. This enum is not supported in Gemini
+// API.
 type HarmBlockMethod string
 
 const (
@@ -163,7 +164,7 @@ const (
 	ModeDynamic Mode = "MODE_DYNAMIC"
 )
 
-// Type of auth scheme.
+// Type of auth scheme. This enum is not supported in Gemini API.
 type AuthType string
 
 const (
@@ -182,7 +183,8 @@ const (
 	AuthTypeOidcAuth AuthType = "OIDC_AUTH"
 )
 
-// The API spec that the external API implements.
+// The API spec that the external API implements. This enum is not supported in Gemini
+// API.
 type APISpec string
 
 const (
@@ -265,7 +267,7 @@ const (
 	HarmProbabilityHigh HarmProbability = "HIGH"
 )
 
-// Harm severity levels in the content.
+// Harm severity levels in the content. This enum is not supported in Gemini API.
 type HarmSeverity string
 
 const (
@@ -307,7 +309,7 @@ const (
 )
 
 // Traffic type. This shows whether a request consumes Pay-As-You-Go or Provisioned
-// Throughput quota.
+// Throughput quota. This enum is not supported in Gemini API.
 type TrafficType string
 
 const (
@@ -379,7 +381,7 @@ const (
 	JobStatePartiallySucceeded JobState = "JOB_STATE_PARTIALLY_SUCCEEDED"
 )
 
-// Tuning mode.
+// Tuning mode. This enum is not supported in Gemini API.
 type TuningMode string
 
 const (
@@ -391,7 +393,7 @@ const (
 	TuningModePeftAdapter TuningMode = "TUNING_MODE_PEFT_ADAPTER"
 )
 
-// Adapter size for tuning.
+// Adapter size for tuning. This enum is not supported in Gemini API.
 type AdapterSize string
 
 const (
@@ -411,7 +413,7 @@ const (
 	AdapterSizeThirtyTwo AdapterSize = "ADAPTER_SIZE_THIRTY_TWO"
 )
 
-// The tuning task. Either I2V or T2V.
+// The tuning task. Either I2V or T2V. This enum is not supported in Gemini API.
 type TuningTask string
 
 const (
@@ -2263,13 +2265,15 @@ type SafetyRating struct {
 	Category HarmCategory `json:"category,omitempty"`
 	// Output only. The overwritten threshold for the safety category of Gemini 2.0 image
 	// out. If minors are detected in the output image, the threshold of each safety category
-	// will be overwritten if user sets a lower threshold.
+	// will be overwritten if user sets a lower threshold. This field is not supported in
+	// Gemini API.
 	OverwrittenThreshold HarmBlockThreshold `json:"overwrittenThreshold,omitempty"`
 	// Output only. Harm probability levels in the content.
 	Probability HarmProbability `json:"probability,omitempty"`
 	// Output only. Harm probability score. This field is not supported in Gemini API.
 	ProbabilityScore float32 `json:"probabilityScore,omitempty"`
-	// Output only. Harm severity levels in the content.
+	// Output only. Harm severity levels in the content. This field is not supported in
+	// Gemini API.
 	Severity HarmSeverity `json:"severity,omitempty"`
 	// Output only. Harm severity score. This field is not supported in Gemini API.
 	SeverityScore float32 `json:"severityScore,omitempty"`
