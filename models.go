@@ -2462,14 +2462,13 @@ func googleMapsToMldev(fromObject map[string]any, parentObject map[string]any) (
 
 func googleSearchToMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
+	if getValueByPath(fromObject, []string{"excludeDomains"}) != nil {
+		return nil, fmt.Errorf("excludeDomains parameter is not supported in Gemini API")
+	}
 
 	fromTimeRangeFilter := getValueByPath(fromObject, []string{"timeRangeFilter"})
 	if fromTimeRangeFilter != nil {
 		setValueByPath(toObject, []string{"timeRangeFilter"}, fromTimeRangeFilter)
-	}
-
-	if getValueByPath(fromObject, []string{"excludeDomains"}) != nil {
-		return nil, fmt.Errorf("excludeDomains parameter is not supported in Gemini API")
 	}
 
 	return toObject, nil
@@ -3354,23 +3353,9 @@ func toolToMldev(fromObject map[string]any, parentObject map[string]any) (toObje
 		return nil, fmt.Errorf("retrieval parameter is not supported in Gemini API")
 	}
 
-	fromGoogleSearch := getValueByPath(fromObject, []string{"googleSearch"})
-	if fromGoogleSearch != nil {
-		fromGoogleSearch, err = googleSearchToMldev(fromGoogleSearch.(map[string]any), toObject)
-		if err != nil {
-			return nil, err
-		}
-
-		setValueByPath(toObject, []string{"googleSearch"}, fromGoogleSearch)
-	}
-
 	fromGoogleSearchRetrieval := getValueByPath(fromObject, []string{"googleSearchRetrieval"})
 	if fromGoogleSearchRetrieval != nil {
 		setValueByPath(toObject, []string{"googleSearchRetrieval"}, fromGoogleSearchRetrieval)
-	}
-
-	if getValueByPath(fromObject, []string{"enterpriseWebSearch"}) != nil {
-		return nil, fmt.Errorf("enterpriseWebSearch parameter is not supported in Gemini API")
 	}
 
 	fromGoogleMaps := getValueByPath(fromObject, []string{"googleMaps"})
@@ -3383,11 +3368,6 @@ func toolToMldev(fromObject map[string]any, parentObject map[string]any) (toObje
 		setValueByPath(toObject, []string{"googleMaps"}, fromGoogleMaps)
 	}
 
-	fromUrlContext := getValueByPath(fromObject, []string{"urlContext"})
-	if fromUrlContext != nil {
-		setValueByPath(toObject, []string{"urlContext"}, fromUrlContext)
-	}
-
 	fromComputerUse := getValueByPath(fromObject, []string{"computerUse"})
 	if fromComputerUse != nil {
 		setValueByPath(toObject, []string{"computerUse"}, fromComputerUse)
@@ -3396,6 +3376,25 @@ func toolToMldev(fromObject map[string]any, parentObject map[string]any) (toObje
 	fromCodeExecution := getValueByPath(fromObject, []string{"codeExecution"})
 	if fromCodeExecution != nil {
 		setValueByPath(toObject, []string{"codeExecution"}, fromCodeExecution)
+	}
+
+	if getValueByPath(fromObject, []string{"enterpriseWebSearch"}) != nil {
+		return nil, fmt.Errorf("enterpriseWebSearch parameter is not supported in Gemini API")
+	}
+
+	fromGoogleSearch := getValueByPath(fromObject, []string{"googleSearch"})
+	if fromGoogleSearch != nil {
+		fromGoogleSearch, err = googleSearchToMldev(fromGoogleSearch.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"googleSearch"}, fromGoogleSearch)
+	}
+
+	fromUrlContext := getValueByPath(fromObject, []string{"urlContext"})
+	if fromUrlContext != nil {
+		setValueByPath(toObject, []string{"urlContext"}, fromUrlContext)
 	}
 
 	return toObject, nil
@@ -3419,29 +3418,14 @@ func toolToVertex(fromObject map[string]any, parentObject map[string]any) (toObj
 		setValueByPath(toObject, []string{"retrieval"}, fromRetrieval)
 	}
 
-	fromGoogleSearch := getValueByPath(fromObject, []string{"googleSearch"})
-	if fromGoogleSearch != nil {
-		setValueByPath(toObject, []string{"googleSearch"}, fromGoogleSearch)
-	}
-
 	fromGoogleSearchRetrieval := getValueByPath(fromObject, []string{"googleSearchRetrieval"})
 	if fromGoogleSearchRetrieval != nil {
 		setValueByPath(toObject, []string{"googleSearchRetrieval"}, fromGoogleSearchRetrieval)
 	}
 
-	fromEnterpriseWebSearch := getValueByPath(fromObject, []string{"enterpriseWebSearch"})
-	if fromEnterpriseWebSearch != nil {
-		setValueByPath(toObject, []string{"enterpriseWebSearch"}, fromEnterpriseWebSearch)
-	}
-
 	fromGoogleMaps := getValueByPath(fromObject, []string{"googleMaps"})
 	if fromGoogleMaps != nil {
 		setValueByPath(toObject, []string{"googleMaps"}, fromGoogleMaps)
-	}
-
-	fromUrlContext := getValueByPath(fromObject, []string{"urlContext"})
-	if fromUrlContext != nil {
-		setValueByPath(toObject, []string{"urlContext"}, fromUrlContext)
 	}
 
 	fromComputerUse := getValueByPath(fromObject, []string{"computerUse"})
@@ -3452,6 +3436,21 @@ func toolToVertex(fromObject map[string]any, parentObject map[string]any) (toObj
 	fromCodeExecution := getValueByPath(fromObject, []string{"codeExecution"})
 	if fromCodeExecution != nil {
 		setValueByPath(toObject, []string{"codeExecution"}, fromCodeExecution)
+	}
+
+	fromEnterpriseWebSearch := getValueByPath(fromObject, []string{"enterpriseWebSearch"})
+	if fromEnterpriseWebSearch != nil {
+		setValueByPath(toObject, []string{"enterpriseWebSearch"}, fromEnterpriseWebSearch)
+	}
+
+	fromGoogleSearch := getValueByPath(fromObject, []string{"googleSearch"})
+	if fromGoogleSearch != nil {
+		setValueByPath(toObject, []string{"googleSearch"}, fromGoogleSearch)
+	}
+
+	fromUrlContext := getValueByPath(fromObject, []string{"urlContext"})
+	if fromUrlContext != nil {
+		setValueByPath(toObject, []string{"urlContext"}, fromUrlContext)
 	}
 
 	return toObject, nil

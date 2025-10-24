@@ -1328,75 +1328,6 @@ type FunctionDeclaration struct {
 	ResponseJsonSchema any `json:"responseJsonSchema,omitempty"`
 }
 
-// Represents a time interval, encoded as a start time (inclusive) and an end time (exclusive).
-// The start time must be less than or equal to the end time.
-// When the start equals the end time, the interval is an empty interval.
-// (matches no time)
-// When both start and end are unspecified, the interval matches any time.
-type Interval struct {
-	// Optional. The start time of the interval.
-	StartTime time.Time `json:"startTime,omitempty"`
-	// Optional. The end time of the interval.
-	EndTime time.Time `json:"endTime,omitempty"`
-}
-
-func (i *Interval) UnmarshalJSON(data []byte) error {
-	type Alias Interval
-	aux := &struct {
-		StartTime *time.Time `json:"startTime,omitempty"`
-		EndTime   *time.Time `json:"endTime,omitempty"`
-		*Alias
-	}{
-		Alias: (*Alias)(i),
-	}
-
-	if err := json.Unmarshal(data, &aux); err != nil {
-		return err
-	}
-
-	if !reflect.ValueOf(aux.StartTime).IsZero() {
-		i.StartTime = time.Time(*aux.StartTime)
-	}
-
-	if !reflect.ValueOf(aux.EndTime).IsZero() {
-		i.EndTime = time.Time(*aux.EndTime)
-	}
-
-	return nil
-}
-
-func (i *Interval) MarshalJSON() ([]byte, error) {
-	type Alias Interval
-	aux := &struct {
-		StartTime *time.Time `json:"startTime,omitempty"`
-		EndTime   *time.Time `json:"endTime,omitempty"`
-		*Alias
-	}{
-		Alias: (*Alias)(i),
-	}
-
-	if !reflect.ValueOf(i.StartTime).IsZero() {
-		aux.StartTime = (*time.Time)(&i.StartTime)
-	}
-
-	if !reflect.ValueOf(i.EndTime).IsZero() {
-		aux.EndTime = (*time.Time)(&i.EndTime)
-	}
-
-	return json.Marshal(aux)
-}
-
-// Tool to support Google Search in Model. Powered by Google.
-type GoogleSearch struct {
-	// Optional. Filter search results to a specific time range.
-	// If customers set a start time, they must set an end time (and vice versa).
-	TimeRangeFilter *Interval `json:"timeRangeFilter,omitempty"`
-	// Optional. List of domains to be excluded from the search results. The default limit
-	// is 2000 domains. Example: ["amazon.com", "facebook.com"]. This field is not supported
-	// in Gemini API.
-	ExcludeDomains []string `json:"excludeDomains,omitempty"`
-}
-
 // Describes the options to customize dynamic retrieval.
 type DynamicRetrievalConfig struct {
 	// Optional. The mode of the predictor to be used in dynamic retrieval.
@@ -1410,13 +1341,6 @@ type DynamicRetrievalConfig struct {
 type GoogleSearchRetrieval struct {
 	// Optional. Specifies the dynamic retrieval configuration for the given source.
 	DynamicRetrievalConfig *DynamicRetrievalConfig `json:"dynamicRetrievalConfig,omitempty"`
-}
-
-// Tool to search public web data, powered by Vertex AI Search and Sec4 compliance.
-type EnterpriseWebSearch struct {
-	// Optional. List of domains to be excluded from the search results. The default limit
-	// is 2000 domains.
-	ExcludeDomains []string `json:"excludeDomains,omitempty"`
 }
 
 // Config for authentication with API key.
@@ -1494,10 +1418,6 @@ type GoogleMaps struct {
 	AuthConfig *AuthConfig `json:"authConfig,omitempty"`
 	// Optional. If true, include the widget context token in the response.
 	EnableWidget *bool `json:"enableWidget,omitempty"`
-}
-
-// Tool to support URL context retrieval.
-type URLContext struct {
 }
 
 // Tool to support computer use.
@@ -1696,6 +1616,89 @@ type Retrieval struct {
 type ToolCodeExecution struct {
 }
 
+// Tool to search public web data, powered by Vertex AI Search and Sec4 compliance.
+// This data type is not supported in Gemini API.
+type EnterpriseWebSearch struct {
+	// Optional. List of domains to be excluded from the search results. The default limit
+	// is 2000 domains.
+	ExcludeDomains []string `json:"excludeDomains,omitempty"`
+}
+
+// Represents a time interval, encoded as a Timestamp start (inclusive) and a Timestamp
+// end (exclusive). The start must be less than or equal to the end. When the start
+// equals the end, the interval is empty (matches no time). When both start and end
+// are unspecified, the interval matches any time.
+type Interval struct {
+	// Optional. Exclusive end of the interval. If specified, a Timestamp matching this
+	// interval will have to be before the end.
+	EndTime time.Time `json:"endTime,omitempty"`
+	// Optional. Inclusive start of the interval. If specified, a Timestamp matching this
+	// interval will have to be the same or after the start.
+	StartTime time.Time `json:"startTime,omitempty"`
+}
+
+func (i *Interval) UnmarshalJSON(data []byte) error {
+	type Alias Interval
+	aux := &struct {
+		EndTime   *time.Time `json:"endTime,omitempty"`
+		StartTime *time.Time `json:"startTime,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(i),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	if !reflect.ValueOf(aux.EndTime).IsZero() {
+		i.EndTime = time.Time(*aux.EndTime)
+	}
+
+	if !reflect.ValueOf(aux.StartTime).IsZero() {
+		i.StartTime = time.Time(*aux.StartTime)
+	}
+
+	return nil
+}
+
+func (i *Interval) MarshalJSON() ([]byte, error) {
+	type Alias Interval
+	aux := &struct {
+		EndTime   *time.Time `json:"endTime,omitempty"`
+		StartTime *time.Time `json:"startTime,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(i),
+	}
+
+	if !reflect.ValueOf(i.EndTime).IsZero() {
+		aux.EndTime = (*time.Time)(&i.EndTime)
+	}
+
+	if !reflect.ValueOf(i.StartTime).IsZero() {
+		aux.StartTime = (*time.Time)(&i.StartTime)
+	}
+
+	return json.Marshal(aux)
+}
+
+// GoogleSearch tool type. Tool to support Google Search in Model. Powered by Google.
+type GoogleSearch struct {
+	// Optional. List of domains to be excluded from the search results. The default limit
+	// is 2000 domains. Example: ["amazon.com", "facebook.com"]. This field is not supported
+	// in Gemini API.
+	ExcludeDomains []string `json:"excludeDomains,omitempty"`
+	// Optional. Filter search results to a specific time range. If customers set a start
+	// time, they must set an end time (and vice versa). This field is not supported in
+	// Vertex AI.
+	TimeRangeFilter *Interval `json:"timeRangeFilter,omitempty"`
+}
+
+// Tool to support URL context.
+type URLContext struct {
+}
+
 // Tool details of a tool that the model may use to generate a response.
 type Tool struct {
 	// Optional. List of function declarations that the tool supports.
@@ -1704,26 +1707,26 @@ type Tool struct {
 	// tool(s) to get external knowledge to answer the prompt. Retrieval results are presented
 	// to the model for generation. This field is not supported in Gemini API.
 	Retrieval *Retrieval `json:"retrieval,omitempty"`
-	// Optional. Google Search tool type. Specialized retrieval tool
-	// that is powered by Google Search.
-	GoogleSearch *GoogleSearch `json:"googleSearch,omitempty"`
 	// Optional. GoogleSearchRetrieval tool type. Specialized retrieval tool that is powered
 	// by Google search.
 	GoogleSearchRetrieval *GoogleSearchRetrieval `json:"googleSearchRetrieval,omitempty"`
-	// Optional. Enterprise web search tool type. Specialized retrieval
-	// tool that is powered by Vertex AI Search and Sec4 compliance.
-	EnterpriseWebSearch *EnterpriseWebSearch `json:"enterpriseWebSearch,omitempty"`
 	// Optional. Google Maps tool type. Specialized retrieval tool
 	// that is powered by Google Maps.
 	GoogleMaps *GoogleMaps `json:"googleMaps,omitempty"`
-	// Optional. Tool to support URL context retrieval.
-	URLContext *URLContext `json:"urlContext,omitempty"`
 	// Optional. Tool to support the model interacting directly with the
 	// computer. If enabled, it automatically populates computer-use specific
 	// Function Declarations.
 	ComputerUse *ComputerUse `json:"computerUse,omitempty"`
 	// Optional. CodeExecution tool type. Enables the model to execute code as part of generation.
 	CodeExecution *ToolCodeExecution `json:"codeExecution,omitempty"`
+	// Optional. Tool to support searching public web data, powered by Vertex AI Search
+	// and Sec4 compliance. This field is not supported in Gemini API.
+	EnterpriseWebSearch *EnterpriseWebSearch `json:"enterpriseWebSearch,omitempty"`
+	// Optional. GoogleSearch tool type. Tool to support Google Search in Model. Powered
+	// by Google.
+	GoogleSearch *GoogleSearch `json:"googleSearch,omitempty"`
+	// Optional. Tool to support URL context retrieval.
+	URLContext *URLContext `json:"urlContext,omitempty"`
 }
 
 // Function calling config.
