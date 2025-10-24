@@ -35,6 +35,7 @@ import (
 //	genai.GenerateContentConfig{Temperature: genai.Ptr(0.5)}
 func Ptr[T any](t T) *T { return &t }
 
+//nolint:unused
 type converterFuncWithClientWithRoot func(*apiClient, map[string]any, map[string]any, map[string]any) (map[string]any, error)
 
 type converterFuncWithRoot func(map[string]any, map[string]any, map[string]any) (map[string]any, error)
@@ -301,6 +302,8 @@ func formatMap(template string, variables map[string]any) (string, error) {
 }
 
 // applyConverterToSlice calls converter function (with API client) to each element of the slice.
+//
+//nolint:unused
 func applyConverterToSliceWithClientWithRoot(ac *apiClient, inputs []any, converter converterFuncWithClientWithRoot, rootObject map[string]any) ([]map[string]any, error) {
 	var outputs []map[string]any
 	for _, object := range inputs {
@@ -314,6 +317,8 @@ func applyConverterToSliceWithClientWithRoot(ac *apiClient, inputs []any, conver
 }
 
 // applyConverterToSlice calls converter function to each element of the slice.
+//
+//nolint:unused
 func applyConverterToSliceWithRoot(inputs []any, converter converterFuncWithRoot, rootObject map[string]any) ([]map[string]any, error) {
 	var outputs []map[string]any
 	for _, object := range inputs {
