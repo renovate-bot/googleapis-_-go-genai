@@ -1768,45 +1768,6 @@ type ToolConfig struct {
 	RetrievalConfig *RetrievalConfig `json:"retrievalConfig,omitempty"`
 }
 
-// The configuration for the prebuilt speaker to use.
-type PrebuiltVoiceConfig struct {
-	// Optional. The name of the prebuilt voice to use.
-	VoiceName string `json:"voiceName,omitempty"`
-}
-
-// The configuration for the voice to use.
-type VoiceConfig struct {
-	// The configuration for the speaker to use.
-	PrebuiltVoiceConfig *PrebuiltVoiceConfig `json:"prebuiltVoiceConfig,omitempty"`
-}
-
-// The configuration for the speaker to use.
-type SpeakerVoiceConfig struct {
-	// The name of the speaker to use. Should be the same as in the
-	// prompt.
-	Speaker string `json:"speaker,omitempty"`
-	// The configuration for the voice to use.
-	VoiceConfig *VoiceConfig `json:"voiceConfig,omitempty"`
-}
-
-// The configuration for the multi-speaker setup.
-type MultiSpeakerVoiceConfig struct {
-	// The configuration for the speaker to use.
-	SpeakerVoiceConfigs []*SpeakerVoiceConfig `json:"speakerVoiceConfigs,omitempty"`
-}
-
-// The speech generation configuration.
-type SpeechConfig struct {
-	// Optional. The configuration for the speaker to use.
-	VoiceConfig *VoiceConfig `json:"voiceConfig,omitempty"`
-	// Optional. The configuration for the multi-speaker setup.
-	// It is mutually exclusive with the voice_config field.
-	MultiSpeakerVoiceConfig *MultiSpeakerVoiceConfig `json:"multiSpeakerVoiceConfig,omitempty"`
-	// Optional. Language code (ISO 639. e.g. en-US) for the speech synthesization.
-	// Only available for Live API.
-	LanguageCode string `json:"languageCode,omitempty"`
-}
-
 // The thinking features configuration.
 type ThinkingConfig struct {
 	// Optional. Indicates whether to include thoughts in the response. If true, thoughts
@@ -3196,6 +3157,45 @@ type DeleteModelConfig struct {
 type DeleteModelResponse struct {
 	// Optional. Used to retain the full HTTP response.
 	SDKHTTPResponse *HTTPResponse `json:"sdkHttpResponse,omitempty"`
+}
+
+// The configuration for the prebuilt speaker to use.
+type PrebuiltVoiceConfig struct {
+	// The name of the preset voice to use.
+	VoiceName string `json:"voiceName,omitempty"`
+}
+
+// The configuration for the voice to use.
+type VoiceConfig struct {
+	// The configuration for the prebuilt voice to use.
+	PrebuiltVoiceConfig *PrebuiltVoiceConfig `json:"prebuiltVoiceConfig,omitempty"`
+}
+
+// The configuration for a single speaker in a multi speaker setup. This data type is
+// not supported in Vertex AI.
+type SpeakerVoiceConfig struct {
+	// Required. The name of the speaker to use. Should be the same as in the prompt.
+	Speaker string `json:"speaker,omitempty"`
+	// Required. The configuration for the voice to use.
+	VoiceConfig *VoiceConfig `json:"voiceConfig,omitempty"`
+}
+
+// The configuration for the multi-speaker setup. This data type is not supported in
+// Vertex AI.
+type MultiSpeakerVoiceConfig struct {
+	// Required. All the enabled speaker voices.
+	SpeakerVoiceConfigs []*SpeakerVoiceConfig `json:"speakerVoiceConfigs,omitempty"`
+}
+
+// The speech generation config.
+type SpeechConfig struct {
+	// Optional. Language code (ISO 639. e.g. en-US) for the speech synthesization.
+	LanguageCode string `json:"languageCode,omitempty"`
+	// The configuration for the speaker to use.
+	VoiceConfig *VoiceConfig `json:"voiceConfig,omitempty"`
+	// Optional. The configuration for the multi-speaker setup. It is mutually exclusive
+	// with the voice_config field. This field is not supported in Vertex AI.
+	MultiSpeakerVoiceConfig *MultiSpeakerVoiceConfig `json:"multiSpeakerVoiceConfig,omitempty"`
 }
 
 // Generation config. You can find API default values and more details at https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/inference#generationconfig
