@@ -71,11 +71,6 @@ func candidateFromMldev(fromObject map[string]any, parentObject map[string]any) 
 		setValueByPath(toObject, []string{"finishReason"}, fromFinishReason)
 	}
 
-	fromUrlContextMetadata := getValueByPath(fromObject, []string{"urlContextMetadata"})
-	if fromUrlContextMetadata != nil {
-		setValueByPath(toObject, []string{"urlContextMetadata"}, fromUrlContextMetadata)
-	}
-
 	fromAvgLogprobs := getValueByPath(fromObject, []string{"avgLogprobs"})
 	if fromAvgLogprobs != nil {
 		setValueByPath(toObject, []string{"avgLogprobs"}, fromAvgLogprobs)
@@ -99,6 +94,11 @@ func candidateFromMldev(fromObject map[string]any, parentObject map[string]any) 
 	fromSafetyRatings := getValueByPath(fromObject, []string{"safetyRatings"})
 	if fromSafetyRatings != nil {
 		setValueByPath(toObject, []string{"safetyRatings"}, fromSafetyRatings)
+	}
+
+	fromUrlContextMetadata := getValueByPath(fromObject, []string{"urlContextMetadata"})
+	if fromUrlContextMetadata != nil {
+		setValueByPath(toObject, []string{"urlContextMetadata"}, fromUrlContextMetadata)
 	}
 
 	return toObject, nil

@@ -196,22 +196,6 @@ const (
 	APISpecElasticSearch APISpec = "ELASTIC_SEARCH"
 )
 
-// Status of the URL retrieval.
-type URLRetrievalStatus string
-
-const (
-	// Default value. This value is unused
-	URLRetrievalStatusUnspecified URLRetrievalStatus = "URL_RETRIEVAL_STATUS_UNSPECIFIED"
-	// URL retrieval is successful.
-	URLRetrievalStatusSuccess URLRetrievalStatus = "URL_RETRIEVAL_STATUS_SUCCESS"
-	// URL retrieval is failed due to error.
-	URLRetrievalStatusError URLRetrievalStatus = "URL_RETRIEVAL_STATUS_ERROR"
-	// URL retrieval is failed because the content is behind paywall.
-	URLRetrievalStatusPaywall URLRetrievalStatus = "URL_RETRIEVAL_STATUS_PAYWALL"
-	// URL retrieval is failed because the content is unsafe.
-	URLRetrievalStatusUnsafe URLRetrievalStatus = "URL_RETRIEVAL_STATUS_UNSAFE"
-)
-
 // The reason why the model stopped generating tokens.
 // If empty, the model has not stopped generating the tokens.
 type FinishReason string
@@ -281,6 +265,24 @@ const (
 	HarmSeverityMedium HarmSeverity = "HARM_SEVERITY_MEDIUM"
 	// High level of harm severity.
 	HarmSeverityHigh HarmSeverity = "HARM_SEVERITY_HIGH"
+)
+
+// Status of the URL retrieval.
+type URLRetrievalStatus string
+
+const (
+	// Default value. This value is unused.
+	URLRetrievalStatusUnspecified URLRetrievalStatus = "URL_RETRIEVAL_STATUS_UNSPECIFIED"
+	// URL retrieval is successful.
+	URLRetrievalStatusSuccess URLRetrievalStatus = "URL_RETRIEVAL_STATUS_SUCCESS"
+	// URL retrieval is failed due to error.
+	URLRetrievalStatusError URLRetrievalStatus = "URL_RETRIEVAL_STATUS_ERROR"
+	// URL retrieval is failed because the content is behind paywall. This enum value is
+	// not supported in Vertex AI.
+	URLRetrievalStatusPaywall URLRetrievalStatus = "URL_RETRIEVAL_STATUS_PAYWALL"
+	// URL retrieval is failed because the content is unsafe. This enum value is not supported
+	// in Vertex AI.
+	URLRetrievalStatusUnsafe URLRetrievalStatus = "URL_RETRIEVAL_STATUS_UNSAFE"
 )
 
 // The reason why the prompt was blocked.
@@ -1992,20 +1994,6 @@ type CitationMetadata struct {
 	Citations []*Citation `json:"citations,omitempty"`
 }
 
-// Context for a single URL retrieval.
-type URLMetadata struct {
-	// Optional. The URL retrieved by the tool.
-	RetrievedURL string `json:"retrievedUrl,omitempty"`
-	// Optional. Status of the URL retrieval.
-	URLRetrievalStatus URLRetrievalStatus `json:"urlRetrievalStatus,omitempty"`
-}
-
-// Metadata related to URL context retrieval tool.
-type URLContextMetadata struct {
-	// Optional. List of URL context.
-	URLMetadata []*URLMetadata `json:"urlMetadata,omitempty"`
-}
-
 // Author attribution for a photo or review. This data type is not supported in Gemini
 // API.
 type GroundingChunkMapsPlaceAnswerSourcesAuthorAttribution struct {
@@ -2243,6 +2231,20 @@ type SafetyRating struct {
 	SeverityScore float32 `json:"severityScore,omitempty"`
 }
 
+// Context of the a single URL retrieval.
+type URLMetadata struct {
+	// Retrieved URL by the tool.
+	RetrievedURL string `json:"retrievedUrl,omitempty"`
+	// Status of the URL retrieval.
+	URLRetrievalStatus URLRetrievalStatus `json:"urlRetrievalStatus,omitempty"`
+}
+
+// Metadata related to URL context retrieval tool.
+type URLContextMetadata struct {
+	// Output only. List of URL context.
+	URLMetadata []*URLMetadata `json:"urlMetadata,omitempty"`
+}
+
 // A response candidate generated from the model.
 type Candidate struct {
 	// Optional. Contains the multi-part content of the response.
@@ -2257,8 +2259,6 @@ type Candidate struct {
 	// Optional. The reason why the model stopped generating tokens.
 	// If empty, the model has not stopped generating the tokens.
 	FinishReason FinishReason `json:"finishReason,omitempty"`
-	// Optional. Metadata related to URL context retrieval tool.
-	URLContextMetadata *URLContextMetadata `json:"urlContextMetadata,omitempty"`
 	// Output only. Average log probability score of the candidate.
 	AvgLogprobs float64 `json:"avgLogprobs,omitempty"`
 	// Output only. Metadata specifies sources used to ground generated content.
@@ -2270,6 +2270,8 @@ type Candidate struct {
 	// Output only. List of ratings for the safety of a response candidate. There is at
 	// most one rating per category.
 	SafetyRatings []*SafetyRating `json:"safetyRatings,omitempty"`
+	// Output only. Metadata related to URL context retrieval tool.
+	URLContextMetadata *URLContextMetadata `json:"urlContextMetadata,omitempty"`
 }
 
 // Content filter results for a prompt sent in the request. Note: This is sent only
