@@ -349,38 +349,6 @@ const (
 	MediaResolutionHigh MediaResolution = "MEDIA_RESOLUTION_HIGH"
 )
 
-// Job state.
-type JobState string
-
-const (
-	// The job state is unspecified.
-	JobStateUnspecified JobState = "JOB_STATE_UNSPECIFIED"
-	// The job has been just created or resumed and processing has not yet begun.
-	JobStateQueued JobState = "JOB_STATE_QUEUED"
-	// The service is preparing to run the job.
-	JobStatePending JobState = "JOB_STATE_PENDING"
-	// The job is in progress.
-	JobStateRunning JobState = "JOB_STATE_RUNNING"
-	// The job completed successfully.
-	JobStateSucceeded JobState = "JOB_STATE_SUCCEEDED"
-	// The job failed.
-	JobStateFailed JobState = "JOB_STATE_FAILED"
-	// The job is being cancelled. From this state the job may only go to either `JOB_STATE_SUCCEEDED`,
-	// `JOB_STATE_FAILED` or `JOB_STATE_CANCELLED`.
-	JobStateCancelling JobState = "JOB_STATE_CANCELLING"
-	// The job has been cancelled.
-	JobStateCancelled JobState = "JOB_STATE_CANCELLED"
-	// The job has been stopped, and can be resumed.
-	JobStatePaused JobState = "JOB_STATE_PAUSED"
-	// The job has expired.
-	JobStateExpired JobState = "JOB_STATE_EXPIRED"
-	// The job is being updated. Only jobs in the `JOB_STATE_RUNNING` state can be updated.
-	// After updating, the job goes back to the `JOB_STATE_RUNNING` state.
-	JobStateUpdating JobState = "JOB_STATE_UPDATING"
-	// The job is partially succeeded, some results may be missing due to errors.
-	JobStatePartiallySucceeded JobState = "JOB_STATE_PARTIALLY_SUCCEEDED"
-)
-
 // Tuning mode. This enum is not supported in Gemini API.
 type TuningMode string
 
@@ -411,6 +379,38 @@ const (
 	AdapterSizeSixteen AdapterSize = "ADAPTER_SIZE_SIXTEEN"
 	// Adapter size 32.
 	AdapterSizeThirtyTwo AdapterSize = "ADAPTER_SIZE_THIRTY_TWO"
+)
+
+// Job state.
+type JobState string
+
+const (
+	// The job state is unspecified.
+	JobStateUnspecified JobState = "JOB_STATE_UNSPECIFIED"
+	// The job has been just created or resumed and processing has not yet begun.
+	JobStateQueued JobState = "JOB_STATE_QUEUED"
+	// The service is preparing to run the job.
+	JobStatePending JobState = "JOB_STATE_PENDING"
+	// The job is in progress.
+	JobStateRunning JobState = "JOB_STATE_RUNNING"
+	// The job completed successfully.
+	JobStateSucceeded JobState = "JOB_STATE_SUCCEEDED"
+	// The job failed.
+	JobStateFailed JobState = "JOB_STATE_FAILED"
+	// The job is being cancelled. From this state the job may only go to either `JOB_STATE_SUCCEEDED`,
+	// `JOB_STATE_FAILED` or `JOB_STATE_CANCELLED`.
+	JobStateCancelling JobState = "JOB_STATE_CANCELLING"
+	// The job has been cancelled.
+	JobStateCancelled JobState = "JOB_STATE_CANCELLED"
+	// The job has been stopped, and can be resumed.
+	JobStatePaused JobState = "JOB_STATE_PAUSED"
+	// The job has expired.
+	JobStateExpired JobState = "JOB_STATE_EXPIRED"
+	// The job is being updated. Only jobs in the `JOB_STATE_RUNNING` state can be updated.
+	// After updating, the job goes back to the `JOB_STATE_RUNNING` state.
+	JobStateUpdating JobState = "JOB_STATE_UPDATING"
+	// The job is partially succeeded, some results may be missing due to errors.
+	JobStatePartiallySucceeded JobState = "JOB_STATE_PARTIALLY_SUCCEEDED"
 )
 
 // The tuning task. Either I2V or T2V. This enum is not supported in Gemini API.
@@ -3544,6 +3544,43 @@ type TunedModel struct {
 	Checkpoints []*TunedModelCheckpoint `json:"checkpoints,omitempty"`
 }
 
+// Hyperparameters for SFT. This data type is not supported in Gemini API.
+type SupervisedHyperParameters struct {
+	// Optional. Adapter size for tuning.
+	AdapterSize AdapterSize `json:"adapterSize,omitempty"`
+	// Optional. Batch size for tuning. This feature is only available for open source models.
+	BatchSize int64 `json:"batchSize,omitempty,string"`
+	// Optional. Number of complete passes the model makes over the entire training dataset
+	// during training.
+	EpochCount int64 `json:"epochCount,omitempty,string"`
+	// Optional. Learning rate for tuning. Mutually exclusive with `learning_rate_multiplier`.
+	// This feature is only available for open source models.
+	LearningRate float64 `json:"learningRate,omitempty"`
+	// Optional. Multiplier for adjusting the default learning rate. Mutually exclusive
+	// with `learning_rate`. This feature is only available for 1P models.
+	LearningRateMultiplier float64 `json:"learningRateMultiplier,omitempty"`
+}
+
+// Supervised tuning spec for tuning.
+type SupervisedTuningSpec struct {
+	// Optional. If set to true, disable intermediate checkpoints for SFT and only the last
+	// checkpoint will be exported. Otherwise, enable intermediate checkpoints for SFT.
+	// Default is false.
+	ExportLastCheckpointOnly bool `json:"exportLastCheckpointOnly,omitempty"`
+	// Optional. Hyperparameters for SFT.
+	HyperParameters *SupervisedHyperParameters `json:"hyperParameters,omitempty"`
+	// Required. Training dataset used for tuning. The dataset can be specified as either
+	// a Cloud Storage path to a JSONL file or as the resource name of a Vertex Multimodal
+	// Dataset.
+	TrainingDatasetURI string `json:"trainingDatasetUri,omitempty"`
+	// Tuning mode.
+	TuningMode TuningMode `json:"tuningMode,omitempty"`
+	// Optional. Validation dataset used for tuning. The dataset can be specified as either
+	// a Cloud Storage path to a JSONL file or as the resource name of a Vertex Multimodal
+	// Dataset.
+	ValidationDatasetURI string `json:"validationDatasetUri,omitempty"`
+}
+
 // The `Status` type defines a logical error model that is suitable for different programming
 // environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc).
 // Each `Status` message contains three pieces of data: error code, error message, and
@@ -3575,44 +3612,6 @@ type PreTunedModel struct {
 	// `projects/{project}/locations/{location}/models/{model}@{alias}` Or, omit the version
 	// ID to use the default version: `projects/{project}/locations/{location}/models/{model}`
 	TunedModelName string `json:"tunedModelName,omitempty"`
-}
-
-// Hyperparameters for SFT. This data type is not supported in Gemini API.
-type SupervisedHyperParameters struct {
-	// Optional. Adapter size for tuning.
-	AdapterSize AdapterSize `json:"adapterSize,omitempty"`
-	// Optional. Batch size for tuning. This feature is only available for open source models.
-	BatchSize int64 `json:"batchSize,omitempty,string"`
-	// Optional. Number of complete passes the model makes over the entire training dataset
-	// during training.
-	EpochCount int64 `json:"epochCount,omitempty,string"`
-	// Optional. Learning rate for tuning. Mutually exclusive with `learning_rate_multiplier`.
-	// This feature is only available for open source models.
-	LearningRate float64 `json:"learningRate,omitempty"`
-	// Optional. Multiplier for adjusting the default learning rate. Mutually exclusive
-	// with `learning_rate`. This feature is only available for 1P models.
-	LearningRateMultiplier float64 `json:"learningRateMultiplier,omitempty"`
-}
-
-// Tuning Spec for Supervised Tuning for first party models. This data type is not supported
-// in Gemini API.
-type SupervisedTuningSpec struct {
-	// Optional. If set to true, disable intermediate checkpoints for SFT and only the last
-	// checkpoint will be exported. Otherwise, enable intermediate checkpoints for SFT.
-	// Default is false.
-	ExportLastCheckpointOnly bool `json:"exportLastCheckpointOnly,omitempty"`
-	// Optional. Hyperparameters for SFT.
-	HyperParameters *SupervisedHyperParameters `json:"hyperParameters,omitempty"`
-	// Required. Training dataset used for tuning. The dataset can be specified as either
-	// a Cloud Storage path to a JSONL file or as the resource name of a Vertex Multimodal
-	// Dataset.
-	TrainingDatasetURI string `json:"trainingDatasetUri,omitempty"`
-	// Tuning mode.
-	TuningMode TuningMode `json:"tuningMode,omitempty"`
-	// Optional. Validation dataset used for tuning. The dataset can be specified as either
-	// a Cloud Storage path to a JSONL file or as the resource name of a Vertex Multimodal
-	// Dataset.
-	ValidationDatasetURI string `json:"validationDatasetUri,omitempty"`
 }
 
 // Dataset bucket used to create a histogram for the distribution given a population
