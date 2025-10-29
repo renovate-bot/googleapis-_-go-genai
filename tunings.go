@@ -100,20 +100,40 @@ func createTuningJobConfigToMldev(fromObject map[string]any, parentObject map[st
 		return nil, fmt.Errorf("labels parameter is not supported in Gemini API")
 	}
 
+	if getValueByPath(fromObject, []string{"beta"}) != nil {
+		return nil, fmt.Errorf("beta parameter is not supported in Gemini API")
+	}
+
 	return toObject, nil
 }
 
 func createTuningJobConfigToVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
-	fromValidationDataset := getValueByPath(fromObject, []string{"validationDataset"})
-	if fromValidationDataset != nil {
-		fromValidationDataset, err = tuningValidationDatasetToVertex(fromValidationDataset.(map[string]any), toObject, rootObject)
-		if err != nil {
-			return nil, err
-		}
+	var discriminatorValidationDataset any = getValueByPath(rootObject, []string{"config", "method"})
+	if discriminatorValidationDataset == nil {
+		discriminatorValidationDataset = "SUPERVISED_FINE_TUNING"
+	}
+	if discriminatorValidationDataset.(string) == "SUPERVISED_FINE_TUNING" {
+		fromValidationDataset := getValueByPath(fromObject, []string{"validationDataset"})
+		if fromValidationDataset != nil {
+			fromValidationDataset, err = tuningValidationDatasetToVertex(fromValidationDataset.(map[string]any), toObject, rootObject)
+			if err != nil {
+				return nil, err
+			}
 
-		setValueByPath(parentObject, []string{"supervisedTuningSpec"}, fromValidationDataset)
+			setValueByPath(parentObject, []string{"supervisedTuningSpec"}, fromValidationDataset)
+		}
+	} else if discriminatorValidationDataset.(string) == "PREFERENCE_TUNING" {
+		fromValidationDataset := getValueByPath(fromObject, []string{"validationDataset"})
+		if fromValidationDataset != nil {
+			fromValidationDataset, err = tuningValidationDatasetToVertex(fromValidationDataset.(map[string]any), toObject, rootObject)
+			if err != nil {
+				return nil, err
+			}
+
+			setValueByPath(parentObject, []string{"preferenceOptimizationSpec"}, fromValidationDataset)
+		}
 	}
 
 	fromTunedModelDisplayName := getValueByPath(fromObject, []string{"tunedModelDisplayName"})
@@ -126,24 +146,68 @@ func createTuningJobConfigToVertex(fromObject map[string]any, parentObject map[s
 		setValueByPath(parentObject, []string{"description"}, fromDescription)
 	}
 
-	fromEpochCount := getValueByPath(fromObject, []string{"epochCount"})
-	if fromEpochCount != nil {
-		setValueByPath(parentObject, []string{"supervisedTuningSpec", "hyperParameters", "epochCount"}, fromEpochCount)
+	var discriminatorEpochCount any = getValueByPath(rootObject, []string{"config", "method"})
+	if discriminatorEpochCount == nil {
+		discriminatorEpochCount = "SUPERVISED_FINE_TUNING"
+	}
+	if discriminatorEpochCount.(string) == "SUPERVISED_FINE_TUNING" {
+		fromEpochCount := getValueByPath(fromObject, []string{"epochCount"})
+		if fromEpochCount != nil {
+			setValueByPath(parentObject, []string{"supervisedTuningSpec", "hyperParameters", "epochCount"}, fromEpochCount)
+		}
+	} else if discriminatorEpochCount.(string) == "PREFERENCE_TUNING" {
+		fromEpochCount := getValueByPath(fromObject, []string{"epochCount"})
+		if fromEpochCount != nil {
+			setValueByPath(parentObject, []string{"preferenceOptimizationSpec", "hyperParameters", "epochCount"}, fromEpochCount)
+		}
 	}
 
-	fromLearningRateMultiplier := getValueByPath(fromObject, []string{"learningRateMultiplier"})
-	if fromLearningRateMultiplier != nil {
-		setValueByPath(parentObject, []string{"supervisedTuningSpec", "hyperParameters", "learningRateMultiplier"}, fromLearningRateMultiplier)
+	var discriminatorLearningRateMultiplier any = getValueByPath(rootObject, []string{"config", "method"})
+	if discriminatorLearningRateMultiplier == nil {
+		discriminatorLearningRateMultiplier = "SUPERVISED_FINE_TUNING"
+	}
+	if discriminatorLearningRateMultiplier.(string) == "SUPERVISED_FINE_TUNING" {
+		fromLearningRateMultiplier := getValueByPath(fromObject, []string{"learningRateMultiplier"})
+		if fromLearningRateMultiplier != nil {
+			setValueByPath(parentObject, []string{"supervisedTuningSpec", "hyperParameters", "learningRateMultiplier"}, fromLearningRateMultiplier)
+		}
+	} else if discriminatorLearningRateMultiplier.(string) == "PREFERENCE_TUNING" {
+		fromLearningRateMultiplier := getValueByPath(fromObject, []string{"learningRateMultiplier"})
+		if fromLearningRateMultiplier != nil {
+			setValueByPath(parentObject, []string{"preferenceOptimizationSpec", "hyperParameters", "learningRateMultiplier"}, fromLearningRateMultiplier)
+		}
 	}
 
-	fromExportLastCheckpointOnly := getValueByPath(fromObject, []string{"exportLastCheckpointOnly"})
-	if fromExportLastCheckpointOnly != nil {
-		setValueByPath(parentObject, []string{"supervisedTuningSpec", "exportLastCheckpointOnly"}, fromExportLastCheckpointOnly)
+	var discriminatorExportLastCheckpointOnly any = getValueByPath(rootObject, []string{"config", "method"})
+	if discriminatorExportLastCheckpointOnly == nil {
+		discriminatorExportLastCheckpointOnly = "SUPERVISED_FINE_TUNING"
+	}
+	if discriminatorExportLastCheckpointOnly.(string) == "SUPERVISED_FINE_TUNING" {
+		fromExportLastCheckpointOnly := getValueByPath(fromObject, []string{"exportLastCheckpointOnly"})
+		if fromExportLastCheckpointOnly != nil {
+			setValueByPath(parentObject, []string{"supervisedTuningSpec", "exportLastCheckpointOnly"}, fromExportLastCheckpointOnly)
+		}
+	} else if discriminatorExportLastCheckpointOnly.(string) == "PREFERENCE_TUNING" {
+		fromExportLastCheckpointOnly := getValueByPath(fromObject, []string{"exportLastCheckpointOnly"})
+		if fromExportLastCheckpointOnly != nil {
+			setValueByPath(parentObject, []string{"preferenceOptimizationSpec", "exportLastCheckpointOnly"}, fromExportLastCheckpointOnly)
+		}
 	}
 
-	fromAdapterSize := getValueByPath(fromObject, []string{"adapterSize"})
-	if fromAdapterSize != nil {
-		setValueByPath(parentObject, []string{"supervisedTuningSpec", "hyperParameters", "adapterSize"}, fromAdapterSize)
+	var discriminatorAdapterSize any = getValueByPath(rootObject, []string{"config", "method"})
+	if discriminatorAdapterSize == nil {
+		discriminatorAdapterSize = "SUPERVISED_FINE_TUNING"
+	}
+	if discriminatorAdapterSize.(string) == "SUPERVISED_FINE_TUNING" {
+		fromAdapterSize := getValueByPath(fromObject, []string{"adapterSize"})
+		if fromAdapterSize != nil {
+			setValueByPath(parentObject, []string{"supervisedTuningSpec", "hyperParameters", "adapterSize"}, fromAdapterSize)
+		}
+	} else if discriminatorAdapterSize.(string) == "PREFERENCE_TUNING" {
+		fromAdapterSize := getValueByPath(fromObject, []string{"adapterSize"})
+		if fromAdapterSize != nil {
+			setValueByPath(parentObject, []string{"preferenceOptimizationSpec", "hyperParameters", "adapterSize"}, fromAdapterSize)
+		}
 	}
 
 	if getValueByPath(fromObject, []string{"batchSize"}) != nil {
@@ -157,6 +221,11 @@ func createTuningJobConfigToVertex(fromObject map[string]any, parentObject map[s
 	fromLabels := getValueByPath(fromObject, []string{"labels"})
 	if fromLabels != nil {
 		setValueByPath(parentObject, []string{"labels"}, fromLabels)
+	}
+
+	fromBeta := getValueByPath(fromObject, []string{"beta"})
+	if fromBeta != nil {
+		setValueByPath(parentObject, []string{"preferenceOptimizationSpec", "hyperParameters", "beta"}, fromBeta)
 	}
 
 	return toObject, nil
@@ -177,12 +246,10 @@ func createTuningJobParametersPrivateToMldev(fromObject map[string]any, parentOb
 
 	fromTrainingDataset := getValueByPath(fromObject, []string{"trainingDataset"})
 	if fromTrainingDataset != nil {
-		fromTrainingDataset, err = tuningDatasetToMldev(fromTrainingDataset.(map[string]any), toObject, rootObject)
+		_, err = tuningDatasetToMldev(fromTrainingDataset.(map[string]any), toObject, rootObject)
 		if err != nil {
 			return nil, err
 		}
-
-		setValueByPath(toObject, []string{"tuningTask", "trainingData"}, fromTrainingDataset)
 	}
 
 	fromConfig := getValueByPath(fromObject, []string{"config"})
@@ -409,14 +476,36 @@ func tuningDatasetToMldev(fromObject map[string]any, parentObject map[string]any
 func tuningDatasetToVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
-	fromGcsUri := getValueByPath(fromObject, []string{"gcsUri"})
-	if fromGcsUri != nil {
-		setValueByPath(parentObject, []string{"supervisedTuningSpec", "trainingDatasetUri"}, fromGcsUri)
+	var discriminatorGcsUri any = getValueByPath(rootObject, []string{"config", "method"})
+	if discriminatorGcsUri == nil {
+		discriminatorGcsUri = "SUPERVISED_FINE_TUNING"
+	}
+	if discriminatorGcsUri.(string) == "SUPERVISED_FINE_TUNING" {
+		fromGcsUri := getValueByPath(fromObject, []string{"gcsUri"})
+		if fromGcsUri != nil {
+			setValueByPath(parentObject, []string{"supervisedTuningSpec", "trainingDatasetUri"}, fromGcsUri)
+		}
+	} else if discriminatorGcsUri.(string) == "PREFERENCE_TUNING" {
+		fromGcsUri := getValueByPath(fromObject, []string{"gcsUri"})
+		if fromGcsUri != nil {
+			setValueByPath(parentObject, []string{"preferenceOptimizationSpec", "trainingDatasetUri"}, fromGcsUri)
+		}
 	}
 
-	fromVertexDatasetResource := getValueByPath(fromObject, []string{"vertexDatasetResource"})
-	if fromVertexDatasetResource != nil {
-		setValueByPath(parentObject, []string{"supervisedTuningSpec", "trainingDatasetUri"}, fromVertexDatasetResource)
+	var discriminatorVertexDatasetResource any = getValueByPath(rootObject, []string{"config", "method"})
+	if discriminatorVertexDatasetResource == nil {
+		discriminatorVertexDatasetResource = "SUPERVISED_FINE_TUNING"
+	}
+	if discriminatorVertexDatasetResource.(string) == "SUPERVISED_FINE_TUNING" {
+		fromVertexDatasetResource := getValueByPath(fromObject, []string{"vertexDatasetResource"})
+		if fromVertexDatasetResource != nil {
+			setValueByPath(parentObject, []string{"supervisedTuningSpec", "trainingDatasetUri"}, fromVertexDatasetResource)
+		}
+	} else if discriminatorVertexDatasetResource.(string) == "PREFERENCE_TUNING" {
+		fromVertexDatasetResource := getValueByPath(fromObject, []string{"vertexDatasetResource"})
+		if fromVertexDatasetResource != nil {
+			setValueByPath(parentObject, []string{"preferenceOptimizationSpec", "trainingDatasetUri"}, fromVertexDatasetResource)
+		}
 	}
 
 	if getValueByPath(fromObject, []string{"examples"}) != nil {
@@ -563,6 +652,11 @@ func tuningJobFromVertex(fromObject map[string]any, parentObject map[string]any,
 	fromSupervisedTuningSpec := getValueByPath(fromObject, []string{"supervisedTuningSpec"})
 	if fromSupervisedTuningSpec != nil {
 		setValueByPath(toObject, []string{"supervisedTuningSpec"}, fromSupervisedTuningSpec)
+	}
+
+	fromPreferenceOptimizationSpec := getValueByPath(fromObject, []string{"preferenceOptimizationSpec"})
+	if fromPreferenceOptimizationSpec != nil {
+		setValueByPath(toObject, []string{"preferenceOptimizationSpec"}, fromPreferenceOptimizationSpec)
 	}
 
 	fromTuningDataStats := getValueByPath(fromObject, []string{"tuningDataStats"})

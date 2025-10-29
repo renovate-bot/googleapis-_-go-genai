@@ -641,6 +641,16 @@ const (
 	VideoCompressionQualityLossless VideoCompressionQuality = "LOSSLESS"
 )
 
+// Enum representing the tuning method.
+type TuningMethod string
+
+const (
+	// Supervised fine tuning.
+	TuningMethodSupervisedFineTuning TuningMethod = "SUPERVISED_FINE_TUNING"
+	// Preference optimization tuning.
+	TuningMethodPreferenceTuning TuningMethod = "PREFERENCE_TUNING"
+)
+
 // State for the lifecycle of a File.
 type FileState string
 
@@ -3594,6 +3604,32 @@ type SupervisedTuningSpec struct {
 	ValidationDatasetURI string `json:"validationDatasetUri,omitempty"`
 }
 
+// Hyperparameters for Preference Optimization. This data type is not supported in Gemini
+// API.
+type PreferenceOptimizationHyperParameters struct {
+	// Optional. Adapter size for preference optimization.
+	AdapterSize AdapterSize `json:"adapterSize,omitempty"`
+	// Optional. Weight for KL Divergence regularization.
+	Beta float64 `json:"beta,omitempty"`
+	// Optional. Number of complete passes the model makes over the entire training dataset
+	// during training.
+	EpochCount int64 `json:"epochCount,omitempty,string"`
+	// Optional. Multiplier for adjusting the default learning rate.
+	LearningRateMultiplier float64 `json:"learningRateMultiplier,omitempty"`
+}
+
+// Preference optimization tuning spec for tuning.
+type PreferenceOptimizationSpec struct {
+	// Optional. Hyperparameters for Preference Optimization.
+	HyperParameters *PreferenceOptimizationHyperParameters `json:"hyperParameters,omitempty"`
+	// Required. Cloud Storage path to file containing training dataset for preference optimization
+	// tuning. The dataset must be formatted as a JSONL file.
+	TrainingDatasetURI string `json:"trainingDatasetUri,omitempty"`
+	// Optional. Cloud Storage path to file containing validation dataset for preference
+	// optimization tuning. The dataset must be formatted as a JSONL file.
+	ValidationDatasetURI string `json:"validationDatasetUri,omitempty"`
+}
+
 // The `Status` type defines a logical error model that is suitable for different programming
 // environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc).
 // Each `Status` message contains three pieces of data: error code, error message, and
@@ -3915,6 +3951,8 @@ type TuningJob struct {
 	PreTunedModel *PreTunedModel `json:"preTunedModel,omitempty"`
 	// Tuning Spec for Supervised Fine Tuning.
 	SupervisedTuningSpec *SupervisedTuningSpec `json:"supervisedTuningSpec,omitempty"`
+	// Tuning Spec for Preference Optimization.
+	PreferenceOptimizationSpec *PreferenceOptimizationSpec `json:"preferenceOptimizationSpec,omitempty"`
 	// Output only. The tuning data statistics associated with this TuningJob.
 	TuningDataStats *TuningDataStats `json:"tuningDataStats,omitempty"`
 	// Customer-managed encryption key options for a TuningJob. If this is set, then all
@@ -4082,10 +4120,13 @@ type TuningValidationDataset struct {
 	VertexDatasetResource string `json:"vertexDatasetResource,omitempty"`
 }
 
-// Supervised fine-tuning job creation request - optional fields.
+// Fine-tuning job creation request - optional fields.
 type CreateTuningJobConfig struct {
 	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
+	// The method to use for tuning (SUPERVISED_FINE_TUNING or PREFERENCE_TUNING). If not
+	// set, the default method (SFT) will be used.
+	Method TuningMethod `json:"method,omitempty"`
 	// Optional. Validation dataset for tuning. The dataset must be formatted as a JSONL
 	// file.
 	ValidationDataset *TuningValidationDataset `json:"validationDataset,omitempty"`
@@ -4099,8 +4140,8 @@ type CreateTuningJobConfig struct {
 	EpochCount *int32 `json:"epochCount,omitempty"`
 	// Optional. Multiplier for adjusting the default learning rate.
 	LearningRateMultiplier *float32 `json:"learningRateMultiplier,omitempty"`
-	// Optional. If set to true, disable intermediate checkpoints for SFT and only the last
-	// checkpoint will be exported. Otherwise, enable intermediate checkpoints for SFT.
+	// Optional. If set to true, disable intermediate checkpoints and only the last checkpoint
+	// will be exported. Otherwise, enable intermediate checkpoints.
 	ExportLastCheckpointOnly *bool `json:"exportLastCheckpointOnly,omitempty"`
 	// Optional. The optional checkpoint ID of the pre-tuned model to use for tuning, if
 	// applicable.
@@ -4119,6 +4160,9 @@ type CreateTuningJobConfig struct {
 	// underscores and dashes. International characters are allowed. See https://goo.gl/xmQnxf
 	// for more information and examples of labels.
 	Labels map[string]string `json:"labels,omitempty"`
+	// Optional. Weight for KL Divergence regularization, Preference Optimization tuning
+	// only.
+	Beta *float32 `json:"beta,omitempty"`
 }
 
 // A long-running operation.
