@@ -240,9 +240,6 @@ func NewClient(ctx context.Context, cc *ClientConfig) (*Client, error) {
 		if cc.Credentials != nil && envAPIKey != "" {
 			log.Println("Warning: The user provided Google Cloud credentials will take precedence over the API key from the environment variable.")
 			cc.APIKey = ""
-			if cc.Project != "" && cc.Location == "" {
-				cc.Location = "global"
-			}
 		} else if configAPIKey != "" && (envProject != "" || envLocation != "") {
 			// Explicit API key takes precedence over implicit project/location.
 			log.Println("Warning: The user provided Vertex AI API key will take precedence over the project/location from the environment variables.")
@@ -252,16 +249,10 @@ func NewClient(ctx context.Context, cc *ClientConfig) (*Client, error) {
 			// Explicit project/location takes precedence over implicit API key.
 			log.Println("Warning: The user provided project/location will take precedence over the API key from the environment variable.")
 			cc.APIKey = ""
-			if cc.Project != "" && cc.Location == "" {
-				cc.Location = "global"
-			}
 		} else if (envProject != "" || envLocation != "") && envAPIKey != "" {
 			// Implicit project/location takes precedence over implicit API key.
 			log.Println("Warning: The project/location from the environment variables will take precedence over the API key from the environment variable.")
 			cc.APIKey = ""
-			if cc.Project != "" && cc.Location == "" {
-				cc.Location = "global"
-			}
 		}
 
 		if cc.Location == "" && cc.APIKey == "" {
