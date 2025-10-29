@@ -26,13 +26,14 @@ import (
 
 func blobToMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
-	if getValueByPath(fromObject, []string{"displayName"}) != nil {
-		return nil, fmt.Errorf("displayName parameter is not supported in Gemini API")
-	}
 
 	fromData := getValueByPath(fromObject, []string{"data"})
 	if fromData != nil {
 		setValueByPath(toObject, []string{"data"}, fromData)
+	}
+
+	if getValueByPath(fromObject, []string{"displayName"}) != nil {
+		return nil, fmt.Errorf("displayName parameter is not supported in Gemini API")
 	}
 
 	fromMimeType := getValueByPath(fromObject, []string{"mimeType"})
@@ -2854,41 +2855,6 @@ func modelFromVertex(fromObject map[string]any, parentObject map[string]any) (to
 func partToMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
-	fromVideoMetadata := getValueByPath(fromObject, []string{"videoMetadata"})
-	if fromVideoMetadata != nil {
-		setValueByPath(toObject, []string{"videoMetadata"}, fromVideoMetadata)
-	}
-
-	fromThought := getValueByPath(fromObject, []string{"thought"})
-	if fromThought != nil {
-		setValueByPath(toObject, []string{"thought"}, fromThought)
-	}
-
-	fromInlineData := getValueByPath(fromObject, []string{"inlineData"})
-	if fromInlineData != nil {
-		fromInlineData, err = blobToMldev(fromInlineData.(map[string]any), toObject)
-		if err != nil {
-			return nil, err
-		}
-
-		setValueByPath(toObject, []string{"inlineData"}, fromInlineData)
-	}
-
-	fromFileData := getValueByPath(fromObject, []string{"fileData"})
-	if fromFileData != nil {
-		fromFileData, err = fileDataToMldev(fromFileData.(map[string]any), toObject)
-		if err != nil {
-			return nil, err
-		}
-
-		setValueByPath(toObject, []string{"fileData"}, fromFileData)
-	}
-
-	fromThoughtSignature := getValueByPath(fromObject, []string{"thoughtSignature"})
-	if fromThoughtSignature != nil {
-		setValueByPath(toObject, []string{"thoughtSignature"}, fromThoughtSignature)
-	}
-
 	fromFunctionCall := getValueByPath(fromObject, []string{"functionCall"})
 	if fromFunctionCall != nil {
 		setValueByPath(toObject, []string{"functionCall"}, fromFunctionCall)
@@ -2904,14 +2870,49 @@ func partToMldev(fromObject map[string]any, parentObject map[string]any) (toObje
 		setValueByPath(toObject, []string{"executableCode"}, fromExecutableCode)
 	}
 
+	fromFileData := getValueByPath(fromObject, []string{"fileData"})
+	if fromFileData != nil {
+		fromFileData, err = fileDataToMldev(fromFileData.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"fileData"}, fromFileData)
+	}
+
 	fromFunctionResponse := getValueByPath(fromObject, []string{"functionResponse"})
 	if fromFunctionResponse != nil {
 		setValueByPath(toObject, []string{"functionResponse"}, fromFunctionResponse)
 	}
 
+	fromInlineData := getValueByPath(fromObject, []string{"inlineData"})
+	if fromInlineData != nil {
+		fromInlineData, err = blobToMldev(fromInlineData.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"inlineData"}, fromInlineData)
+	}
+
 	fromText := getValueByPath(fromObject, []string{"text"})
 	if fromText != nil {
 		setValueByPath(toObject, []string{"text"}, fromText)
+	}
+
+	fromThought := getValueByPath(fromObject, []string{"thought"})
+	if fromThought != nil {
+		setValueByPath(toObject, []string{"thought"}, fromThought)
+	}
+
+	fromThoughtSignature := getValueByPath(fromObject, []string{"thoughtSignature"})
+	if fromThoughtSignature != nil {
+		setValueByPath(toObject, []string{"thoughtSignature"}, fromThoughtSignature)
+	}
+
+	fromVideoMetadata := getValueByPath(fromObject, []string{"videoMetadata"})
+	if fromVideoMetadata != nil {
+		setValueByPath(toObject, []string{"videoMetadata"}, fromVideoMetadata)
 	}
 
 	return toObject, nil
@@ -3173,13 +3174,14 @@ func safetyAttributesFromVertex(fromObject map[string]any, parentObject map[stri
 
 func safetySettingToMldev(fromObject map[string]any, parentObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
-	if getValueByPath(fromObject, []string{"method"}) != nil {
-		return nil, fmt.Errorf("method parameter is not supported in Gemini API")
-	}
 
 	fromCategory := getValueByPath(fromObject, []string{"category"})
 	if fromCategory != nil {
 		setValueByPath(toObject, []string{"category"}, fromCategory)
+	}
+
+	if getValueByPath(fromObject, []string{"method"}) != nil {
+		return nil, fmt.Errorf("method parameter is not supported in Gemini API")
 	}
 
 	fromThreshold := getValueByPath(fromObject, []string{"threshold"})

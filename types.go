@@ -90,6 +90,48 @@ const (
 	TypeNULL Type = "NULL"
 )
 
+// The mode of the predictor to be used in dynamic retrieval.
+type Mode string
+
+const (
+	// Always trigger retrieval.
+	ModeUnspecified Mode = "MODE_UNSPECIFIED"
+	// Run retrieval only when system decides it is necessary.
+	ModeDynamic Mode = "MODE_DYNAMIC"
+)
+
+// Type of auth scheme. This enum is not supported in Gemini API.
+type AuthType string
+
+const (
+	AuthTypeUnspecified AuthType = "AUTH_TYPE_UNSPECIFIED"
+	// No Auth.
+	AuthTypeNoAuth AuthType = "NO_AUTH"
+	// API Key Auth.
+	AuthTypeAPIKeyAuth AuthType = "API_KEY_AUTH"
+	// HTTP Basic Auth.
+	AuthTypeHTTPBasicAuth AuthType = "HTTP_BASIC_AUTH"
+	// Google Service Account Auth.
+	AuthTypeGoogleServiceAccountAuth AuthType = "GOOGLE_SERVICE_ACCOUNT_AUTH"
+	// OAuth auth.
+	AuthTypeOauth AuthType = "OAUTH"
+	// OpenID Connect (OIDC) Auth.
+	AuthTypeOidcAuth AuthType = "OIDC_AUTH"
+)
+
+// The API spec that the external API implements. This enum is not supported in Gemini
+// API.
+type APISpec string
+
+const (
+	// Unspecified API spec. This value should not be used.
+	APISpecUnspecified APISpec = "API_SPEC_UNSPECIFIED"
+	// Simple search API spec.
+	APISpecSimpleSearch APISpec = "SIMPLE_SEARCH"
+	// Elastic search API spec.
+	APISpecElasticSearch APISpec = "ELASTIC_SEARCH"
+)
+
 // Harm category.
 type HarmCategory string
 
@@ -152,48 +194,6 @@ const (
 	HarmBlockThresholdBlockNone HarmBlockThreshold = "BLOCK_NONE"
 	// Turn off the safety filter.
 	HarmBlockThresholdOff HarmBlockThreshold = "OFF"
-)
-
-// The mode of the predictor to be used in dynamic retrieval.
-type Mode string
-
-const (
-	// Always trigger retrieval.
-	ModeUnspecified Mode = "MODE_UNSPECIFIED"
-	// Run retrieval only when system decides it is necessary.
-	ModeDynamic Mode = "MODE_DYNAMIC"
-)
-
-// Type of auth scheme. This enum is not supported in Gemini API.
-type AuthType string
-
-const (
-	AuthTypeUnspecified AuthType = "AUTH_TYPE_UNSPECIFIED"
-	// No Auth.
-	AuthTypeNoAuth AuthType = "NO_AUTH"
-	// API Key Auth.
-	AuthTypeAPIKeyAuth AuthType = "API_KEY_AUTH"
-	// HTTP Basic Auth.
-	AuthTypeHTTPBasicAuth AuthType = "HTTP_BASIC_AUTH"
-	// Google Service Account Auth.
-	AuthTypeGoogleServiceAccountAuth AuthType = "GOOGLE_SERVICE_ACCOUNT_AUTH"
-	// OAuth auth.
-	AuthTypeOauth AuthType = "OAUTH"
-	// OpenID Connect (OIDC) Auth.
-	AuthTypeOidcAuth AuthType = "OIDC_AUTH"
-)
-
-// The API spec that the external API implements. This enum is not supported in Gemini
-// API.
-type APISpec string
-
-const (
-	// Unspecified API spec. This value should not be used.
-	APISpecUnspecified APISpec = "API_SPEC_UNSPECIFIED"
-	// Simple search API spec.
-	APISpecSimpleSearch APISpec = "SIMPLE_SEARCH"
-	// Elastic search API spec.
-	APISpecElasticSearch APISpec = "ELASTIC_SEARCH"
 )
 
 // The reason why the model stopped generating tokens.
@@ -744,95 +744,6 @@ const (
 	TurnCoverageTurnIncludesAllInput TurnCoverage = "TURN_INCLUDES_ALL_INPUT"
 )
 
-// Describes how the video in the Part should be used by the model.
-type VideoMetadata struct {
-	// Optional. The frame rate of the video sent to the model. If not specified, the
-	// default value will be 1.0. The FPS range is (0.0, 24.0].
-	FPS *float64 `json:"fps,omitempty"`
-	// Optional. The end offset of the video.
-	EndOffset time.Duration `json:"endOffset,omitempty"`
-	// Optional. The start offset of the video.
-	StartOffset time.Duration `json:"startOffset,omitempty"`
-}
-
-func (c *VideoMetadata) UnmarshalJSON(data []byte) error {
-	type Alias VideoMetadata
-	aux := &struct {
-		EndOffset   string `json:"endOffset,omitempty"`
-		StartOffset string `json:"startOffset,omitempty"`
-		*Alias
-	}{
-		Alias: (*Alias)(c),
-	}
-
-	if err := json.Unmarshal(data, &aux); err != nil {
-		return err
-	}
-
-	if aux.EndOffset != "" {
-		d, err := time.ParseDuration(aux.EndOffset)
-		if err != nil {
-			return err
-		}
-		c.EndOffset = d
-	}
-
-	if aux.StartOffset != "" {
-		d, err := time.ParseDuration(aux.StartOffset)
-		if err != nil {
-			return err
-		}
-		c.StartOffset = d
-	}
-
-	return nil
-}
-
-func (c *VideoMetadata) MarshalJSON() ([]byte, error) {
-	type Alias VideoMetadata
-	aux := &struct {
-		EndOffset   string `json:"endOffset,omitempty"`
-		StartOffset string `json:"startOffset,omitempty"`
-		*Alias
-	}{
-		Alias: (*Alias)(c),
-	}
-
-	if c.StartOffset != 0 {
-		aux.StartOffset = fmt.Sprintf("%.0fs", c.StartOffset.Seconds())
-	}
-	if c.EndOffset != 0 {
-		aux.EndOffset = fmt.Sprintf("%.0fs", c.EndOffset.Seconds())
-		if aux.StartOffset == "" {
-			aux.StartOffset = "0s"
-		}
-	}
-
-	return json.Marshal(aux)
-}
-
-// Content blob.
-type Blob struct {
-	// Optional. Display name of the blob. Used to provide a label or filename to distinguish
-	// blobs. This field is not currently used in the Gemini GenerateContent calls.
-	DisplayName string `json:"displayName,omitempty"`
-	// Required. Raw bytes.
-	Data []byte `json:"data,omitempty"`
-	// Required. The IANA standard MIME type of the source data.
-	MIMEType string `json:"mimeType,omitempty"`
-}
-
-// URI based data.
-type FileData struct {
-	// Optional. Display name of the file data. Used to provide a label or filename to distinguish
-	// file datas. It is not currently used in the Gemini GenerateContent calls.
-	DisplayName string `json:"displayName,omitempty"`
-	// Optional. Required. URI.
-	FileURI string `json:"fileUri,omitempty"`
-	// Optional. Required. The IANA standard MIME type of the source data.
-	MIMEType string `json:"mimeType,omitempty"`
-}
-
 // A function call.
 type FunctionCall struct {
 	// Optional. The unique ID of the function call. If populated, the client to execute
@@ -865,6 +776,20 @@ type ExecutableCode struct {
 	Code string `json:"code,omitempty"`
 	// Required. Programming language of the `code`.
 	Language Language `json:"language,omitempty"`
+}
+
+// URI based data.
+type FileData struct {
+	// Optional. Display name of the file data. Used to provide a label or filename to distinguish
+	// file datas. This field is only returned in PromptMessage for prompt management. It
+	// is currently used in the Gemini GenerateContent calls only when server side tools
+	// (code_execution, google_search, and url_context) are enabled. This field is not supported
+	// in Gemini API.
+	DisplayName string `json:"displayName,omitempty"`
+	// Required. URI.
+	FileURI string `json:"fileUri,omitempty"`
+	// Required. The IANA standard MIME type of the source data.
+	MIMEType string `json:"mimeType,omitempty"`
 }
 
 // Raw media bytes for function response.
@@ -947,21 +872,92 @@ type FunctionResponse struct {
 	Response map[string]any `json:"response,omitempty"`
 }
 
+// Content blob.
+type Blob struct {
+	// Required. Raw bytes.
+	Data []byte `json:"data,omitempty"`
+	// Optional. Display name of the blob. Used to provide a label or filename to distinguish
+	// blobs. This field is only returned in PromptMessage for prompt management. It is
+	// currently used in the Gemini GenerateContent calls only when server side tools (code_execution,
+	// google_search, and url_context) are enabled. This field is not supported in Gemini
+	// API.
+	DisplayName string `json:"displayName,omitempty"`
+	// Required. The IANA standard MIME type of the source data.
+	MIMEType string `json:"mimeType,omitempty"`
+}
+
+// Metadata describes the input video content.
+type VideoMetadata struct {
+	// Optional. The end offset of the video.
+	EndOffset time.Duration `json:"endOffset,omitempty"`
+	// Optional. The frame rate of the video sent to the model. If not specified, the default
+	// value will be 1.0. The FPS range is (0.0, 24.0].
+	FPS *float64 `json:"fps,omitempty"`
+	// Optional. The start offset of the video.
+	StartOffset time.Duration `json:"startOffset,omitempty"`
+}
+
+func (c *VideoMetadata) UnmarshalJSON(data []byte) error {
+	type Alias VideoMetadata
+	aux := &struct {
+		EndOffset   string `json:"endOffset,omitempty"`
+		StartOffset string `json:"startOffset,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(c),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	if aux.EndOffset != "" {
+		d, err := time.ParseDuration(aux.EndOffset)
+		if err != nil {
+			return err
+		}
+		c.EndOffset = d
+	}
+
+	if aux.StartOffset != "" {
+		d, err := time.ParseDuration(aux.StartOffset)
+		if err != nil {
+			return err
+		}
+		c.StartOffset = d
+	}
+
+	return nil
+}
+
+func (c *VideoMetadata) MarshalJSON() ([]byte, error) {
+	type Alias VideoMetadata
+	aux := &struct {
+		EndOffset   string `json:"endOffset,omitempty"`
+		StartOffset string `json:"startOffset,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(c),
+	}
+
+	if c.StartOffset != 0 {
+		aux.StartOffset = fmt.Sprintf("%.0fs", c.StartOffset.Seconds())
+	}
+	if c.EndOffset != 0 {
+		aux.EndOffset = fmt.Sprintf("%.0fs", c.EndOffset.Seconds())
+		if aux.StartOffset == "" {
+			aux.StartOffset = "0s"
+		}
+	}
+
+	return json.Marshal(aux)
+}
+
 // A datatype containing media content.
 // Exactly one field within a Part should be set, representing the specific type
 // of content being conveyed. Using multiple fields within the same `Part`
 // instance is considered invalid.
 type Part struct {
-	// Optional. Metadata for a given video.
-	VideoMetadata *VideoMetadata `json:"videoMetadata,omitempty"`
-	// Optional. Indicates if the part is thought from the model.
-	Thought bool `json:"thought,omitempty"`
-	// Optional. Inlined bytes data.
-	InlineData *Blob `json:"inlineData,omitempty"`
-	// Optional. URI based data.
-	FileData *FileData `json:"fileData,omitempty"`
-	// Optional. An opaque signature for the thought so it can be reused in subsequent requests.
-	ThoughtSignature []byte `json:"thoughtSignature,omitempty"`
 	// Optional. A predicted [FunctionCall] returned from the model that contains a string
 	// representing the [FunctionDeclaration.Name] with the parameters and their values.
 	FunctionCall *FunctionCall `json:"functionCall,omitempty"`
@@ -969,12 +965,23 @@ type Part struct {
 	CodeExecutionResult *CodeExecutionResult `json:"codeExecutionResult,omitempty"`
 	// Optional. Code generated by the model that is meant to be executed.
 	ExecutableCode *ExecutableCode `json:"executableCode,omitempty"`
+	// Optional. URI based data.
+	FileData *FileData `json:"fileData,omitempty"`
 	// Optional. The result output of a [FunctionCall] that contains a string representing
 	// the [FunctionDeclaration.Name] and a structured JSON object containing any output
 	// from the function call. It is used as context to the model.
 	FunctionResponse *FunctionResponse `json:"functionResponse,omitempty"`
+	// Optional. Inlined bytes data.
+	InlineData *Blob `json:"inlineData,omitempty"`
 	// Optional. Text part (can be code).
 	Text string `json:"text,omitempty"`
+	// Optional. Indicates if the part is thought from the model.
+	Thought bool `json:"thought,omitempty"`
+	// Optional. An opaque signature for the thought so it can be reused in subsequent requests.
+	ThoughtSignature []byte `json:"thoughtSignature,omitempty"`
+	// Optional. Video metadata. The metadata should only be specified while the video data
+	// is presented in inline_data or file_data.
+	VideoMetadata *VideoMetadata `json:"videoMetadata,omitempty"`
 }
 
 // NewPartFromURI builds a Part from a given file URI and mime type.
@@ -1070,9 +1077,8 @@ type Content struct {
 	// Optional. List of parts that constitute a single message. Each part may have
 	// a different IANA MIME type.
 	Parts []*Part `json:"parts,omitempty"`
-	// Optional. The producer of the content. Must be either 'user' or
-	// 'model'. Useful to set for multi-turn conversations, otherwise can be
-	// empty. If role is not specified, SDK will determine the role.
+	// Optional. The producer of the content. Must be either 'user' or 'model'. Useful to
+	// set for multi-turn conversations, otherwise can be left blank or unset.
 	Role string `json:"role,omitempty"`
 }
 
@@ -1278,17 +1284,6 @@ type Schema struct {
 type ModelSelectionConfig struct {
 	// Optional. Options for feature selection preference.
 	FeatureSelectionPreference FeatureSelectionPreference `json:"featureSelectionPreference,omitempty"`
-}
-
-// Safety settings.
-type SafetySetting struct {
-	// Optional. Determines if the harm block method uses probability or probability
-	// and severity scores.
-	Method HarmBlockMethod `json:"method,omitempty"`
-	// Required. Harm category.
-	Category HarmCategory `json:"category,omitempty"`
-	// Required. The harm block threshold.
-	Threshold HarmBlockThreshold `json:"threshold,omitempty"`
 }
 
 // Defines a function that the model can generate JSON inputs for.
@@ -1808,6 +1803,18 @@ type GenerationConfigRoutingConfig struct {
 	AutoMode *GenerationConfigRoutingConfigAutoRoutingMode `json:"autoMode,omitempty"`
 	// Manual routing.
 	ManualMode *GenerationConfigRoutingConfigManualRoutingMode `json:"manualMode,omitempty"`
+}
+
+// Safety settings.
+type SafetySetting struct {
+	// Required. Harm category.
+	Category HarmCategory `json:"category,omitempty"`
+	// Optional. Specify if the threshold is used for probability or severity score. If
+	// not specified, the threshold is used for probability score. This field is not supported
+	// in Gemini API.
+	Method HarmBlockMethod `json:"method,omitempty"`
+	// Required. The harm block threshold.
+	Threshold HarmBlockThreshold `json:"threshold,omitempty"`
 }
 
 // Optional model configuration parameters.
