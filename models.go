@@ -2467,6 +2467,10 @@ func googleSearchToMldev(fromObject map[string]any, parentObject map[string]any)
 		return nil, fmt.Errorf("excludeDomains parameter is not supported in Gemini API")
 	}
 
+	if getValueByPath(fromObject, []string{"blockingConfidence"}) != nil {
+		return nil, fmt.Errorf("blockingConfidence parameter is not supported in Gemini API")
+	}
+
 	fromTimeRangeFilter := getValueByPath(fromObject, []string{"timeRangeFilter"})
 	if fromTimeRangeFilter != nil {
 		setValueByPath(toObject, []string{"timeRangeFilter"}, fromTimeRangeFilter)
