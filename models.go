@@ -3364,16 +3364,6 @@ func toolToMldev(fromObject map[string]any, parentObject map[string]any) (toObje
 		setValueByPath(toObject, []string{"googleSearchRetrieval"}, fromGoogleSearchRetrieval)
 	}
 
-	fromGoogleMaps := getValueByPath(fromObject, []string{"googleMaps"})
-	if fromGoogleMaps != nil {
-		fromGoogleMaps, err = googleMapsToMldev(fromGoogleMaps.(map[string]any), toObject)
-		if err != nil {
-			return nil, err
-		}
-
-		setValueByPath(toObject, []string{"googleMaps"}, fromGoogleMaps)
-	}
-
 	fromComputerUse := getValueByPath(fromObject, []string{"computerUse"})
 	if fromComputerUse != nil {
 		setValueByPath(toObject, []string{"computerUse"}, fromComputerUse)
@@ -3386,6 +3376,16 @@ func toolToMldev(fromObject map[string]any, parentObject map[string]any) (toObje
 
 	if getValueByPath(fromObject, []string{"enterpriseWebSearch"}) != nil {
 		return nil, fmt.Errorf("enterpriseWebSearch parameter is not supported in Gemini API")
+	}
+
+	fromGoogleMaps := getValueByPath(fromObject, []string{"googleMaps"})
+	if fromGoogleMaps != nil {
+		fromGoogleMaps, err = googleMapsToMldev(fromGoogleMaps.(map[string]any), toObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"googleMaps"}, fromGoogleMaps)
 	}
 
 	fromGoogleSearch := getValueByPath(fromObject, []string{"googleSearch"})
@@ -3429,11 +3429,6 @@ func toolToVertex(fromObject map[string]any, parentObject map[string]any) (toObj
 		setValueByPath(toObject, []string{"googleSearchRetrieval"}, fromGoogleSearchRetrieval)
 	}
 
-	fromGoogleMaps := getValueByPath(fromObject, []string{"googleMaps"})
-	if fromGoogleMaps != nil {
-		setValueByPath(toObject, []string{"googleMaps"}, fromGoogleMaps)
-	}
-
 	fromComputerUse := getValueByPath(fromObject, []string{"computerUse"})
 	if fromComputerUse != nil {
 		setValueByPath(toObject, []string{"computerUse"}, fromComputerUse)
@@ -3447,6 +3442,11 @@ func toolToVertex(fromObject map[string]any, parentObject map[string]any) (toObj
 	fromEnterpriseWebSearch := getValueByPath(fromObject, []string{"enterpriseWebSearch"})
 	if fromEnterpriseWebSearch != nil {
 		setValueByPath(toObject, []string{"enterpriseWebSearch"}, fromEnterpriseWebSearch)
+	}
+
+	fromGoogleMaps := getValueByPath(fromObject, []string{"googleMaps"})
+	if fromGoogleMaps != nil {
+		setValueByPath(toObject, []string{"googleMaps"}, fromGoogleMaps)
 	}
 
 	fromGoogleSearch := getValueByPath(fromObject, []string{"googleSearch"})

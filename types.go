@@ -100,6 +100,19 @@ const (
 	ModeDynamic Mode = "MODE_DYNAMIC"
 )
 
+// The API spec that the external API implements. This enum is not supported in Gemini
+// API.
+type APISpec string
+
+const (
+	// Unspecified API spec. This value should not be used.
+	APISpecUnspecified APISpec = "API_SPEC_UNSPECIFIED"
+	// Simple search API spec.
+	APISpecSimpleSearch APISpec = "SIMPLE_SEARCH"
+	// Elastic search API spec.
+	APISpecElasticSearch APISpec = "ELASTIC_SEARCH"
+)
+
 // Type of auth scheme. This enum is not supported in Gemini API.
 type AuthType string
 
@@ -119,17 +132,21 @@ const (
 	AuthTypeOidcAuth AuthType = "OIDC_AUTH"
 )
 
-// The API spec that the external API implements. This enum is not supported in Gemini
-// API.
-type APISpec string
+// The location of the API key. This enum is not supported in Gemini API.
+type HTTPElementLocation string
 
 const (
-	// Unspecified API spec. This value should not be used.
-	APISpecUnspecified APISpec = "API_SPEC_UNSPECIFIED"
-	// Simple search API spec.
-	APISpecSimpleSearch APISpec = "SIMPLE_SEARCH"
-	// Elastic search API spec.
-	APISpecElasticSearch APISpec = "ELASTIC_SEARCH"
+	HTTPElementLocationHTTPInUnspecified HTTPElementLocation = "HTTP_IN_UNSPECIFIED"
+	// Element is in the HTTP request query.
+	HTTPElementLocationHTTPInQuery HTTPElementLocation = "HTTP_IN_QUERY"
+	// Element is in the HTTP request header.
+	HTTPElementLocationHTTPInHeader HTTPElementLocation = "HTTP_IN_HEADER"
+	// Element is in the HTTP request path.
+	HTTPElementLocationHTTPInPath HTTPElementLocation = "HTTP_IN_PATH"
+	// Element is in the HTTP request body.
+	HTTPElementLocationHTTPInBody HTTPElementLocation = "HTTP_IN_BODY"
+	// Element is in the HTTP request cookie.
+	HTTPElementLocationHTTPInCookie HTTPElementLocation = "HTTP_IN_COOKIE"
 )
 
 // Sites with confidence level chosen & above this value will be blocked from the search
@@ -1371,10 +1388,50 @@ type GoogleSearchRetrieval struct {
 	DynamicRetrievalConfig *DynamicRetrievalConfig `json:"dynamicRetrievalConfig,omitempty"`
 }
 
-// Config for authentication with API key.
+// Tool to support computer use.
+type ComputerUse struct {
+	// Optional. Required. The environment being operated.
+	Environment Environment `json:"environment,omitempty"`
+	// Optional. By default, predefined functions are included in the final model call.
+	// Some of them can be explicitly excluded from being automatically included.
+	// This can serve two purposes:
+	// 1. Using a more restricted / different action space.
+	// 2. Improving the definitions / instructions of predefined functions.
+	ExcludedPredefinedFunctions []string `json:"excludedPredefinedFunctions,omitempty"`
+}
+
+// The API secret. This data type is not supported in Gemini API.
+type APIAuthAPIKeyConfig struct {
+	// Required. The SecretManager secret version resource name storing API key. e.g. projects/{project}/secrets/{secret}/versions/{version}
+	APIKeySecretVersion string `json:"apiKeySecretVersion,omitempty"`
+	// The API key string. Either this or `api_key_secret_version` must be set.
+	APIKeyString string `json:"apiKeyString,omitempty"`
+}
+
+// The generic reusable API auth config. Deprecated. Please use AuthConfig (google/cloud/aiplatform/master/auth.proto)
+// instead. This data type is not supported in Gemini API.
+type APIAuth struct {
+	// The API secret.
+	APIKeyConfig *APIAuthAPIKeyConfig `json:"apiKeyConfig,omitempty"`
+}
+
+// Config for authentication with API key. This data type is not supported in Gemini
+// API.
 type APIKeyConfig struct {
+	// Optional. The name of the SecretManager secret version resource storing the API key.
+	// Format: `projects/{project}/secrets/{secrete}/versions/{version}` - If both `api_key_secret`
+	// and `api_key_string` are specified, this field takes precedence over `api_key_string`.
+	// - If specified, the `secretmanager.versions.access` permission should be granted
+	// to Vertex AI Extension Service Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents)
+	// on the specified resource.
+	APIKeySecret string `json:"apiKeySecret,omitempty"`
 	// Optional. The API key to be used in the request directly.
 	APIKeyString string `json:"apiKeyString,omitempty"`
+	// Optional. The location of the API key.
+	HTTPElementLocation HTTPElementLocation `json:"httpElementLocation,omitempty"`
+	// Optional. The parameter name of the API key. E.g. If the API request is "https://example.com/act?api_key=",
+	// "api_key" would be the parameter name.
+	Name string `json:"name,omitempty"`
 }
 
 // Config for Google Service Account Authentication. This data type is not supported
@@ -1424,9 +1481,10 @@ type AuthConfigOidcConfig struct {
 	ServiceAccount string `json:"serviceAccount,omitempty"`
 }
 
-// Auth configuration to run the extension.
+// Auth configuration to run the extension. This data type is not supported in Gemini
+// API.
 type AuthConfig struct {
-	// Optional. Config for API key auth.
+	// Config for API key auth.
 	APIKeyConfig *APIKeyConfig `json:"apiKeyConfig,omitempty"`
 	// Type of auth scheme.
 	AuthType AuthType `json:"authType,omitempty"`
@@ -1438,41 +1496,6 @@ type AuthConfig struct {
 	OauthConfig *AuthConfigOauthConfig `json:"oauthConfig,omitempty"`
 	// Config for user OIDC auth.
 	OidcConfig *AuthConfigOidcConfig `json:"oidcConfig,omitempty"`
-}
-
-// Tool to support Google Maps in Model.
-type GoogleMaps struct {
-	// Optional. Auth config for the Google Maps tool.
-	AuthConfig *AuthConfig `json:"authConfig,omitempty"`
-	// Optional. If true, include the widget context token in the response.
-	EnableWidget *bool `json:"enableWidget,omitempty"`
-}
-
-// Tool to support computer use.
-type ComputerUse struct {
-	// Optional. Required. The environment being operated.
-	Environment Environment `json:"environment,omitempty"`
-	// Optional. By default, predefined functions are included in the final model call.
-	// Some of them can be explicitly excluded from being automatically included.
-	// This can serve two purposes:
-	// 1. Using a more restricted / different action space.
-	// 2. Improving the definitions / instructions of predefined functions.
-	ExcludedPredefinedFunctions []string `json:"excludedPredefinedFunctions,omitempty"`
-}
-
-// The API secret. This data type is not supported in Gemini API.
-type APIAuthAPIKeyConfig struct {
-	// Required. The SecretManager secret version resource name storing API key. e.g. projects/{project}/secrets/{secret}/versions/{version}
-	APIKeySecretVersion string `json:"apiKeySecretVersion,omitempty"`
-	// The API key string. Either this or `api_key_secret_version` must be set.
-	APIKeyString string `json:"apiKeyString,omitempty"`
-}
-
-// The generic reusable API auth config. Deprecated. Please use AuthConfig (google/cloud/aiplatform/master/auth.proto)
-// instead. This data type is not supported in Gemini API.
-type APIAuth struct {
-	// The API secret.
-	APIKeyConfig *APIAuthAPIKeyConfig `json:"apiKeyConfig,omitempty"`
 }
 
 // The search parameters to use for the ELASTIC_SEARCH spec. This data type is not supported
@@ -1655,6 +1678,15 @@ type EnterpriseWebSearch struct {
 	BlockingConfidence PhishBlockThreshold `json:"blockingConfidence,omitempty"`
 }
 
+// Tool to retrieve public maps data for grounding, powered by Google.
+type GoogleMaps struct {
+	// The authentication config to access the API. Only API key is supported. This field
+	// is not supported in Gemini API.
+	AuthConfig *AuthConfig `json:"authConfig,omitempty"`
+	// Optional. If true, include the widget context token in the response.
+	EnableWidget *bool `json:"enableWidget,omitempty"`
+}
+
 // Represents a time interval, encoded as a Timestamp start (inclusive) and a Timestamp
 // end (exclusive). The start must be less than or equal to the end. When the start
 // equals the end, the interval is empty (matches no time). When both start and end
@@ -1744,9 +1776,6 @@ type Tool struct {
 	// Optional. GoogleSearchRetrieval tool type. Specialized retrieval tool that is powered
 	// by Google search.
 	GoogleSearchRetrieval *GoogleSearchRetrieval `json:"googleSearchRetrieval,omitempty"`
-	// Optional. Google Maps tool type. Specialized retrieval tool
-	// that is powered by Google Maps.
-	GoogleMaps *GoogleMaps `json:"googleMaps,omitempty"`
 	// Optional. Tool to support the model interacting directly with the
 	// computer. If enabled, it automatically populates computer-use specific
 	// Function Declarations.
@@ -1756,6 +1785,8 @@ type Tool struct {
 	// Optional. Tool to support searching public web data, powered by Vertex AI Search
 	// and Sec4 compliance. This field is not supported in Gemini API.
 	EnterpriseWebSearch *EnterpriseWebSearch `json:"enterpriseWebSearch,omitempty"`
+	// Optional. GoogleMaps tool type. Tool to support Google Maps in Model.
+	GoogleMaps *GoogleMaps `json:"googleMaps,omitempty"`
 	// Optional. GoogleSearch tool type. Tool to support Google Search in Model. Powered
 	// by Google.
 	GoogleSearch *GoogleSearch `json:"googleSearch,omitempty"`
