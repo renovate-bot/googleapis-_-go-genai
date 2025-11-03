@@ -602,11 +602,26 @@ func TestNewClient(t *testing.T) {
 				t.Errorf("Expected location to be empty, got %q", client.clientConfig.Location)
 			}
 		})
+
+		t.Run("Credentials empty when providing http client", func(t *testing.T) {
+			cc := &ClientConfig{Backend: BackendVertexAI, HTTPClient: &http.Client{}, Project: "test-project", Location: "test-location"}
+			// Because the above http.Client doesn't handle credentials, we call UseDefaultCredentials()
+			// so that the http client will have authorization headers in the requests.
+			err := cc.UseDefaultCredentials()
+			if err != nil {
+				t.Fatalf("Expected no error, got error %v", err)
+			}
+			_, err = NewClient(ctx, cc)
+			if err != nil {
+				t.Fatalf("Expected no error, got error %v", err)
+			}
+		})
 	})
 
 	t.Run("VertexAI without default credentials", func(t *testing.T) {
 		t.Run("Credentials empty when providing http client", func(t *testing.T) {
 			_, err := NewClient(ctx, &ClientConfig{Backend: BackendVertexAI, HTTPClient: &http.Client{}, Project: "test-project", Location: "test-location"})
+			// Verify client creation should not fail when no default credential file exists.
 			if err != nil {
 				t.Fatalf("Expected no error, got error %v", err)
 			}
