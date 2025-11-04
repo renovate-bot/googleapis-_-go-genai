@@ -348,14 +348,13 @@ const (
 	BlockedReasonJailbreak BlockedReason = "JAILBREAK"
 )
 
-// Traffic type. This shows whether a request consumes Pay-As-You-Go or Provisioned
-// Throughput quota. This enum is not supported in Gemini API.
+// The traffic type for this request. This enum is not supported in Gemini API.
 type TrafficType string
 
 const (
 	// Unspecified request traffic type.
 	TrafficTypeUnspecified TrafficType = "TRAFFIC_TYPE_UNSPECIFIED"
-	// Type for Pay-As-You-Go traffic.
+	// The request was processed using Pay-As-You-Go quota.
 	TrafficTypeOnDemand TrafficType = "ON_DEMAND"
 	// Type for Provisioned Throughput traffic.
 	TrafficTypeProvisionedThroughput TrafficType = "PROVISIONED_THROUGHPUT"
@@ -463,6 +462,8 @@ const (
 	TuningTaskI2v TuningTask = "TUNING_TASK_I2V"
 	// Tuning task for text to video.
 	TuningTaskT2v TuningTask = "TUNING_TASK_T2V"
+	// Tuning task for reference to video.
+	TuningTaskR2v TuningTask = "TUNING_TASK_R2V"
 )
 
 // Options for feature selection preference.
@@ -801,7 +802,7 @@ type FunctionCall struct {
 	// Optional. The function parameters and values in JSON object format. See [FunctionDeclaration.parameters]
 	// for parameter details.
 	Args map[string]any `json:"args,omitempty"`
-	// Required. The name of the function to call. Matches [FunctionDeclaration.Name].
+	// Optional. Required. The name of the function to call. Matches [FunctionDeclaration.Name].
 	Name string `json:"name,omitempty"`
 }
 
@@ -1773,8 +1774,7 @@ type Tool struct {
 	// tool(s) to get external knowledge to answer the prompt. Retrieval results are presented
 	// to the model for generation. This field is not supported in Gemini API.
 	Retrieval *Retrieval `json:"retrieval,omitempty"`
-	// Optional. GoogleSearchRetrieval tool type. Specialized retrieval tool that is powered
-	// by Google search.
+	// Optional. Specialized retrieval tool that is powered by Google Search.
 	GoogleSearchRetrieval *GoogleSearchRetrieval `json:"googleSearchRetrieval,omitempty"`
 	// Optional. Tool to support the model interacting directly with the
 	// computer. If enabled, it automatically populates computer-use specific
@@ -2117,11 +2117,11 @@ type GroundingChunkMaps struct {
 	// This Place's resource name, in `places/{place_id}` format. Can be used to look up
 	// the Place.
 	PlaceID string `json:"placeId,omitempty"`
-	// Text of the chunk.
+	// Text of the place answer.
 	Text string `json:"text,omitempty"`
-	// Title of the chunk.
+	// Title of the place.
 	Title string `json:"title,omitempty"`
-	// URI reference of the chunk.
+	// URI reference of the place.
 	URI string `json:"uri,omitempty"`
 }
 
@@ -2370,31 +2370,39 @@ type ModalityTokenCount struct {
 	TokenCount int32 `json:"tokenCount,omitempty"`
 }
 
-// Usage metadata about response(s). This data type is not supported in Gemini API.
+// Usage metadata about the content generation request and response. This message provides
+// a detailed breakdown of token usage and other relevant metrics. This data type is
+// not supported in Gemini API.
 type GenerateContentResponseUsageMetadata struct {
-	// Output only. List of modalities of the cached content in the request input.
+	// Output only. A detailed breakdown of the token count for each modality in the cached
+	// content.
 	CacheTokensDetails []*ModalityTokenCount `json:"cacheTokensDetails,omitempty"`
-	// Output only. Number of tokens in the cached part in the input (the cached content).
+	// Output only. The number of tokens in the cached content that was used for this request.
 	CachedContentTokenCount int32 `json:"cachedContentTokenCount,omitempty"`
-	// Number of tokens in the response(s). This includes all the generated response candidates.
+	// The total number of tokens in the generated candidates. This includes all the generated
+	// response candidates.
 	CandidatesTokenCount int32 `json:"candidatesTokenCount,omitempty"`
-	// Output only. List of modalities that were returned in the response.
+	// Output only. A detailed breakdown of the token count for each modality in the generated
+	// candidates.
 	CandidatesTokensDetails []*ModalityTokenCount `json:"candidatesTokensDetails,omitempty"`
 	// Number of tokens in the prompt. When cached_content is set, this is still the total
 	// effective prompt size meaning this includes the number of tokens in the cached content.
 	PromptTokenCount int32 `json:"promptTokenCount,omitempty"`
-	// Output only. List of modalities that were processed in the request input.
+	// Output only. A detailed breakdown of the token count for each modality in the prompt.
 	PromptTokensDetails []*ModalityTokenCount `json:"promptTokensDetails,omitempty"`
-	// Output only. Number of tokens present in thoughts output.
+	// Output only. The number of tokens that were part of the model's generated "thoughts"
+	// output, if applicable.
 	ThoughtsTokenCount int32 `json:"thoughtsTokenCount,omitempty"`
-	// Output only. Number of tokens present in tool-use prompt(s).
+	// Output only. The number of tokens in the results from tool executions, which are
+	// provided back to the model as input, if applicable.
 	ToolUsePromptTokenCount int32 `json:"toolUsePromptTokenCount,omitempty"`
-	// Output only. List of modalities that were processed for tool-use request inputs.
+	// Output only. A detailed breakdown by modality of the token counts from the results
+	// of tool executions, which are provided back to the model as input.
 	ToolUsePromptTokensDetails []*ModalityTokenCount `json:"toolUsePromptTokensDetails,omitempty"`
-	// Total token count for prompt, response candidates, and tool-use prompts (if present).
+	// The total number of tokens for the entire request. This is the sum of `prompt_token_count`,
+	// `candidates_token_count`, `tool_use_prompt_token_count`, and `thoughts_token_count`.
 	TotalTokenCount int32 `json:"totalTokenCount,omitempty"`
-	// Output only. Traffic type. This shows whether a request consumes Pay-As-You-Go or
-	// Provisioned Throughput quota.
+	// Output only. The traffic type for this request.
 	TrafficType TrafficType `json:"trafficType,omitempty"`
 }
 
@@ -3252,12 +3260,12 @@ type VoiceConfig struct {
 	PrebuiltVoiceConfig *PrebuiltVoiceConfig `json:"prebuiltVoiceConfig,omitempty"`
 }
 
-// The configuration for a single speaker in a multi speaker setup. This data type is
-// not supported in Vertex AI.
+// Configuration for a single speaker in a multi speaker setup.
 type SpeakerVoiceConfig struct {
-	// Required. The name of the speaker to use. Should be the same as in the prompt.
+	// Required. The name of the speaker. This should be the same as the speaker name used
+	// in the prompt.
 	Speaker string `json:"speaker,omitempty"`
-	// Required. The configuration for the voice to use.
+	// Required. The configuration for the voice of this speaker.
 	VoiceConfig *VoiceConfig `json:"voiceConfig,omitempty"`
 }
 
@@ -3284,6 +3292,9 @@ type SpeechConfig struct {
 type GenerationConfig struct {
 	// Optional. Config for model selection.
 	ModelSelectionConfig *ModelSelectionConfig `json:"modelSelectionConfig,omitempty"`
+	// Optional. Output schema of the generated response. This is an alternative to
+	// `response_schema` that accepts [JSON Schema](https://json-schema.org/).
+	ResponseJsonSchema any `json:"responseJsonSchema,omitempty"`
 	// Optional. If enabled, audio timestamp will be included in the request to the model.
 	// This field is not supported in Gemini API.
 	AudioTimestamp bool `json:"audioTimestamp,omitempty"`
@@ -3304,19 +3315,6 @@ type GenerationConfig struct {
 	MediaResolution MediaResolution `json:"mediaResolution,omitempty"`
 	// Optional. Positive penalties.
 	PresencePenalty *float32 `json:"presencePenalty,omitempty"`
-	// Optional. Output schema of the generated response. This is an alternative to `response_schema`
-	// that accepts [JSON Schema](https://json-schema.org/). If set, `response_schema` must
-	// be omitted, but `response_mime_type` is required. While the full JSON Schema may
-	// be sent, not all features are supported. Specifically, only the following properties
-	// are supported: - `$id` - `$defs` - `$ref` - `$anchor` - `type` - `format` - `title`
-	// - `description` - `enum` (for strings and numbers) - `items` - `prefixItems` - `minItems`
-	// - `maxItems` - `minimum` - `maximum` - `anyOf` - `oneOf` (interpreted the same as
-	// `anyOf`) - `properties` - `additionalProperties` - `required` The non-standard `propertyOrdering`
-	// property may also be set. Cyclic references are unrolled to a limited degree and,
-	// as such, may only be used within non-required properties. (Nullable properties are
-	// not sufficient.) If `$ref` is set on a sub-schema, no other properties, except for
-	// than those starting as a `$`, may be set.
-	ResponseJsonSchema any `json:"responseJsonSchema,omitempty"`
 	// Optional. If true, export the logprobs results in response.
 	ResponseLogprobs bool `json:"responseLogprobs,omitempty"`
 	// Optional. Output response mimetype of the generated candidate text. Supported mimetype:
@@ -3678,6 +3676,10 @@ type PreferenceOptimizationHyperParameters struct {
 
 // Preference optimization tuning spec for tuning.
 type PreferenceOptimizationSpec struct {
+	// Optional. If set to true, disable intermediate checkpoints for Preference Optimization
+	// and only the last checkpoint will be exported. Otherwise, enable intermediate checkpoints
+	// for Preference Optimization. Default is false.
+	ExportLastCheckpointOnly bool `json:"exportLastCheckpointOnly,omitempty"`
 	// Optional. Hyperparameters for Preference Optimization.
 	HyperParameters *PreferenceOptimizationHyperParameters `json:"hyperParameters,omitempty"`
 	// Required. Cloud Storage path to file containing training dataset for preference optimization
@@ -4046,7 +4048,9 @@ type TuningJob struct {
 	// on this service account.
 	ServiceAccount string `json:"serviceAccount,omitempty"`
 	// Optional. The display name of the TunedModel. The name can be up to 128 characters
-	// long and can consist of any UTF-8 characters.
+	// long and can consist of any UTF-8 characters. For continuous tuning, tuned_model_display_name
+	// will by default use the same display name as the pre-tuned model. If a new display
+	// name is provided, the tuning job will create a new model instead of a new version.
 	TunedModelDisplayName string `json:"tunedModelDisplayName,omitempty"`
 	// Tuning Spec for Veo Tuning.
 	VeoTuningSpec *VeoTuningSpec `json:"veoTuningSpec,omitempty"`

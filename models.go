@@ -2298,6 +2298,11 @@ func generationConfigToVertex(fromObject map[string]any, parentObject map[string
 		setValueByPath(toObject, []string{"modelConfig"}, fromModelSelectionConfig)
 	}
 
+	fromResponseJsonSchema := getValueByPath(fromObject, []string{"responseJsonSchema"})
+	if fromResponseJsonSchema != nil {
+		setValueByPath(toObject, []string{"responseJsonSchema"}, fromResponseJsonSchema)
+	}
+
 	fromAudioTimestamp := getValueByPath(fromObject, []string{"audioTimestamp"})
 	if fromAudioTimestamp != nil {
 		setValueByPath(toObject, []string{"audioTimestamp"}, fromAudioTimestamp)
@@ -2336,11 +2341,6 @@ func generationConfigToVertex(fromObject map[string]any, parentObject map[string
 	fromPresencePenalty := getValueByPath(fromObject, []string{"presencePenalty"})
 	if fromPresencePenalty != nil {
 		setValueByPath(toObject, []string{"presencePenalty"}, fromPresencePenalty)
-	}
-
-	fromResponseJsonSchema := getValueByPath(fromObject, []string{"responseJsonSchema"})
-	if fromResponseJsonSchema != nil {
-		setValueByPath(toObject, []string{"responseJsonSchema"}, fromResponseJsonSchema)
 	}
 
 	fromResponseLogprobs := getValueByPath(fromObject, []string{"responseLogprobs"})
