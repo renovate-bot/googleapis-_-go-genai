@@ -3369,6 +3369,11 @@ func toolToMldev(fromObject map[string]any, parentObject map[string]any) (toObje
 		setValueByPath(toObject, []string{"computerUse"}, fromComputerUse)
 	}
 
+	fromFileSearch := getValueByPath(fromObject, []string{"fileSearch"})
+	if fromFileSearch != nil {
+		setValueByPath(toObject, []string{"fileSearch"}, fromFileSearch)
+	}
+
 	fromCodeExecution := getValueByPath(fromObject, []string{"codeExecution"})
 	if fromCodeExecution != nil {
 		setValueByPath(toObject, []string{"codeExecution"}, fromCodeExecution)
@@ -3432,6 +3437,10 @@ func toolToVertex(fromObject map[string]any, parentObject map[string]any) (toObj
 	fromComputerUse := getValueByPath(fromObject, []string{"computerUse"})
 	if fromComputerUse != nil {
 		setValueByPath(toObject, []string{"computerUse"}, fromComputerUse)
+	}
+
+	if getValueByPath(fromObject, []string{"fileSearch"}) != nil {
+		return nil, fmt.Errorf("fileSearch parameter is not supported in Vertex AI")
 	}
 
 	fromCodeExecution := getValueByPath(fromObject, []string{"codeExecution"})

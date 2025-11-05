@@ -564,7 +564,7 @@ func scan(data []byte, atEOF bool) (advance int, token []byte, err error) {
 	return 0, nil, nil
 }
 
-func (ac *apiClient) uploadFile(ctx context.Context, r io.Reader, uploadURL string, httpOptions *HTTPOptions) (*File, error) {
+func (ac *apiClient) upload(ctx context.Context, r io.Reader, uploadURL string, httpOptions *HTTPOptions) (map[string]any, error) {
 	var offset int64 = 0
 	var resp *http.Response
 	var respBody map[string]any
@@ -648,8 +648,37 @@ func (ac *apiClient) uploadFile(ctx context.Context, r io.Reader, uploadURL stri
 		return nil, fmt.Errorf("Failed to upload file: Upload status is not finalized")
 	}
 
+	return respBody, nil
+}
+
+func (ac *apiClient) uploadFile(ctx context.Context, r io.Reader, uploadURL string, httpOptions *HTTPOptions) (*File, error) {
+	respBody, err := ac.upload(ctx, r, uploadURL, httpOptions)
+	if err != nil {
+		return nil, err // Propagate any errors from the upload process
+	}
+	if respBody == nil {
+		return nil, fmt.Errorf("upload completed but response body was empty")
+	}
+
 	var response = new(File)
-	err := mapToStruct(respBody["file"].(map[string]any), &response)
+	err = mapToStruct(respBody["file"].(map[string]any), &response)
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (ac *apiClient) uploadToFileSearchStore(ctx context.Context, r io.Reader, uploadURL string, httpOptions *HTTPOptions) (*UploadToFileSearchStoreOperation, error) {
+	respBody, err := ac.upload(ctx, r, uploadURL, httpOptions)
+	if err != nil {
+		return nil, err // Propagate any errors from the upload process
+	}
+	if respBody == nil {
+		return nil, fmt.Errorf("upload completed but response body was empty")
+	}
+
+	var response = new(UploadToFileSearchStoreOperation)
+	err = mapToStruct(respBody, &response)
 	if err != nil {
 		return nil, err
 	}
