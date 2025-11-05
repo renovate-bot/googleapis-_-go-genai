@@ -42,8 +42,6 @@ type Client struct {
 	Files *Files
 	// Operations provides access to long-running operations.
 	Operations *Operations
-	// FileSearchStores provides access to the File Search Stores service.
-	FileSearchStores *FileSearchStores
 	// Batches provides access to the Batch service.
 	Batches *Batches
 	// Tunings provides access to the Tunings service.
@@ -327,16 +325,15 @@ func NewClient(ctx context.Context, cc *ClientConfig) (*Client, error) {
 
 	ac := &apiClient{clientConfig: cc}
 	c := &Client{
-		clientConfig:     *cc,
-		Models:           &Models{apiClient: ac},
-		Live:             &Live{apiClient: ac},
-		Caches:           &Caches{apiClient: ac},
-		Chats:            &Chats{apiClient: ac},
-		Operations:       &Operations{apiClient: ac},
-		FileSearchStores: &FileSearchStores{apiClient: ac, Documents: &Documents{apiClient: ac}},
-		Files:            &Files{apiClient: ac},
-		Batches:          &Batches{apiClient: ac},
-		Tunings:          &Tunings{apiClient: ac},
+		clientConfig: *cc,
+		Models:       &Models{apiClient: ac},
+		Live:         &Live{apiClient: ac},
+		Caches:       &Caches{apiClient: ac},
+		Chats:        &Chats{apiClient: ac},
+		Operations:   &Operations{apiClient: ac},
+		Files:        &Files{apiClient: ac},
+		Batches:      &Batches{apiClient: ac},
+		Tunings:      &Tunings{apiClient: ac},
 	}
 	return c, nil
 }

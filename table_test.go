@@ -177,43 +177,38 @@ func extractArgs(ctx context.Context, t *testing.T, method reflect.Value, testTa
 
 func moduleAndMethodName(t *testing.T, testTableFile *testTableFile) (string, string) {
 	t.Helper()
-	// Gets module path and method name.
+	// Gets module name and method name.
 	segments := strings.Split(testTableFile.TestMethod, ".")
-	if len(segments) < 2 {
-		t.Errorf("Invalid test method: %s", testTableFile.TestMethod)
+	if len(segments) != 2 {
+		t.Error("Invalid test method: " + testTableFile.TestMethod)
 	}
-	modulePath := strings.Join(segments[:len(segments)-1], ".")
-	methodName := segments[len(segments)-1]
-	return modulePath, methodName
+	moduleName := segments[0]
+	methodName := segments[1]
+	return moduleName, methodName
 }
 
 func extractMethod(t *testing.T, testTableFile *testTableFile, client *Client) reflect.Value {
 	t.Helper()
-	// Gets module path and method name.
-	modulePath, methodName := moduleAndMethodName(t, testTableFile)
+	// Gets module name and method name.
+	segments := strings.Split(testTableFile.TestMethod, ".")
+	if len(segments) != 2 {
+		t.Error("Invalid test method: " + testTableFile.TestMethod)
+	}
+	moduleName, methodName := moduleAndMethodName(t, testTableFile)
 
 	// TODO(b/428772983): Remove this once the tests are updated.
 	if methodName == "tune" && client.clientConfig.Backend != BackendVertexAI {
 		methodName = "tuneMldev"
 	}
 
-	// Finds the module by traversing the path.
-	module := reflect.ValueOf(*client)
-	for _, segment := range strings.Split(modulePath, ".") {
-		// Dereference pointer to get the module struct.
-		if module.Kind() == reflect.Ptr {
-			module = module.Elem()
-		}
-		pascalSegment := snakeToPascal(segment)
-		nextModule := module.FieldByName(pascalSegment)
-		if !nextModule.IsValid() {
-			t.Skipf("Skipping module: %s.%s, not supported in Go", modulePath, methodName)
-		}
-		module = nextModule
+	// Finds the module and method.
+	module := reflect.ValueOf(*client).FieldByName(snakeToPascal(moduleName))
+	if !module.IsValid() {
+		t.Skipf("Skipping module: %s.%s, not supported in Go", moduleName, methodName)
 	}
 	method := module.MethodByName(snakeToPascal(methodName))
 	if !method.IsValid() {
-		t.Skipf("Skipping method: %s.%s, not supported in Go", modulePath, methodName)
+		t.Skipf("Skipping method: %s.%s, not supported in Go", moduleName, methodName)
 	}
 	return method
 }

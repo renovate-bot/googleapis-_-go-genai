@@ -153,11 +153,9 @@ func readFileForReplayTest[T any](path string, output *T, omitempty bool) error 
 }
 
 // In testing server, host and scheme is empty.
-func processReplayURL(url string) string {
+func redactReplayURL(url string) string {
 	url = strings.ReplaceAll(url, "{MLDEV_URL_PREFIX}/", "")
 	url = strings.ReplaceAll(url, "{VERTEX_URL_PREFIX}/", "")
-	url = strings.ReplaceAll(url, "True", "true")
-	url = strings.ReplaceAll(url, "False", "false")
 	return url
 }
 
@@ -279,7 +277,7 @@ func (rac *replayAPIClient) assertRequest(sdkRequest *http.Request, replayReques
 
 	want := map[string]any{
 		"method":       replayRequest.Method,
-		"url":          processReplayURL(replayRequest.URL),
+		"url":          redactReplayURL(replayRequest.URL),
 		"headers":      replayHeaders,
 		"bodySegments": replayRequest.BodySegments,
 	}
