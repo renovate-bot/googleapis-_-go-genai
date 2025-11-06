@@ -2029,6 +2029,47 @@ type GenerateContentConfig struct {
 	ImageConfig *ImageConfig `json:"imageConfig,omitempty"`
 }
 
+func (c GenerateContentConfig) ToGenerationConfig(backend Backend) (*GenerationConfig, error) {
+	ac := apiClient{
+		clientConfig: &ClientConfig{
+			Backend: backend,
+		},
+	}
+
+	paramsMap := make(map[string]any)
+	deepMarshal(c, &paramsMap)
+	parentMap := make(map[string]any)
+	var outputMap map[string]any
+	var err error
+	switch backend {
+	case BackendGeminiAPI:
+		outputMap, err = generateContentConfigToMldev(&ac, paramsMap, parentMap)
+	case BackendVertexAI:
+		outputMap, err = generateContentConfigToVertex(&ac, paramsMap, parentMap)
+	default:
+		return nil, fmt.Errorf("Unsupported backend: %v", backend)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(parentMap) > 0 {
+		keys := make([]string, 0, len(parentMap))
+		for k := range parentMap {
+			keys = append(keys, k)
+		}
+		return nil, fmt.Errorf("Unsupported conversion for %v", keys)
+	}
+
+	output := new(GenerationConfig)
+	if err := mapToStruct(outputMap, output); err != nil {
+		return nil, err
+	}
+
+	return output, nil
+}
+
 // A wrapper class for the HTTP response.
 type HTTPResponse struct {
 	// Optional. Used to retain the processed HTTP headers in the response.
