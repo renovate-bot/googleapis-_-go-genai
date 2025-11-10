@@ -4625,11 +4625,24 @@ func (m Models) list(ctx context.Context, config *ListModelsConfig) (*ListModels
 		return nil, fmt.Errorf("invalid url params: %#v.\n%w", urlParams, err)
 	}
 	if _, ok := body["_query"]; ok {
-		query, err := createURLQuery(body["_query"].(map[string]any))
-		if err != nil {
-			return nil, err
+		if body["_query"].(map[string]any)["filter"] != nil {
+			filter := body["_query"].(map[string]any)["filter"].(string)
+			delete(body["_query"].(map[string]any), "filter")
+			query, err := createURLQuery(body["_query"].(map[string]any))
+			if err != nil {
+				return nil, err
+			}
+			if query != "" {
+				filter += "&"
+			}
+			path += "?filter=" + filter + query
+		} else {
+			query, err := createURLQuery(body["_query"].(map[string]any))
+			if err != nil {
+				return nil, err
+			}
+			path += "?" + query
 		}
-		path += "?" + query
 		delete(body, "_query")
 	}
 	responseMap, err = sendRequest(ctx, m.apiClient, path, http.MethodGet, body, httpOptions)
