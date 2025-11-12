@@ -2973,7 +2973,7 @@ func recontextImageConfigToVertex(fromObject map[string]any, parentObject map[st
 
 	fromBaseSteps := getValueByPath(fromObject, []string{"baseSteps"})
 	if fromBaseSteps != nil {
-		setValueByPath(parentObject, []string{"parameters", "editConfig", "baseSteps"}, fromBaseSteps)
+		setValueByPath(parentObject, []string{"parameters", "baseSteps"}, fromBaseSteps)
 	}
 
 	fromOutputGcsUri := getValueByPath(fromObject, []string{"outputGcsUri"})
