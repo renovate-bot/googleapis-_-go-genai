@@ -859,6 +859,9 @@ type FunctionResponseBlob struct {
 	MIMEType string `json:"mimeType,omitempty"`
 	// Required. Inline media bytes.
 	Data []byte `json:"data,omitempty"`
+	// Optional. Display name of the blob.
+	// Used to provide a label or filename to distinguish blobs.
+	DisplayName string `json:"displayName,omitempty"`
 }
 
 // URI based data for function response.
