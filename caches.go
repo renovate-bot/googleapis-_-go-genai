@@ -535,9 +535,6 @@ func (m Caches) Create(ctx context.Context, model string, config *CreateCachedCo
 	if err != nil {
 		return nil, err
 	}
-	if err != nil {
-		return nil, err
-	}
 	err = mapToStruct(responseMap, response)
 	if err != nil {
 		return nil, err
@@ -610,9 +607,6 @@ func (m Caches) Get(ctx context.Context, name string, config *GetCachedContentCo
 		delete(body, "_query")
 	}
 	responseMap, err = sendRequest(ctx, m.apiClient, path, http.MethodGet, body, httpOptions)
-	if err != nil {
-		return nil, err
-	}
 	if err != nil {
 		return nil, err
 	}
@@ -760,9 +754,6 @@ func (m Caches) Update(ctx context.Context, name string, config *UpdateCachedCon
 		delete(body, "_query")
 	}
 	responseMap, err = sendRequest(ctx, m.apiClient, path, http.MethodPatch, body, httpOptions)
-	if err != nil {
-		return nil, err
-	}
 	if err != nil {
 		return nil, err
 	}
