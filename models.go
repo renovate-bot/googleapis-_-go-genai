@@ -24,6 +24,41 @@ import (
 	"reflect"
 )
 
+func authConfigToMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromApiKey := getValueByPath(fromObject, []string{"apiKey"})
+	if fromApiKey != nil {
+		setValueByPath(toObject, []string{"apiKey"}, fromApiKey)
+	}
+
+	if getValueByPath(fromObject, []string{"apiKeyConfig"}) != nil {
+		return nil, fmt.Errorf("apiKeyConfig parameter is not supported in Gemini API")
+	}
+
+	if getValueByPath(fromObject, []string{"authType"}) != nil {
+		return nil, fmt.Errorf("authType parameter is not supported in Gemini API")
+	}
+
+	if getValueByPath(fromObject, []string{"googleServiceAccountConfig"}) != nil {
+		return nil, fmt.Errorf("googleServiceAccountConfig parameter is not supported in Gemini API")
+	}
+
+	if getValueByPath(fromObject, []string{"httpBasicAuthConfig"}) != nil {
+		return nil, fmt.Errorf("httpBasicAuthConfig parameter is not supported in Gemini API")
+	}
+
+	if getValueByPath(fromObject, []string{"oauthConfig"}) != nil {
+		return nil, fmt.Errorf("oauthConfig parameter is not supported in Gemini API")
+	}
+
+	if getValueByPath(fromObject, []string{"oidcConfig"}) != nil {
+		return nil, fmt.Errorf("oidcConfig parameter is not supported in Gemini API")
+	}
+
+	return toObject, nil
+}
+
 func blobToMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -2626,8 +2661,15 @@ func getModelParametersToVertex(ac *apiClient, fromObject map[string]any, parent
 
 func googleMapsToMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
-	if getValueByPath(fromObject, []string{"authConfig"}) != nil {
-		return nil, fmt.Errorf("authConfig parameter is not supported in Gemini API")
+
+	fromAuthConfig := getValueByPath(fromObject, []string{"authConfig"})
+	if fromAuthConfig != nil {
+		fromAuthConfig, err = authConfigToMldev(fromAuthConfig.(map[string]any), toObject, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"authConfig"}, fromAuthConfig)
 	}
 
 	fromEnableWidget := getValueByPath(fromObject, []string{"enableWidget"})
@@ -2646,12 +2688,12 @@ func googleSearchToMldev(fromObject map[string]any, parentObject map[string]any,
 		setValueByPath(toObject, []string{"searchTypes"}, fromSearchTypes)
 	}
 
-	if getValueByPath(fromObject, []string{"excludeDomains"}) != nil {
-		return nil, fmt.Errorf("excludeDomains parameter is not supported in Gemini API")
-	}
-
 	if getValueByPath(fromObject, []string{"blockingConfidence"}) != nil {
 		return nil, fmt.Errorf("blockingConfidence parameter is not supported in Gemini API")
+	}
+
+	if getValueByPath(fromObject, []string{"excludeDomains"}) != nil {
+		return nil, fmt.Errorf("excludeDomains parameter is not supported in Gemini API")
 	}
 
 	fromTimeRangeFilter := getValueByPath(fromObject, []string{"timeRangeFilter"})
@@ -2691,6 +2733,10 @@ func imageConfigToMldev(fromObject map[string]any, parentObject map[string]any, 
 		return nil, fmt.Errorf("outputCompressionQuality parameter is not supported in Gemini API")
 	}
 
+	if getValueByPath(fromObject, []string{"imageOutputOptions"}) != nil {
+		return nil, fmt.Errorf("imageOutputOptions parameter is not supported in Gemini API")
+	}
+
 	return toObject, nil
 }
 
@@ -2725,6 +2771,11 @@ func imageConfigToVertex(fromObject map[string]any, parentObject map[string]any,
 	fromOutputCompressionQuality := getValueByPath(fromObject, []string{"outputCompressionQuality"})
 	if fromOutputCompressionQuality != nil {
 		setValueByPath(toObject, []string{"imageOutputOptions", "compressionQuality"}, fromOutputCompressionQuality)
+	}
+
+	fromImageOutputOptions := getValueByPath(fromObject, []string{"imageOutputOptions"})
+	if fromImageOutputOptions != nil {
+		setValueByPath(toObject, []string{"imageOutputOptions"}, fromImageOutputOptions)
 	}
 
 	return toObject, nil
@@ -3660,6 +3711,16 @@ func toolToMldev(fromObject map[string]any, parentObject map[string]any, rootObj
 		setValueByPath(toObject, []string{"googleSearch"}, fromGoogleSearch)
 	}
 
+	fromGoogleMaps := getValueByPath(fromObject, []string{"googleMaps"})
+	if fromGoogleMaps != nil {
+		fromGoogleMaps, err = googleMapsToMldev(fromGoogleMaps.(map[string]any), toObject, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
+		setValueByPath(toObject, []string{"googleMaps"}, fromGoogleMaps)
+	}
+
 	fromCodeExecution := getValueByPath(fromObject, []string{"codeExecution"})
 	if fromCodeExecution != nil {
 		setValueByPath(toObject, []string{"codeExecution"}, fromCodeExecution)
@@ -3674,19 +3735,13 @@ func toolToMldev(fromObject map[string]any, parentObject map[string]any, rootObj
 		setValueByPath(toObject, []string{"functionDeclarations"}, fromFunctionDeclarations)
 	}
 
-	fromGoogleMaps := getValueByPath(fromObject, []string{"googleMaps"})
-	if fromGoogleMaps != nil {
-		fromGoogleMaps, err = googleMapsToMldev(fromGoogleMaps.(map[string]any), toObject, rootObject)
-		if err != nil {
-			return nil, err
-		}
-
-		setValueByPath(toObject, []string{"googleMaps"}, fromGoogleMaps)
-	}
-
 	fromGoogleSearchRetrieval := getValueByPath(fromObject, []string{"googleSearchRetrieval"})
 	if fromGoogleSearchRetrieval != nil {
 		setValueByPath(toObject, []string{"googleSearchRetrieval"}, fromGoogleSearchRetrieval)
+	}
+
+	if getValueByPath(fromObject, []string{"parallelAiSearch"}) != nil {
+		return nil, fmt.Errorf("parallelAiSearch parameter is not supported in Gemini API")
 	}
 
 	fromUrlContext := getValueByPath(fromObject, []string{"urlContext"})
@@ -3724,6 +3779,11 @@ func toolToVertex(fromObject map[string]any, parentObject map[string]any, rootOb
 		setValueByPath(toObject, []string{"googleSearch"}, fromGoogleSearch)
 	}
 
+	fromGoogleMaps := getValueByPath(fromObject, []string{"googleMaps"})
+	if fromGoogleMaps != nil {
+		setValueByPath(toObject, []string{"googleMaps"}, fromGoogleMaps)
+	}
+
 	fromCodeExecution := getValueByPath(fromObject, []string{"codeExecution"})
 	if fromCodeExecution != nil {
 		setValueByPath(toObject, []string{"codeExecution"}, fromCodeExecution)
@@ -3744,14 +3804,14 @@ func toolToVertex(fromObject map[string]any, parentObject map[string]any, rootOb
 		setValueByPath(toObject, []string{"functionDeclarations"}, fromFunctionDeclarations)
 	}
 
-	fromGoogleMaps := getValueByPath(fromObject, []string{"googleMaps"})
-	if fromGoogleMaps != nil {
-		setValueByPath(toObject, []string{"googleMaps"}, fromGoogleMaps)
-	}
-
 	fromGoogleSearchRetrieval := getValueByPath(fromObject, []string{"googleSearchRetrieval"})
 	if fromGoogleSearchRetrieval != nil {
 		setValueByPath(toObject, []string{"googleSearchRetrieval"}, fromGoogleSearchRetrieval)
+	}
+
+	fromParallelAiSearch := getValueByPath(fromObject, []string{"parallelAiSearch"})
+	if fromParallelAiSearch != nil {
+		setValueByPath(toObject, []string{"parallelAiSearch"}, fromParallelAiSearch)
 	}
 
 	fromUrlContext := getValueByPath(fromObject, []string{"urlContext"})
