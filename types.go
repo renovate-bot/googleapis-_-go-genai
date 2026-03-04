@@ -5961,6 +5961,23 @@ type DeleteFileResponse struct {
 	SDKHTTPResponse *HTTPResponse `json:"sdkHttpResponse,omitempty"`
 }
 
+// Used to override the default configuration.
+type RegisterFilesConfig struct {
+	// Optional. Used to override HTTP request options.
+	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
+	// Optional. If true, the raw HTTP response will be returned in the 'sdk_http_response'
+	// field.
+	ShouldReturnHTTPResponse *bool `json:"shouldReturnHttpResponse,omitempty"`
+}
+
+// Response for the _register file method.
+type RegisterFilesResponse struct {
+	// Optional. Used to retain the full HTTP response.
+	SDKHTTPResponse *HTTPResponse `json:"sdkHttpResponse,omitempty"`
+	// The registered files.
+	Files []*File `json:"files,omitempty"`
+}
+
 // Config for inlined request.
 type InlinedRequest struct {
 	// ID of the model to use. For a list of models, see `Google models
