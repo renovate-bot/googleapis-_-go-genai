@@ -430,6 +430,122 @@ func createTuningJobParametersPrivateToVertex(fromObject map[string]any, parentO
 	return toObject, nil
 }
 
+func generationConfigFromVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+
+	fromModelSelectionConfig := getValueByPath(fromObject, []string{"modelConfig"})
+	if fromModelSelectionConfig != nil {
+		setValueByPath(toObject, []string{"modelSelectionConfig"}, fromModelSelectionConfig)
+	}
+
+	fromResponseJsonSchema := getValueByPath(fromObject, []string{"responseJsonSchema"})
+	if fromResponseJsonSchema != nil {
+		setValueByPath(toObject, []string{"responseJsonSchema"}, fromResponseJsonSchema)
+	}
+
+	fromAudioTimestamp := getValueByPath(fromObject, []string{"audioTimestamp"})
+	if fromAudioTimestamp != nil {
+		setValueByPath(toObject, []string{"audioTimestamp"}, fromAudioTimestamp)
+	}
+
+	fromCandidateCount := getValueByPath(fromObject, []string{"candidateCount"})
+	if fromCandidateCount != nil {
+		setValueByPath(toObject, []string{"candidateCount"}, fromCandidateCount)
+	}
+
+	fromEnableAffectiveDialog := getValueByPath(fromObject, []string{"enableAffectiveDialog"})
+	if fromEnableAffectiveDialog != nil {
+		setValueByPath(toObject, []string{"enableAffectiveDialog"}, fromEnableAffectiveDialog)
+	}
+
+	fromFrequencyPenalty := getValueByPath(fromObject, []string{"frequencyPenalty"})
+	if fromFrequencyPenalty != nil {
+		setValueByPath(toObject, []string{"frequencyPenalty"}, fromFrequencyPenalty)
+	}
+
+	fromLogprobs := getValueByPath(fromObject, []string{"logprobs"})
+	if fromLogprobs != nil {
+		setValueByPath(toObject, []string{"logprobs"}, fromLogprobs)
+	}
+
+	fromMaxOutputTokens := getValueByPath(fromObject, []string{"maxOutputTokens"})
+	if fromMaxOutputTokens != nil {
+		setValueByPath(toObject, []string{"maxOutputTokens"}, fromMaxOutputTokens)
+	}
+
+	fromMediaResolution := getValueByPath(fromObject, []string{"mediaResolution"})
+	if fromMediaResolution != nil {
+		setValueByPath(toObject, []string{"mediaResolution"}, fromMediaResolution)
+	}
+
+	fromPresencePenalty := getValueByPath(fromObject, []string{"presencePenalty"})
+	if fromPresencePenalty != nil {
+		setValueByPath(toObject, []string{"presencePenalty"}, fromPresencePenalty)
+	}
+
+	fromResponseLogprobs := getValueByPath(fromObject, []string{"responseLogprobs"})
+	if fromResponseLogprobs != nil {
+		setValueByPath(toObject, []string{"responseLogprobs"}, fromResponseLogprobs)
+	}
+
+	fromResponseMimeType := getValueByPath(fromObject, []string{"responseMimeType"})
+	if fromResponseMimeType != nil {
+		setValueByPath(toObject, []string{"responseMimeType"}, fromResponseMimeType)
+	}
+
+	fromResponseModalities := getValueByPath(fromObject, []string{"responseModalities"})
+	if fromResponseModalities != nil {
+		setValueByPath(toObject, []string{"responseModalities"}, fromResponseModalities)
+	}
+
+	fromResponseSchema := getValueByPath(fromObject, []string{"responseSchema"})
+	if fromResponseSchema != nil {
+		setValueByPath(toObject, []string{"responseSchema"}, fromResponseSchema)
+	}
+
+	fromRoutingConfig := getValueByPath(fromObject, []string{"routingConfig"})
+	if fromRoutingConfig != nil {
+		setValueByPath(toObject, []string{"routingConfig"}, fromRoutingConfig)
+	}
+
+	fromSeed := getValueByPath(fromObject, []string{"seed"})
+	if fromSeed != nil {
+		setValueByPath(toObject, []string{"seed"}, fromSeed)
+	}
+
+	fromSpeechConfig := getValueByPath(fromObject, []string{"speechConfig"})
+	if fromSpeechConfig != nil {
+		setValueByPath(toObject, []string{"speechConfig"}, fromSpeechConfig)
+	}
+
+	fromStopSequences := getValueByPath(fromObject, []string{"stopSequences"})
+	if fromStopSequences != nil {
+		setValueByPath(toObject, []string{"stopSequences"}, fromStopSequences)
+	}
+
+	fromTemperature := getValueByPath(fromObject, []string{"temperature"})
+	if fromTemperature != nil {
+		setValueByPath(toObject, []string{"temperature"}, fromTemperature)
+	}
+
+	fromThinkingConfig := getValueByPath(fromObject, []string{"thinkingConfig"})
+	if fromThinkingConfig != nil {
+		setValueByPath(toObject, []string{"thinkingConfig"}, fromThinkingConfig)
+	}
+
+	fromTopK := getValueByPath(fromObject, []string{"topK"})
+	if fromTopK != nil {
+		setValueByPath(toObject, []string{"topK"}, fromTopK)
+	}
+
+	fromTopP := getValueByPath(fromObject, []string{"topP"})
+	if fromTopP != nil {
+		setValueByPath(toObject, []string{"topP"}, fromTopP)
+	}
+
+	return toObject, nil
+}
+
 func getTuningJobParametersToMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
