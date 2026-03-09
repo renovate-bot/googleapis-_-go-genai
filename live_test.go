@@ -167,6 +167,31 @@ func TestLiveConnect(t *testing.T) {
 			wantRequestBody: `{"setup":{"model":"projects/test-project/locations/test-location/publishers/google/models/test-model"}}`,
 		},
 		{
+			desc: "successful connection vertex express mode",
+			client: func() *Client {
+				c, _ := NewClient(ctx, &ClientConfig{
+					Backend: BackendVertexAI,
+					APIKey:  "test-api-key",
+				})
+				return c
+			}(),
+			wantRequestBody: `{"setup":{"model":"publishers/google/models/test-model"}}`,
+		},
+		{
+			desc: "successful connection vertex custom proxy",
+			client: func() *Client {
+				c, _ := NewClient(ctx, &ClientConfig{
+					Backend: BackendVertexAI,
+					HTTPOptions: HTTPOptions{
+						BaseURL: "ws://custom-proxy-server.com/my-custom-path",
+					},
+				})
+				return c
+			}(),
+			wantRequestBody: `{"setup":{"model":"publishers/google/models/test-model"}}`,
+			wantPath:        "/my-custom-path",
+		},
+		{
 			desc:   "successful connection with config vertex",
 			client: vertexClient,
 			config: &LiveConnectConfig{

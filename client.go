@@ -261,21 +261,60 @@ func NewInternalAPIClient(ctx context.Context, cc *ClientConfig) (*InternalAPICl
 			cc.APIKey = ""
 		}
 
-		if cc.Location == "" && cc.APIKey == "" {
+		// Resolve BaseURL early to determine if we have a custom base URL.
+		baseURL := getBaseURL(cc.Backend, &cc.HTTPOptions, envVars)
+		if baseURL != "" {
+			cc.HTTPOptions.BaseURL = baseURL
+		}
+
+		// If no location, no API key, and no custom Base URL, default to global.
+		if cc.Location == "" && cc.APIKey == "" && cc.HTTPOptions.BaseURL == "" {
 			cc.Location = "global"
 		}
 
-		if (cc.Project == "" || cc.Location == "") && cc.APIKey == "" {
+		configHasSufficientAuth := (configProject != "" && configLocation != "") || configAPIKey != ""
+		hasSufficientAuth := (cc.Project != "" && cc.Location != "") || cc.APIKey != ""
+		hasCustomBaseURL := cc.HTTPOptions.BaseURL != ""
+
+		if !hasSufficientAuth && !hasCustomBaseURL {
 			return nil, fmt.Errorf("project/location or API key must be set when using Vertex AI backend. ClientConfig: %#v", cc)
+		}
+
+		// If we have a custom Base URL and NO standard auth, clear Project/Location to avoid prefixing.
+		// If we have a custom Base URL (and it's not the default googleapis ones effectively, though here we just check if it overrides),
+		// and we DON'T have sufficient auth (Project/Location or APIKey), assume the Base URL handles it (e.g. proxy) or the user knows what they are doing.
+		// In this case, we clear Project and Location to avoid 'projects//locations//' path construction if they were partial.
+		if hasCustomBaseURL && !configHasSufficientAuth {
+			cc.Project = ""
+			cc.Location = ""
+		}
+
+		// Set default BaseURL if still empty.
+		if cc.HTTPOptions.BaseURL == "" {
+			if cc.Location == "global" || cc.APIKey != "" {
+				cc.HTTPOptions.BaseURL = "https://aiplatform.googleapis.com/"
+			} else {
+				cc.HTTPOptions.BaseURL = fmt.Sprintf("https://%s-aiplatform.googleapis.com/", cc.Location)
+			}
 		}
 	} else {
 		// Mldev API
+		// Resolve BaseURL for Gemini API
+		baseURL := getBaseURL(cc.Backend, &cc.HTTPOptions, envVars)
+		if baseURL != "" {
+			cc.HTTPOptions.BaseURL = baseURL
+		}
+		if cc.HTTPOptions.BaseURL == "" {
+			cc.HTTPOptions.BaseURL = "https://generativelanguage.googleapis.com/"
+		}
+
 		if cc.APIKey == "" {
 			return nil, fmt.Errorf("api key is required for Google AI backend. ClientConfig: %#v.\nYou can get the API key from https://ai.google.dev/gemini-api/docs/api-key", cc)
 		}
 	}
 
-	if cc.Backend == BackendVertexAI && cc.Credentials == nil && cc.APIKey == "" && cc.HTTPClient == nil {
+	skipADC := cc.HTTPOptions.BaseURL != "" && cc.Project == "" && cc.Location == "" && cc.APIKey == ""
+	if cc.Backend == BackendVertexAI && cc.Credentials == nil && cc.APIKey == "" && cc.HTTPClient == nil && !skipADC {
 		cred, err := credentials.DetectDefault(&credentials.DetectOptions{
 			Scopes: []string{"https://www.googleapis.com/auth/cloud-platform"},
 		})
@@ -283,20 +322,6 @@ func NewInternalAPIClient(ctx context.Context, cc *ClientConfig) (*InternalAPICl
 			return nil, fmt.Errorf("failed to find default credentials: %w", err)
 		}
 		cc.Credentials = cred
-	}
-
-	baseURL := getBaseURL(cc.Backend, &cc.HTTPOptions, envVars)
-	if baseURL != "" {
-		cc.HTTPOptions.BaseURL = baseURL
-	}
-	if cc.HTTPOptions.BaseURL == "" && cc.Backend == BackendVertexAI {
-		if cc.Location == "global" || cc.APIKey != "" {
-			cc.HTTPOptions.BaseURL = "https://aiplatform.googleapis.com/"
-		} else {
-			cc.HTTPOptions.BaseURL = fmt.Sprintf("https://%s-aiplatform.googleapis.com/", cc.Location)
-		}
-	} else if cc.HTTPOptions.BaseURL == "" {
-		cc.HTTPOptions.BaseURL = "https://generativelanguage.googleapis.com/"
 	}
 
 	if cc.HTTPOptions.APIVersion == "" && cc.Backend == BackendVertexAI {
@@ -307,7 +332,7 @@ func NewInternalAPIClient(ctx context.Context, cc *ClientConfig) (*InternalAPICl
 
 	if cc.HTTPClient == nil {
 		// x-goog-api-key header is set for Express mode in api_client.go
-		if cc.Backend == BackendVertexAI && cc.APIKey == "" {
+		if cc.Backend == BackendVertexAI && cc.APIKey == "" && cc.Credentials != nil {
 			quotaProjectID, err := cc.Credentials.QuotaProjectID(ctx)
 			if err != nil {
 				return nil, fmt.Errorf("failed to get quota project ID: %w", err)
@@ -356,6 +381,9 @@ func NewInternalAPIClient(ctx context.Context, cc *ClientConfig) (*InternalAPICl
 // If using the Vertex AI backend and no credentials are provided in the
 // ClientConfig, the client will attempt to use application default credentials.
 func NewClient(ctx context.Context, cc *ClientConfig) (*Client, error) {
+	if cc == nil {
+		cc = &ClientConfig{}
+	}
 	ac, err := NewInternalAPIClient(ctx, cc)
 	if err != nil {
 		return nil, err

@@ -64,6 +64,20 @@ func TestModelTransformer(t *testing.T) {
 			want:         "projects/test-project/locations/test-location/publishers/google/models/gemini-2.5-flash",
 			wantFullName: "projects/test-project/locations/test-location/publishers/google/models/gemini-2.5-flash",
 		},
+		{
+			name:         "VertexAI_Model_No_Project",
+			backend:      BackendVertexAI,
+			input:        "gemini-2.5-flash",
+			want:         "publishers/google/models/gemini-2.5-flash",
+			wantFullName: "publishers/google/models/gemini-2.5-flash", // Should not be prefixed with projects/ locations/ if project is empty
+		},
+		{
+			name:         "VertexAI_Model_No_Location",
+			backend:      BackendVertexAI,
+			input:        "publishers/google/models/gemini-2.5-flash",
+			want:         "publishers/google/models/gemini-2.5-flash",
+			wantFullName: "publishers/google/models/gemini-2.5-flash", // Should not be prefixed if either is empty
+		},
 
 		{
 			name:         "GoogleAI_Model_Short",
@@ -96,10 +110,19 @@ func TestModelTransformer(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			project := "test-project"
+			location := "test-location"
+			if tt.name == "VertexAI_Model_No_Project" {
+				project = ""
+			}
+			if tt.name == "VertexAI_Model_No_Location" {
+				location = ""
+			}
+
 			ac := &apiClient{clientConfig: &ClientConfig{
 				Backend:  tt.backend,
-				Project:  "test-project",
-				Location: "test-location",
+				Project:  project,
+				Location: location,
 			}}
 			got, err := tModel(ac, tt.input)
 			if (err != nil) != tt.wantErr {

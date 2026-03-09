@@ -37,12 +37,14 @@ func tResourceName(ac *apiClient, resourceName string, collectionIdentifier stri
 	case BackendVertexAI:
 		if strings.HasPrefix(resourceName, "projects/") {
 			return resourceName
-		} else if strings.HasPrefix(resourceName, "locations/") {
+		} else if strings.HasPrefix(resourceName, "locations/") && ac.clientConfig.Project != "" {
 			return fmt.Sprintf("projects/%s/%s", ac.clientConfig.Project, resourceName)
-		} else if strings.HasPrefix(resourceName, collectionIdentifier+"/") {
+		} else if strings.HasPrefix(resourceName, collectionIdentifier+"/") && ac.clientConfig.Project != "" && ac.clientConfig.Location != "" {
 			return fmt.Sprintf("projects/%s/locations/%s/%s", ac.clientConfig.Project, ac.clientConfig.Location, resourceName)
-		} else if shouldPrependCollectionIdentifier {
+		} else if shouldPrependCollectionIdentifier && ac.clientConfig.Project != "" && ac.clientConfig.Location != "" {
 			return fmt.Sprintf("projects/%s/locations/%s/%s/%s", ac.clientConfig.Project, ac.clientConfig.Location, collectionIdentifier, resourceName)
+		} else if shouldPrependCollectionIdentifier {
+			return fmt.Sprintf("%s/%s", collectionIdentifier, resourceName)
 		} else {
 			return resourceName
 		}
@@ -117,9 +119,9 @@ func tModelFullName(ac *apiClient, origin any) (string, error) {
 		if err != nil {
 			return "", fmt.Errorf("tModelFullName: %w", err)
 		}
-		if strings.HasPrefix(name, "publishers/") && ac.clientConfig.Backend == BackendVertexAI {
+		if strings.HasPrefix(name, "publishers/") && ac.clientConfig.Backend == BackendVertexAI && ac.clientConfig.Project != "" && ac.clientConfig.Location != "" {
 			return fmt.Sprintf("projects/%s/locations/%s/%s", ac.clientConfig.Project, ac.clientConfig.Location, name), nil
-		} else if strings.HasPrefix(name, "models/") && ac.clientConfig.Backend == BackendVertexAI {
+		} else if strings.HasPrefix(name, "models/") && ac.clientConfig.Backend == BackendVertexAI && ac.clientConfig.Project != "" && ac.clientConfig.Location != "" {
 			return fmt.Sprintf("projects/%s/locations/%s/publishers/google/%s", ac.clientConfig.Project, ac.clientConfig.Location, name), nil
 		} else {
 			return name, nil
