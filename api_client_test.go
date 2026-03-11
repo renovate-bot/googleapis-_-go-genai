@@ -1780,3 +1780,77 @@ func TestRecursiveMapMerge(t *testing.T) {
 		})
 	}
 }
+
+func TestUpload_RewritesAbsoluteURL(t *testing.T) {
+	ctx := context.Background()
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// If the request reaches here, it means the URL was rewritten.
+		// We can also verify Path and RawQuery.
+		if r.URL.Path != "/upload/v1beta/files" {
+			t.Errorf("Expected path /upload/v1beta/files, got %s", r.URL.Path)
+		}
+		if r.URL.RawQuery != "uploadType=resumable" {
+			t.Errorf("Expected query uploadType=resumable, got %s", r.URL.RawQuery)
+		}
+
+		w.Header().Set("X-Goog-Upload-Status", "final")
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintln(w, `{"file": {"name": "files/test", "sizeBytes": "9", "mimeType": "text/plain"}}`)
+	}))
+	defer ts.Close()
+
+	ac := &apiClient{
+		clientConfig: &ClientConfig{
+			HTTPClient: ts.Client(),
+			APIKey:     "test-key",
+		},
+	}
+
+	// 1. User configures a custom enterprise proxy base URL
+	httpOptions := &HTTPOptions{
+		BaseURL: ts.URL, // Rewrite to our test server
+	}
+
+	// 2. The server returns an absolute Google URL
+	absoluteGoogleURL := "https://generativelanguage.googleapis.com/upload/v1beta/files?uploadType=resumable"
+
+	reader := strings.NewReader("test data")
+
+	_, err := ac.uploadFile(ctx, reader, absoluteGoogleURL, httpOptions)
+	if err != nil {
+		t.Fatalf("uploadFile failed: %v", err)
+	}
+}
+
+func TestUploadToFileSearchStore_RewritesAbsoluteURL(t *testing.T) {
+	ctx := context.Background()
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// If the request reaches here, it means the URL was rewritten.
+		w.Header().Set("X-Goog-Upload-Status", "final")
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintln(w, `{"name": "operations/test"}`)
+	}))
+	defer ts.Close()
+
+	ac := &apiClient{
+		clientConfig: &ClientConfig{
+			HTTPClient: ts.Client(),
+			APIKey:     "test-key",
+		},
+	}
+
+	// 1. User configures a custom enterprise proxy base URL
+	httpOptions := &HTTPOptions{
+		BaseURL: ts.URL, // Rewrite to our test server
+	}
+
+	// 2. The server returns an absolute Google URL
+	absoluteGoogleURL := "https://generativelanguage.googleapis.com/upload/v1beta/files?uploadType=resumable"
+
+	reader := strings.NewReader("test data")
+
+	_, err := ac.uploadToFileSearchStore(ctx, reader, absoluteGoogleURL, httpOptions)
+	if err != nil {
+		t.Fatalf("uploadToFileSearchStore failed: %v", err)
+	}
+}

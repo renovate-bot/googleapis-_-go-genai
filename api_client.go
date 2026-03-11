@@ -611,8 +611,19 @@ func (ac *apiClient) upload(ctx context.Context, r io.Reader, uploadURL string, 
 				return nil, err
 			}
 
+			finalUploadURL := uploadURL
+			if patchedHTTPOptions.BaseURL != "" {
+				parsedBase, errBase := url.Parse(patchedHTTPOptions.BaseURL)
+				parsedUpload, errUpload := url.Parse(uploadURL)
+				if errBase == nil && errUpload == nil {
+					parsedUpload.Scheme = parsedBase.Scheme
+					parsedUpload.Host = parsedBase.Host
+					finalUploadURL = parsedUpload.String()
+				}
+			}
+
 			// TODO(b/427540996): Support timeout.
-			req, err := http.NewRequestWithContext(ctx, http.MethodPost, uploadURL, bytes.NewReader(buffer[:bytesRead]))
+			req, err := http.NewRequestWithContext(ctx, http.MethodPost, finalUploadURL, bytes.NewReader(buffer[:bytesRead]))
 			if err != nil {
 				return nil, fmt.Errorf("Failed to create upload request for chunk at offset %d: %w", offset, err)
 			}
