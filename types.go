@@ -6875,6 +6875,11 @@ type ContextWindowCompressionConfig struct {
 
 // The audio transcription configuration in Setup.
 type AudioTranscriptionConfig struct {
+	// Optional. The language codes of the audio. BCP-47 language code. If not set, the
+	// transcription will be in the language detected by the model. If set, the server will
+	// use the language code specified in the model config as a hint for the language of
+	// the audio
+	LanguageCodes []string `json:"languageCodes,omitempty"`
 }
 
 // Config for proactivity features.
