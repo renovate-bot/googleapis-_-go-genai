@@ -995,6 +995,16 @@ func tuningJobFromVertex(fromObject map[string]any, parentObject map[string]any,
 		InternalSetValueByPath(toObject, []string{"veoTuningSpec"}, fromVeoTuningSpec)
 	}
 
+	fromDistillationSamplingSpec := InternalGetValueByPath(fromObject, []string{"distillationSamplingSpec"})
+	if fromDistillationSamplingSpec != nil {
+		InternalSetValueByPath(toObject, []string{"distillationSamplingSpec"}, fromDistillationSamplingSpec)
+	}
+
+	fromTuningJobMetadata := InternalGetValueByPath(fromObject, []string{"tuningJobMetadata"})
+	if fromTuningJobMetadata != nil {
+		InternalSetValueByPath(toObject, []string{"tuningJobMetadata"}, fromTuningJobMetadata)
+	}
+
 	return toObject, nil
 }
 

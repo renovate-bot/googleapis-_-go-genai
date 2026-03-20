@@ -1613,6 +1613,11 @@ func generateContentResponseFromMldev(fromObject map[string]any, parentObject ma
 		InternalSetValueByPath(toObject, []string{"usageMetadata"}, fromUsageMetadata)
 	}
 
+	fromModelStatus := InternalGetValueByPath(fromObject, []string{"modelStatus"})
+	if fromModelStatus != nil {
+		InternalSetValueByPath(toObject, []string{"modelStatus"}, fromModelStatus)
+	}
+
 	return toObject, nil
 }
 
@@ -3322,6 +3327,11 @@ func partToMldev(fromObject map[string]any, parentObject map[string]any, rootObj
 		InternalSetValueByPath(toObject, []string{"toolResponse"}, fromToolResponse)
 	}
 
+	fromPartMetadata := InternalGetValueByPath(fromObject, []string{"partMetadata"})
+	if fromPartMetadata != nil {
+		InternalSetValueByPath(toObject, []string{"partMetadata"}, fromPartMetadata)
+	}
+
 	return toObject, nil
 }
 
@@ -3389,6 +3399,10 @@ func partToVertex(fromObject map[string]any, parentObject map[string]any, rootOb
 
 	if InternalGetValueByPath(fromObject, []string{"toolResponse"}) != nil {
 		return nil, fmt.Errorf("toolResponse parameter is not supported in Vertex AI")
+	}
+
+	if InternalGetValueByPath(fromObject, []string{"partMetadata"}) != nil {
+		return nil, fmt.Errorf("partMetadata parameter is not supported in Vertex AI")
 	}
 
 	return toObject, nil
