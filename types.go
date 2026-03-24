@@ -2313,11 +2313,13 @@ type ToolConfig struct {
 	IncludeServerSideToolInvocations *bool `json:"includeServerSideToolInvocations,omitempty"`
 }
 
-// ReplicatedVoiceConfig is used to configure replicated voice.
+// The configuration for the replicated voice to use.
 type ReplicatedVoiceConfig struct {
-	// Optional. The MIME type of the replicated voice.
+	// Optional. The mimetype of the voice sample. The only currently supported
+	// value is `audio/wav`. This represents 16-bit signed little-endian wav
+	// data, with a 24kHz sampling rate.
 	MIMEType string `json:"mimeType,omitempty"`
-	// Optional. The sample audio of the replicated voice.
+	// Optional. The sample of the custom voice.
 	VoiceSampleAudio []byte `json:"voiceSampleAudio,omitempty"`
 }
 
@@ -2327,8 +2329,11 @@ type PrebuiltVoiceConfig struct {
 	VoiceName string `json:"voiceName,omitempty"`
 }
 
+// The configuration for the voice to use.
 type VoiceConfig struct {
-	// Optional. If true, the model will use a replicated voice for the response.
+	// Optional. The configuration for a replicated voice, which is a clone of a
+	// user's voice that can be used for speech synthesis. If this is unset, a
+	// default voice is used.
 	ReplicatedVoiceConfig *ReplicatedVoiceConfig `json:"replicatedVoiceConfig,omitempty"`
 	// The configuration for a prebuilt voice.
 	PrebuiltVoiceConfig *PrebuiltVoiceConfig `json:"prebuiltVoiceConfig,omitempty"`
@@ -2350,8 +2355,9 @@ type MultiSpeakerVoiceConfig struct {
 	SpeakerVoiceConfigs []*SpeakerVoiceConfig `json:"speakerVoiceConfigs,omitempty"`
 }
 
+// Config for speech generation and transcription.
 type SpeechConfig struct {
-	// Optional. Configuration for the voice of the response.
+	// Optional. The configuration in case of single-voice output.
 	VoiceConfig *VoiceConfig `json:"voiceConfig,omitempty"`
 	// Optional. The language code (ISO 639-1) for the speech synthesis.
 	LanguageCode string `json:"languageCode,omitempty"`
