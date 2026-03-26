@@ -1004,6 +1004,9 @@ const (
 	// The users turn includes all realtime input since the last turn, including inactivity
 	// (e.g. silence on the audio stream).
 	TurnCoverageTurnIncludesAllInput TurnCoverage = "TURN_INCLUDES_ALL_INPUT"
+	// Includes audio activity and all video since the last turn. With automatic activity
+	// detection, audio activity means speech and excludes silence.
+	TurnCoverageTurnIncludesAudioActivityAndAllVideo TurnCoverage = "TURN_INCLUDES_AUDIO_ACTIVITY_AND_ALL_VIDEO"
 )
 
 // Model-generated code executed server-side, results returned to the model.
