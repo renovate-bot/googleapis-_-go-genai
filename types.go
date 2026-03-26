@@ -4408,6 +4408,8 @@ type GenerateVideosConfig struct {
 	Mask *VideoGenerationMask `json:"mask,omitempty"`
 	// Optional. Compression quality of the generated videos.
 	CompressionQuality VideoCompressionQuality `json:"compressionQuality,omitempty"`
+	// Optional. User specified labels to track billing usage.
+	Labels map[string]string `json:"labels,omitempty"`
 }
 
 // A generated video.

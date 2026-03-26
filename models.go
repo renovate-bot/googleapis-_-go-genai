@@ -2049,6 +2049,10 @@ func generateVideosConfigToMldev(fromObject map[string]any, parentObject map[str
 		return nil, fmt.Errorf("compressionQuality parameter is not supported in Gemini API")
 	}
 
+	if InternalGetValueByPath(fromObject, []string{"labels"}) != nil {
+		return nil, fmt.Errorf("labels parameter is not supported in Gemini API")
+	}
+
 	return toObject, nil
 }
 
@@ -2148,6 +2152,11 @@ func generateVideosConfigToVertex(fromObject map[string]any, parentObject map[st
 	fromCompressionQuality := InternalGetValueByPath(fromObject, []string{"compressionQuality"})
 	if fromCompressionQuality != nil {
 		InternalSetValueByPath(parentObject, []string{"parameters", "compressionQuality"}, fromCompressionQuality)
+	}
+
+	fromLabels := InternalGetValueByPath(fromObject, []string{"labels"})
+	if fromLabels != nil {
+		InternalSetValueByPath(parentObject, []string{"labels"}, fromLabels)
 	}
 
 	return toObject, nil
