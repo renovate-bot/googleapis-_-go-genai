@@ -964,6 +964,32 @@ func TestClientConfigHTTPOptions(t *testing.T) {
 			expectedAPIVersion: "v1beta1",
 		},
 		{
+			name: "Vertex AI Backend with us location",
+			clientConfig: ClientConfig{
+				Backend:     BackendVertexAI,
+				Project:     "test-project",
+				Location:    "us",
+				HTTPOptions: HTTPOptions{},
+				Credentials: &auth.Credentials{},
+			},
+			expectedBaseURL:    "https://aiplatform.us.rep.googleapis.com/",
+			expectedAPIVersion: "v1beta1",
+		},
+		{
+			name: "Vertex AI Backend with us location and base URL override",
+			clientConfig: ClientConfig{
+				Backend:  BackendVertexAI,
+				Project:  "test-project",
+				Location: "us",
+				HTTPOptions: HTTPOptions{
+					BaseURL: "https://my-custom-url.com/",
+				},
+				Credentials: &auth.Credentials{},
+			},
+			expectedBaseURL:    "https://my-custom-url.com/",
+			expectedAPIVersion: "v1beta1",
+		},
+		{
 			name: "Google AI Backend with HTTP Client Timeout and no HTTPOptions",
 			clientConfig: ClientConfig{
 				Backend:     BackendGeminiAPI,
