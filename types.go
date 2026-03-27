@@ -4564,7 +4564,7 @@ type PreferenceOptimizationSpec struct {
 	ValidationDatasetURI string `json:"validationDatasetUri,omitempty"`
 }
 
-// Hyperparameters for Distillation. This data type is not supported in Gemini API.
+// Hyperparameters for distillation.
 type DistillationHyperParameters struct {
 	// Optional. Adapter size for distillation.
 	AdapterSize AdapterSize `json:"adapterSize,omitempty"`
@@ -4573,6 +4573,11 @@ type DistillationHyperParameters struct {
 	EpochCount int64 `json:"epochCount,omitempty,string"`
 	// Optional. Multiplier for adjusting the default learning rate.
 	LearningRateMultiplier float64 `json:"learningRateMultiplier,omitempty"`
+	// Optional. The batch size hyperparameter for tuning.
+	// This is only supported for OSS models in Vertex.
+	BatchSize int32 `json:"batchSize,omitempty"`
+	// Optional. The learning rate for tuning. OSS models only.
+	LearningRate float32 `json:"learningRate,omitempty"`
 }
 
 // Distillation tuning spec for tuning.
@@ -4598,6 +4603,8 @@ type DistillationSpec struct {
 	// Optional. Cloud Storage path to file containing validation dataset for tuning. The
 	// dataset must be formatted as a JSONL file.
 	ValidationDatasetURI string `json:"validationDatasetUri,omitempty"`
+	// Optional. Tuning mode for tuning.
+	TuningMode TuningMode `json:"tuningMode,omitempty"`
 }
 
 // The `Status` type defines a logical error model that is suitable for different programming
@@ -5404,7 +5411,7 @@ type CreateTuningJobConfig struct {
 	PreTunedModelCheckpointID string `json:"preTunedModelCheckpointId,omitempty"`
 	// Optional. Adapter size for tuning.
 	AdapterSize AdapterSize `json:"adapterSize,omitempty"`
-	// Optional. Tuning mode for SFT tuning.
+	// Optional. Tuning mode for tuning.
 	TuningMode TuningMode `json:"tuningMode,omitempty"`
 	// Optional. Custom base model for tuning. This is only supported for OSS models in
 	// Vertex.
