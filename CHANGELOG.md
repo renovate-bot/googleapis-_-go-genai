@@ -5,7 +5,6 @@
 
 ### Features
 
-* [Python] Add consent_audio and voice_consent_signature and AsyncSession.setup_complete ([bec456d](https://github.com/googleapis/go-genai/commit/bec456de6c2fdb54acf04b5a07397238d6603ccc))
 * Add labels field to Veo configs ([3fab63a](https://github.com/googleapis/go-genai/commit/3fab63a5f628b8ffe35fe75c325108a75e5c5add))
 * Add model_status to GenerateContentResponse (Gemini API only) ([8c040e3](https://github.com/googleapis/go-genai/commit/8c040e35aaab4089303fbd0fcacdf80ae85cc9df))
 * Add part_metadata in Part (Gemini API only) ([8c040e3](https://github.com/googleapis/go-genai/commit/8c040e35aaab4089303fbd0fcacdf80ae85cc9df))
