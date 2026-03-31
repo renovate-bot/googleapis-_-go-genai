@@ -1500,8 +1500,9 @@ func generateContentConfigToVertex(ac *InternalAPIClient, fromObject map[string]
 		InternalSetValueByPath(parentObject, []string{"modelArmorConfig"}, fromModelArmorConfig)
 	}
 
-	if InternalGetValueByPath(fromObject, []string{"serviceTier"}) != nil {
-		return nil, fmt.Errorf("serviceTier parameter is not supported in Vertex AI")
+	fromServiceTier := InternalGetValueByPath(fromObject, []string{"serviceTier"})
+	if fromServiceTier != nil {
+		InternalSetValueByPath(parentObject, []string{"serviceTier"}, fromServiceTier)
 	}
 
 	return toObject, nil

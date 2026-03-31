@@ -717,13 +717,13 @@ type ServiceTier string
 
 const (
 	// Default service tier, which is standard.
-	ServiceTierUnspecified ServiceTier = "SERVICE_TIER_UNSPECIFIED"
+	ServiceTierUnspecified ServiceTier = "unspecified"
 	// Flex service tier.
-	ServiceTierFlex ServiceTier = "SERVICE_TIER_FLEX"
+	ServiceTierFlex ServiceTier = "flex"
 	// Standard service tier.
-	ServiceTierStandard ServiceTier = "SERVICE_TIER_STANDARD"
+	ServiceTierStandard ServiceTier = "standard"
 	// Priority service tier.
-	ServiceTierPriority ServiceTier = "SERVICE_TIER_PRIORITY"
+	ServiceTierPriority ServiceTier = "priority"
 )
 
 // Options for feature selection preference.
@@ -2611,7 +2611,7 @@ type GenerateContentConfig struct {
 	// Optional. Settings for prompt and response sanitization using the Model Armor
 	// service. If supplied, safety_settings must not be supplied.
 	ModelArmorConfig *ModelArmorConfig `json:"modelArmorConfig,omitempty"`
-	// Optional. The service tier to use for the request. For example, SERVICE_TIER_FLEX.
+	// Optional. The service tier to use for the request. For example, ServiceTier.FLEX.
 	ServiceTier ServiceTier `json:"serviceTier,omitempty"`
 }
 
