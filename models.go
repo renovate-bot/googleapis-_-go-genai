@@ -4975,10 +4975,8 @@ func (m Models) upscaleImage(ctx context.Context, model string, image *Image, up
 }
 
 // RecontextImage recontextualizes an image.
-// There are two types of recontextualization currently supported:
-// 1) Imagen Product Recontext - Generate images of products in new scenes
-// and contexts.
-// 2) Virtual Try-On: Generate images of persons modeling fashion products.
+// There is one type of recontextualization currently supported:
+// 1) Virtual Try-On: Generate images of persons modeling fashion products.
 func (m Models) RecontextImage(ctx context.Context, model string, source *RecontextImageSource, config *RecontextImageConfig) (*RecontextImageResponse, error) {
 	parameterMap := make(map[string]any)
 
