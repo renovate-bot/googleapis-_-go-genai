@@ -474,6 +474,8 @@ const (
 	ModalityImage Modality = "IMAGE"
 	// Indicates the model should return audio.
 	ModalityAudio Modality = "AUDIO"
+	// Indicates the model should return video.
+	ModalityVideo Modality = "VIDEO"
 )
 
 // The stage of the underlying model. This enum is not supported in Vertex AI.
@@ -924,6 +926,54 @@ const (
 	TurnCompleteReasonResponseRejected TurnCompleteReason = "RESPONSE_REJECTED"
 	// Needs more input from the user.
 	TurnCompleteReasonNeedMoreInput TurnCompleteReason = "NEED_MORE_INPUT"
+	// Input content is prohibited.
+	TurnCompleteReasonProhibitedInputContent TurnCompleteReason = "PROHIBITED_INPUT_CONTENT"
+	// Input image contains prohibited content.
+	TurnCompleteReasonImageProhibitedInputContent TurnCompleteReason = "IMAGE_PROHIBITED_INPUT_CONTENT"
+	// Input text contains prominent person reference.
+	TurnCompleteReasonInputTextContainProminentPersonProhibited TurnCompleteReason = "INPUT_TEXT_CONTAIN_PROMINENT_PERSON_PROHIBITED"
+	// Input image contains celebrity.
+	TurnCompleteReasonInputImageCelebrity TurnCompleteReason = "INPUT_IMAGE_CELEBRITY"
+	// Input image contains photo realistic child.
+	TurnCompleteReasonInputImagePhotoRealisticChildProhibited TurnCompleteReason = "INPUT_IMAGE_PHOTO_REALISTIC_CHILD_PROHIBITED"
+	// Input text contains NCII content.
+	TurnCompleteReasonInputTextNciiProhibited TurnCompleteReason = "INPUT_TEXT_NCII_PROHIBITED"
+	// Other input safety issue.
+	TurnCompleteReasonInputOther TurnCompleteReason = "INPUT_OTHER"
+	// Input contains IP violation.
+	TurnCompleteReasonInputIpProhibited TurnCompleteReason = "INPUT_IP_PROHIBITED"
+	// Input matched blocklist.
+	TurnCompleteReasonBlocklist TurnCompleteReason = "BLOCKLIST"
+	// Input is unsafe for image generation.
+	TurnCompleteReasonUnsafePromptForImageGeneration TurnCompleteReason = "UNSAFE_PROMPT_FOR_IMAGE_GENERATION"
+	// Generated image failed safety check.
+	TurnCompleteReasonGeneratedImageSafety TurnCompleteReason = "GENERATED_IMAGE_SAFETY"
+	// Generated content failed safety check.
+	TurnCompleteReasonGeneratedContentSafety TurnCompleteReason = "GENERATED_CONTENT_SAFETY"
+	// Generated audio failed safety check.
+	TurnCompleteReasonGeneratedAudioSafety TurnCompleteReason = "GENERATED_AUDIO_SAFETY"
+	// Generated video failed safety check.
+	TurnCompleteReasonGeneratedVideoSafety TurnCompleteReason = "GENERATED_VIDEO_SAFETY"
+	// Generated content is prohibited.
+	TurnCompleteReasonGeneratedContentProhibited TurnCompleteReason = "GENERATED_CONTENT_PROHIBITED"
+	// Generated content matched blocklist.
+	TurnCompleteReasonGeneratedContentBlocklist TurnCompleteReason = "GENERATED_CONTENT_BLOCKLIST"
+	// Generated image is prohibited.
+	TurnCompleteReasonGeneratedImageProhibited TurnCompleteReason = "GENERATED_IMAGE_PROHIBITED"
+	// Generated image contains celebrity.
+	TurnCompleteReasonGeneratedImageCelebrity TurnCompleteReason = "GENERATED_IMAGE_CELEBRITY"
+	// Generated image contains prominent people detected by rewriter.
+	TurnCompleteReasonGeneratedImageProminentPeopleDetectedByRewriter TurnCompleteReason = "GENERATED_IMAGE_PROMINENT_PEOPLE_DETECTED_BY_REWRITER"
+	// Generated image contains identifiable people.
+	TurnCompleteReasonGeneratedImageIdentifiablePeople TurnCompleteReason = "GENERATED_IMAGE_IDENTIFIABLE_PEOPLE"
+	// Generated image contains minors.
+	TurnCompleteReasonGeneratedImageMinors TurnCompleteReason = "GENERATED_IMAGE_MINORS"
+	// Generated image contains IP violation.
+	TurnCompleteReasonOutputImageIpProhibited TurnCompleteReason = "OUTPUT_IMAGE_IP_PROHIBITED"
+	// Other generated content issue.
+	TurnCompleteReasonGeneratedOther TurnCompleteReason = "GENERATED_OTHER"
+	// Max regeneration attempts reached.
+	TurnCompleteReasonMaxRegenerationReached TurnCompleteReason = "MAX_REGENERATION_REACHED"
 )
 
 // Server content modalities.
@@ -7189,6 +7239,27 @@ type ProactivityConfig struct {
 	ProactiveAudio *bool `json:"proactiveAudio,omitempty"`
 }
 
+// Configures the customized avatar to be used in the session.
+type CustomizedAvatar struct {
+	// Optional. The MIME type of the reference image, e.g., "image/jpeg".
+	ImageMIMEType string `json:"imageMimeType,omitempty"`
+	// Optional. The data of the reference image. The dimensions of the reference
+	// image should be 9:16 (portrait) with a minimum resolution of 704x1280.
+	ImageData []byte `json:"imageData,omitempty"`
+}
+
+// Configures the avatar to be used in the session.
+type AvatarConfig struct {
+	// Optional. Pre-built avatar id.
+	AvatarName string `json:"avatarName,omitempty"`
+	// Optional. Customized avatar appearance with a reference image.
+	CustomizedAvatar *CustomizedAvatar `json:"customizedAvatar,omitempty"`
+	// Optional. The bitrate of compressed audio.
+	AudioBitrateBps *int32 `json:"audioBitrateBps,omitempty"`
+	// Optional. The bitrate of compressed video output.
+	VideoBitrateBps *int32 `json:"videoBitrateBps,omitempty"`
+}
+
 // Message contains configuration that will apply for the duration of the streaming
 // session.
 type LiveClientSetup struct {
@@ -7228,6 +7299,11 @@ type LiveClientSetup struct {
 	// vad_signal to indicate the start and end of speech. This allows the server
 	// to process the audio more efficiently.
 	ExplicitVADSignal bool `json:"explicitVadSignal,omitempty"`
+	// Optional. Configures the avatar model behavior.
+	AvatarConfig *AvatarConfig `json:"avatarConfig,omitempty"`
+	// Optional. Safety settings in the request to block unsafe content in the
+	// response.
+	SafetySettings []*SafetySetting `json:"safetySettings,omitempty"`
 }
 
 // Incremental update of the current conversation delivered from the client.
@@ -7373,6 +7449,11 @@ type LiveConnectConfig struct {
 	// vad_signal to indicate the start and end of speech. This allows the server
 	// to process the audio more efficiently.
 	ExplicitVADSignal *bool `json:"explicitVadSignal,omitempty"`
+	// Optional. Configures the avatar model behavior.
+	AvatarConfig *AvatarConfig `json:"avatarConfig,omitempty"`
+	// Optional. Safety settings in the request to block unsafe content in the
+	// response.
+	SafetySettings []*SafetySetting `json:"safetySettings,omitempty"`
 }
 
 // Parameters for sending client content to the live API.

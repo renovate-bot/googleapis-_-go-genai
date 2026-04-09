@@ -271,6 +271,21 @@ func liveClientSetupToMldev(fromObject map[string]any, parentObject map[string]a
 		return nil, fmt.Errorf("explicitVadSignal parameter is not supported in Gemini API")
 	}
 
+	fromAvatarConfig := InternalGetValueByPath(fromObject, []string{"avatarConfig"})
+	if fromAvatarConfig != nil {
+		InternalSetValueByPath(toObject, []string{"avatarConfig"}, fromAvatarConfig)
+	}
+
+	fromSafetySettings := InternalGetValueByPath(fromObject, []string{"safetySettings"})
+	if fromSafetySettings != nil {
+		fromSafetySettings, err = applyConverterToSliceWithRoot(fromSafetySettings.([]any), safetySettingToMldev, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
+		InternalSetValueByPath(toObject, []string{"safetySettings"}, fromSafetySettings)
+	}
+
 	return toObject, nil
 }
 
@@ -360,6 +375,16 @@ func liveClientSetupToVertex(fromObject map[string]any, parentObject map[string]
 	fromExplicitVadSignal := InternalGetValueByPath(fromObject, []string{"explicitVadSignal"})
 	if fromExplicitVadSignal != nil {
 		InternalSetValueByPath(toObject, []string{"explicitVadSignal"}, fromExplicitVadSignal)
+	}
+
+	fromAvatarConfig := InternalGetValueByPath(fromObject, []string{"avatarConfig"})
+	if fromAvatarConfig != nil {
+		InternalSetValueByPath(toObject, []string{"avatarConfig"}, fromAvatarConfig)
+	}
+
+	fromSafetySettings := InternalGetValueByPath(fromObject, []string{"safetySettings"})
+	if fromSafetySettings != nil {
+		InternalSetValueByPath(toObject, []string{"safetySettings"}, fromSafetySettings)
 	}
 
 	return toObject, nil
@@ -507,6 +532,21 @@ func liveConnectConfigToMldev(fromObject map[string]any, parentObject map[string
 		return nil, fmt.Errorf("explicitVadSignal parameter is not supported in Gemini API")
 	}
 
+	fromAvatarConfig := InternalGetValueByPath(fromObject, []string{"avatarConfig"})
+	if fromAvatarConfig != nil {
+		InternalSetValueByPath(parentObject, []string{"setup", "avatarConfig"}, fromAvatarConfig)
+	}
+
+	fromSafetySettings := InternalGetValueByPath(fromObject, []string{"safetySettings"})
+	if fromSafetySettings != nil {
+		fromSafetySettings, err = applyConverterToSliceWithRoot(fromSafetySettings.([]any), safetySettingToMldev, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
+		InternalSetValueByPath(parentObject, []string{"setup", "safetySettings"}, fromSafetySettings)
+	}
+
 	return toObject, nil
 }
 
@@ -636,6 +676,16 @@ func liveConnectConfigToVertex(fromObject map[string]any, parentObject map[strin
 	fromExplicitVadSignal := InternalGetValueByPath(fromObject, []string{"explicitVadSignal"})
 	if fromExplicitVadSignal != nil {
 		InternalSetValueByPath(parentObject, []string{"setup", "explicitVadSignal"}, fromExplicitVadSignal)
+	}
+
+	fromAvatarConfig := InternalGetValueByPath(fromObject, []string{"avatarConfig"})
+	if fromAvatarConfig != nil {
+		InternalSetValueByPath(parentObject, []string{"setup", "avatarConfig"}, fromAvatarConfig)
+	}
+
+	fromSafetySettings := InternalGetValueByPath(fromObject, []string{"safetySettings"})
+	if fromSafetySettings != nil {
+		InternalSetValueByPath(parentObject, []string{"setup", "safetySettings"}, fromSafetySettings)
 	}
 
 	return toObject, nil
