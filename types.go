@@ -7291,29 +7291,6 @@ type LiveClientToolResponse struct {
 	FunctionResponses []*FunctionResponse `json:"functionResponses,omitempty"`
 }
 
-// Parameters for sending realtime input to the live API.
-type LiveSendRealtimeInputParameters struct {
-	// Optional. Realtime input to send to the session.
-	Media *Blob `json:"media,omitempty"`
-	// Optional. The realtime audio input stream.
-	Audio *Blob `json:"audio,omitempty"`
-	// Optional.
-	// Indicates that the audio stream has ended, e.g. because the microphone was
-	// turned off.
-	// This should only be sent when automatic activity detection is enabled
-	// (which is the default).
-	// The client can reopen the stream by sending an audio message.
-	AudioStreamEnd bool `json:"audioStreamEnd,omitempty"`
-	// Optional. The realtime video input stream.
-	Video *Blob `json:"video,omitempty"`
-	// Optional. The realtime text input stream.
-	Text string `json:"text,omitempty"`
-	// Optional. Marks the start of user activity.
-	ActivityStart *ActivityStart `json:"activityStart,omitempty"`
-	// Optional. Marks the end of user activity.
-	ActivityEnd *ActivityEnd `json:"activityEnd,omitempty"`
-}
-
 // Messages sent by the client in the API call.
 type LiveClientMessage struct {
 	// Optional. Message to be sent by the system when connecting to the API. SDK users
@@ -7416,6 +7393,29 @@ func (p LiveSendClientContentParameters) toLiveClientMessage() *LiveClientMessag
 	return &LiveClientMessage{
 		ClientContent: &LiveClientContent{Turns: p.Turns, TurnComplete: *p.TurnComplete},
 	}
+}
+
+// Parameters for sending realtime input to the live API.
+type LiveSendRealtimeInputParameters struct {
+	// Optional. Realtime input to send to the session.
+	Media *Blob `json:"media,omitempty"`
+	// Optional. The realtime audio input stream.
+	Audio *Blob `json:"audio,omitempty"`
+	// Optional.
+	// Indicates that the audio stream has ended, e.g. because the microphone was
+	// turned off.
+	// This should only be sent when automatic activity detection is enabled
+	// (which is the default).
+	// The client can reopen the stream by sending an audio message.
+	AudioStreamEnd bool `json:"audioStreamEnd,omitempty"`
+	// Optional. The realtime video input stream.
+	Video *Blob `json:"video,omitempty"`
+	// Optional. The realtime text input stream.
+	Text string `json:"text,omitempty"`
+	// Optional. Marks the start of user activity.
+	ActivityStart *ActivityStart `json:"activityStart,omitempty"`
+	// Optional. Marks the end of user activity.
+	ActivityEnd *ActivityEnd `json:"activityEnd,omitempty"`
 }
 
 // Parameters for sending tool responses to the live API.

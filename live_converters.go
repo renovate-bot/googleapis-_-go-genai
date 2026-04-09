@@ -137,11 +137,6 @@ func liveClientMessageToVertex(fromObject map[string]any, parentObject map[strin
 
 	fromRealtimeInput := InternalGetValueByPath(fromObject, []string{"realtimeInput"})
 	if fromRealtimeInput != nil {
-		fromRealtimeInput, err = liveClientRealtimeInputToVertex(fromRealtimeInput.(map[string]any), toObject, rootObject)
-		if err != nil {
-			return nil, err
-		}
-
 		InternalSetValueByPath(toObject, []string{"realtimeInput"}, fromRealtimeInput)
 	}
 
@@ -163,27 +158,6 @@ func liveClientRealtimeInputToMldev(fromObject map[string]any, parentObject map[
 			return nil, err
 		}
 
-		InternalSetValueByPath(toObject, []string{"mediaChunks"}, fromMediaChunks)
-	}
-
-	fromActivityStart := InternalGetValueByPath(fromObject, []string{"activityStart"})
-	if fromActivityStart != nil {
-		InternalSetValueByPath(toObject, []string{"activityStart"}, fromActivityStart)
-	}
-
-	fromActivityEnd := InternalGetValueByPath(fromObject, []string{"activityEnd"})
-	if fromActivityEnd != nil {
-		InternalSetValueByPath(toObject, []string{"activityEnd"}, fromActivityEnd)
-	}
-
-	return toObject, nil
-}
-
-func liveClientRealtimeInputToVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-
-	fromMediaChunks := InternalGetValueByPath(fromObject, []string{"mediaChunks"})
-	if fromMediaChunks != nil {
 		InternalSetValueByPath(toObject, []string{"mediaChunks"}, fromMediaChunks)
 	}
 
@@ -577,11 +551,6 @@ func liveConnectConfigToVertex(fromObject map[string]any, parentObject map[strin
 	fromSpeechConfig := InternalGetValueByPath(fromObject, []string{"speechConfig"})
 	if fromSpeechConfig != nil {
 		fromSpeechConfig, err = InternalTLiveSpeechConfig(fromSpeechConfig)
-		if err != nil {
-			return nil, err
-		}
-
-		fromSpeechConfig, err = speechConfigToVertex(fromSpeechConfig.(map[string]any), toObject, rootObject)
 		if err != nil {
 			return nil, err
 		}
