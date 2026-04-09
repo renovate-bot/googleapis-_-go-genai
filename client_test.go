@@ -976,6 +976,18 @@ func TestClientConfigHTTPOptions(t *testing.T) {
 			expectedAPIVersion: "v1beta1",
 		},
 		{
+			name: "Vertex AI Backend with eu location",
+			clientConfig: ClientConfig{
+				Backend:     BackendVertexAI,
+				Project:     "test-project",
+				Location:    "eu",
+				HTTPOptions: HTTPOptions{},
+				Credentials: &auth.Credentials{},
+			},
+			expectedBaseURL:    "https://aiplatform.eu.rep.googleapis.com/",
+			expectedAPIVersion: "v1beta1",
+		},
+		{
 			name: "Vertex AI Backend with us location and base URL override",
 			clientConfig: ClientConfig{
 				Backend:  BackendVertexAI,
