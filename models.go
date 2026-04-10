@@ -698,6 +698,14 @@ func embedContentConfigToMldev(fromObject map[string]any, parentObject map[strin
 		return nil, fmt.Errorf("autoTruncate parameter is not supported in Gemini API")
 	}
 
+	if InternalGetValueByPath(fromObject, []string{"documentOcr"}) != nil {
+		return nil, fmt.Errorf("documentOcr parameter is not supported in Gemini API")
+	}
+
+	if InternalGetValueByPath(fromObject, []string{"audioTrackExtraction"}) != nil {
+		return nil, fmt.Errorf("audioTrackExtraction parameter is not supported in Gemini API")
+	}
+
 	return toObject, nil
 }
 
@@ -716,7 +724,7 @@ func embedContentConfigToVertex(fromObject map[string]any, parentObject map[stri
 	} else if discriminatorTaskType.(string) == "EMBED_CONTENT" {
 		fromTaskType := InternalGetValueByPath(fromObject, []string{"taskType"})
 		if fromTaskType != nil {
-			InternalSetValueByPath(parentObject, []string{"taskType"}, fromTaskType)
+			InternalSetValueByPath(parentObject, []string{"embedContentConfig", "taskType"}, fromTaskType)
 		}
 	}
 
@@ -732,7 +740,7 @@ func embedContentConfigToVertex(fromObject map[string]any, parentObject map[stri
 	} else if discriminatorTitle.(string) == "EMBED_CONTENT" {
 		fromTitle := InternalGetValueByPath(fromObject, []string{"title"})
 		if fromTitle != nil {
-			InternalSetValueByPath(parentObject, []string{"title"}, fromTitle)
+			InternalSetValueByPath(parentObject, []string{"embedContentConfig", "title"}, fromTitle)
 		}
 	}
 
@@ -748,7 +756,7 @@ func embedContentConfigToVertex(fromObject map[string]any, parentObject map[stri
 	} else if discriminatorOutputDimensionality.(string) == "EMBED_CONTENT" {
 		fromOutputDimensionality := InternalGetValueByPath(fromObject, []string{"outputDimensionality"})
 		if fromOutputDimensionality != nil {
-			InternalSetValueByPath(parentObject, []string{"outputDimensionality"}, fromOutputDimensionality)
+			InternalSetValueByPath(parentObject, []string{"embedContentConfig", "outputDimensionality"}, fromOutputDimensionality)
 		}
 	}
 
@@ -775,7 +783,29 @@ func embedContentConfigToVertex(fromObject map[string]any, parentObject map[stri
 	} else if discriminatorAutoTruncate.(string) == "EMBED_CONTENT" {
 		fromAutoTruncate := InternalGetValueByPath(fromObject, []string{"autoTruncate"})
 		if fromAutoTruncate != nil {
-			InternalSetValueByPath(parentObject, []string{"autoTruncate"}, fromAutoTruncate)
+			InternalSetValueByPath(parentObject, []string{"embedContentConfig", "autoTruncate"}, fromAutoTruncate)
+		}
+	}
+
+	var discriminatorDocumentOcr any = InternalGetValueByPath(rootObject, []string{"embeddingApiType"})
+	if discriminatorDocumentOcr == nil {
+		discriminatorDocumentOcr = "PREDICT"
+	}
+	if discriminatorDocumentOcr.(string) == "EMBED_CONTENT" {
+		fromDocumentOcr := InternalGetValueByPath(fromObject, []string{"documentOcr"})
+		if fromDocumentOcr != nil {
+			InternalSetValueByPath(parentObject, []string{"embedContentConfig", "documentOcr"}, fromDocumentOcr)
+		}
+	}
+
+	var discriminatorAudioTrackExtraction any = InternalGetValueByPath(rootObject, []string{"embeddingApiType"})
+	if discriminatorAudioTrackExtraction == nil {
+		discriminatorAudioTrackExtraction = "PREDICT"
+	}
+	if discriminatorAudioTrackExtraction.(string) == "EMBED_CONTENT" {
+		fromAudioTrackExtraction := InternalGetValueByPath(fromObject, []string{"audioTrackExtraction"})
+		if fromAudioTrackExtraction != nil {
+			InternalSetValueByPath(parentObject, []string{"embedContentConfig", "audioTrackExtraction"}, fromAudioTrackExtraction)
 		}
 	}
 

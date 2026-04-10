@@ -3510,6 +3510,12 @@ type EmbedContentConfig struct {
 	// the max sequence length. If this option is set to false, oversized inputs
 	// will lead to an INVALID_ARGUMENT error, similar to other text APIs.
 	AutoTruncate bool `json:"autoTruncate,omitempty"`
+	// Vertex API only. Whether to enable OCR for document content.
+	// Only applicable to Gemini Embedding 2 models.
+	DocumentOcr *bool `json:"documentOcr,omitempty"`
+	// Vertex API only. Whether to extract audio from video content.
+	// Only applicable to Gemini Embedding 2 models.
+	AudioTrackExtraction *bool `json:"audioTrackExtraction,omitempty"`
 }
 
 // Statistics of the input text associated with the result of content embedding.
