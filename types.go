@@ -4434,6 +4434,19 @@ type VideoGenerationMask struct {
 	MaskMode VideoGenerationMaskMode `json:"maskMode,omitempty"`
 }
 
+// Configuration for webhook notifications.
+// Used to configure webhook endpoints that will receive notifications
+// when long-running operations (e.g., batch jobs, video generation) complete.
+type WebhookConfig struct {
+	// Optional. The webhook URIs to receive notifications. If set, these
+	// webhook URIs will be used instead of the registered webhooks.
+	Uris []string `json:"uris,omitempty"`
+	// Optional. User metadata that will be included in each webhook event
+	// notification. Use this to attach custom key-value data to correlate
+	// webhook events with your internal systems.
+	UserMetadata map[string]any `json:"userMetadata,omitempty"`
+}
+
 // You can find API default values and more details at VertexAI: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/veo-video-generation.
 type GenerateVideosConfig struct {
 	// Optional. Used to override HTTP request options.
@@ -4485,6 +4498,9 @@ type GenerateVideosConfig struct {
 	CompressionQuality VideoCompressionQuality `json:"compressionQuality,omitempty"`
 	// Optional. User specified labels to track billing usage.
 	Labels map[string]string `json:"labels,omitempty"`
+	// Optional. Webhook configuration for receiving notifications when the
+	// video generation operation completes.
+	WebhookConfig *WebhookConfig `json:"webhookConfig,omitempty"`
 }
 
 // A generated video.
@@ -6450,6 +6466,9 @@ type CreateBatchJobConfig struct {
 	// GCS or BigQuery URI prefix for the output predictions. Example:
 	// "gs://path/to/output/data" or "bq://projectId.bqDatasetId.bqTableId".
 	Dest *BatchJobDestination `json:"dest,omitempty"`
+	// Optional. Webhook configuration for receiving notifications when the batch
+	// operation completes.
+	WebhookConfig *WebhookConfig `json:"webhookConfig,omitempty"`
 }
 
 // Success and error statistics of processing multiple entities (for example, DataItems

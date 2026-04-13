@@ -2088,6 +2088,11 @@ func generateVideosConfigToMldev(fromObject map[string]any, parentObject map[str
 		return nil, fmt.Errorf("labels parameter is not supported in Gemini API")
 	}
 
+	fromWebhookConfig := InternalGetValueByPath(fromObject, []string{"webhookConfig"})
+	if fromWebhookConfig != nil {
+		InternalSetValueByPath(parentObject, []string{"webhookConfig"}, fromWebhookConfig)
+	}
+
 	return toObject, nil
 }
 
@@ -2192,6 +2197,10 @@ func generateVideosConfigToVertex(fromObject map[string]any, parentObject map[st
 	fromLabels := InternalGetValueByPath(fromObject, []string{"labels"})
 	if fromLabels != nil {
 		InternalSetValueByPath(parentObject, []string{"labels"}, fromLabels)
+	}
+
+	if InternalGetValueByPath(fromObject, []string{"webhookConfig"}) != nil {
+		return nil, fmt.Errorf("webhookConfig parameter is not supported in Vertex AI")
 	}
 
 	return toObject, nil
