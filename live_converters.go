@@ -34,7 +34,7 @@ func liveClientContentToMldev(fromObject map[string]any, parentObject map[string
 
 	fromTurns := InternalGetValueByPath(fromObject, []string{"turns"})
 	if fromTurns != nil {
-		fromTurns, err = applyConverterToSliceWithRoot(fromTurns.([]any), contentToMldev, rootObject)
+		fromTurns, err = InternalApplyConverterToSliceWithRoot(fromTurns.([]any), contentToMldev, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -55,7 +55,7 @@ func liveClientContentToVertex(fromObject map[string]any, parentObject map[strin
 
 	fromTurns := InternalGetValueByPath(fromObject, []string{"turns"})
 	if fromTurns != nil {
-		fromTurns, err = applyConverterToSliceWithRoot(fromTurns.([]any), contentToVertex, rootObject)
+		fromTurns, err = InternalApplyConverterToSliceWithRoot(fromTurns.([]any), contentToVertex, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -153,7 +153,7 @@ func liveClientRealtimeInputToMldev(fromObject map[string]any, parentObject map[
 
 	fromMediaChunks := InternalGetValueByPath(fromObject, []string{"mediaChunks"})
 	if fromMediaChunks != nil {
-		fromMediaChunks, err = applyConverterToSliceWithRoot(fromMediaChunks.([]any), blobToMldev, rootObject)
+		fromMediaChunks, err = InternalApplyConverterToSliceWithRoot(fromMediaChunks.([]any), blobToMldev, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -214,7 +214,7 @@ func liveClientSetupToMldev(fromObject map[string]any, parentObject map[string]a
 			return nil, err
 		}
 
-		fromTools, err = applyConverterToSliceWithRoot(fromTools.([]any), toolToMldev, rootObject)
+		fromTools, err = InternalApplyConverterToSliceWithRoot(fromTools.([]any), toolToMldev, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -278,7 +278,7 @@ func liveClientSetupToMldev(fromObject map[string]any, parentObject map[string]a
 
 	fromSafetySettings := InternalGetValueByPath(fromObject, []string{"safetySettings"})
 	if fromSafetySettings != nil {
-		fromSafetySettings, err = applyConverterToSliceWithRoot(fromSafetySettings.([]any), safetySettingToMldev, rootObject)
+		fromSafetySettings, err = InternalApplyConverterToSliceWithRoot(fromSafetySettings.([]any), safetySettingToMldev, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -334,7 +334,7 @@ func liveClientSetupToVertex(fromObject map[string]any, parentObject map[string]
 			return nil, err
 		}
 
-		fromTools, err = applyConverterToSliceWithRoot(fromTools.([]any), toolToVertex, rootObject)
+		fromTools, err = InternalApplyConverterToSliceWithRoot(fromTools.([]any), toolToVertex, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -475,7 +475,7 @@ func liveConnectConfigToMldev(fromObject map[string]any, parentObject map[string
 			return nil, err
 		}
 
-		fromTools, err = applyConverterToSliceWithRoot(fromTools.([]any), toolToMldev, rootObject)
+		fromTools, err = InternalApplyConverterToSliceWithRoot(fromTools.([]any), toolToMldev, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -539,7 +539,7 @@ func liveConnectConfigToMldev(fromObject map[string]any, parentObject map[string
 
 	fromSafetySettings := InternalGetValueByPath(fromObject, []string{"safetySettings"})
 	if fromSafetySettings != nil {
-		fromSafetySettings, err = applyConverterToSliceWithRoot(fromSafetySettings.([]any), safetySettingToMldev, rootObject)
+		fromSafetySettings, err = InternalApplyConverterToSliceWithRoot(fromSafetySettings.([]any), safetySettingToMldev, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -635,7 +635,7 @@ func liveConnectConfigToVertex(fromObject map[string]any, parentObject map[strin
 			return nil, err
 		}
 
-		fromTools, err = applyConverterToSliceWithRoot(fromTools.([]any), toolToVertex, rootObject)
+		fromTools, err = InternalApplyConverterToSliceWithRoot(fromTools.([]any), toolToVertex, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -753,7 +753,7 @@ func liveSendRealtimeInputParametersToMldev(fromObject map[string]any, parentObj
 			return nil, err
 		}
 
-		fromMedia, err = applyConverterToSliceWithRoot(fromMedia.([]any), blobToMldev, rootObject)
+		fromMedia, err = InternalApplyConverterToSliceWithRoot(fromMedia.([]any), blobToMldev, rootObject)
 		if err != nil {
 			return nil, err
 		}

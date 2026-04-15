@@ -36,7 +36,7 @@ func batchJobDestinationFromMldev(fromObject map[string]any, parentObject map[st
 
 	fromInlinedResponses := InternalGetValueByPath(fromObject, []string{"inlinedResponses", "inlinedResponses"})
 	if fromInlinedResponses != nil {
-		fromInlinedResponses, err = applyConverterToSliceWithRoot(fromInlinedResponses.([]any), inlinedResponseFromMldev, rootObject)
+		fromInlinedResponses, err = InternalApplyConverterToSliceWithRoot(fromInlinedResponses.([]any), inlinedResponseFromMldev, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -724,7 +724,7 @@ func inlinedRequestToMldev(ac *InternalAPIClient, fromObject map[string]any, par
 			return nil, err
 		}
 
-		fromContents, err = applyConverterToSliceWithRoot(fromContents.([]any), contentToMldev, rootObject)
+		fromContents, err = InternalApplyConverterToSliceWithRoot(fromContents.([]any), contentToMldev, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -860,7 +860,7 @@ func listBatchJobsResponseFromMldev(fromObject map[string]any, parentObject map[
 
 	fromBatchJobs := InternalGetValueByPath(fromObject, []string{"operations"})
 	if fromBatchJobs != nil {
-		fromBatchJobs, err = applyConverterToSliceWithRoot(fromBatchJobs.([]any), batchJobFromMldev, rootObject)
+		fromBatchJobs, err = InternalApplyConverterToSliceWithRoot(fromBatchJobs.([]any), batchJobFromMldev, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -886,7 +886,7 @@ func listBatchJobsResponseFromVertex(fromObject map[string]any, parentObject map
 
 	fromBatchJobs := InternalGetValueByPath(fromObject, []string{"batchPredictionJobs"})
 	if fromBatchJobs != nil {
-		fromBatchJobs, err = applyConverterToSliceWithRoot(fromBatchJobs.([]any), batchJobFromVertex, rootObject)
+		fromBatchJobs, err = InternalApplyConverterToSliceWithRoot(fromBatchJobs.([]any), batchJobFromVertex, rootObject)
 		if err != nil {
 			return nil, err
 		}

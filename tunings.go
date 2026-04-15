@@ -552,7 +552,7 @@ func listTuningJobsResponseFromMldev(fromObject map[string]any, parentObject map
 
 	fromTuningJobs := InternalGetValueByPath(fromObject, []string{"tunedModels"})
 	if fromTuningJobs != nil {
-		fromTuningJobs, err = applyConverterToSliceWithRoot(fromTuningJobs.([]any), tuningJobFromMldev, rootObject)
+		fromTuningJobs, err = InternalApplyConverterToSliceWithRoot(fromTuningJobs.([]any), tuningJobFromMldev, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -578,7 +578,7 @@ func listTuningJobsResponseFromVertex(fromObject map[string]any, parentObject ma
 
 	fromTuningJobs := InternalGetValueByPath(fromObject, []string{"tuningJobs"})
 	if fromTuningJobs != nil {
-		fromTuningJobs, err = applyConverterToSliceWithRoot(fromTuningJobs.([]any), tuningJobFromVertex, rootObject)
+		fromTuningJobs, err = InternalApplyConverterToSliceWithRoot(fromTuningJobs.([]any), tuningJobFromVertex, rootObject)
 		if err != nil {
 			return nil, err
 		}

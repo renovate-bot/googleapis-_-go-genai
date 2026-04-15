@@ -171,7 +171,7 @@ func computeTokensParametersToVertex(ac *InternalAPIClient, fromObject map[strin
 			return nil, err
 		}
 
-		fromContents, err = applyConverterToSliceWithRoot(fromContents.([]any), contentToVertex, rootObject)
+		fromContents, err = InternalApplyConverterToSliceWithRoot(fromContents.([]any), contentToVertex, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -240,7 +240,7 @@ func contentToMldev(fromObject map[string]any, parentObject map[string]any, root
 
 	fromParts := InternalGetValueByPath(fromObject, []string{"parts"})
 	if fromParts != nil {
-		fromParts, err = applyConverterToSliceWithRoot(fromParts.([]any), partToMldev, rootObject)
+		fromParts, err = InternalApplyConverterToSliceWithRoot(fromParts.([]any), partToMldev, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -261,7 +261,7 @@ func contentToVertex(fromObject map[string]any, parentObject map[string]any, roo
 
 	fromParts := InternalGetValueByPath(fromObject, []string{"parts"})
 	if fromParts != nil {
-		fromParts, err = applyConverterToSliceWithRoot(fromParts.([]any), partToVertex, rootObject)
+		fromParts, err = InternalApplyConverterToSliceWithRoot(fromParts.([]any), partToVertex, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -331,7 +331,7 @@ func countTokensConfigToVertex(fromObject map[string]any, parentObject map[strin
 
 	fromTools := InternalGetValueByPath(fromObject, []string{"tools"})
 	if fromTools != nil {
-		fromTools, err = applyConverterToSliceWithRoot(fromTools.([]any), toolToVertex, rootObject)
+		fromTools, err = InternalApplyConverterToSliceWithRoot(fromTools.([]any), toolToVertex, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -372,7 +372,7 @@ func countTokensParametersToMldev(ac *InternalAPIClient, fromObject map[string]a
 			return nil, err
 		}
 
-		fromContents, err = applyConverterToSliceWithRoot(fromContents.([]any), contentToMldev, rootObject)
+		fromContents, err = InternalApplyConverterToSliceWithRoot(fromContents.([]any), contentToMldev, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -411,7 +411,7 @@ func countTokensParametersToVertex(ac *InternalAPIClient, fromObject map[string]
 			return nil, err
 		}
 
-		fromContents, err = applyConverterToSliceWithRoot(fromContents.([]any), contentToVertex, rootObject)
+		fromContents, err = InternalApplyConverterToSliceWithRoot(fromContents.([]any), contentToVertex, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -632,7 +632,7 @@ func editImageParametersToVertex(ac *InternalAPIClient, fromObject map[string]an
 
 	fromReferenceImages := InternalGetValueByPath(fromObject, []string{"referenceImages"})
 	if fromReferenceImages != nil {
-		fromReferenceImages, err = applyConverterToSliceWithRoot(fromReferenceImages.([]any), referenceImageAPIToVertex, rootObject)
+		fromReferenceImages, err = InternalApplyConverterToSliceWithRoot(fromReferenceImages.([]any), referenceImageAPIToVertex, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -661,7 +661,7 @@ func editImageResponseFromVertex(fromObject map[string]any, parentObject map[str
 
 	fromGeneratedImages := InternalGetValueByPath(fromObject, []string{"predictions"})
 	if fromGeneratedImages != nil {
-		fromGeneratedImages, err = applyConverterToSliceWithRoot(fromGeneratedImages.([]any), generatedImageFromVertex, rootObject)
+		fromGeneratedImages, err = InternalApplyConverterToSliceWithRoot(fromGeneratedImages.([]any), generatedImageFromVertex, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -953,7 +953,7 @@ func embedContentResponseFromVertex(fromObject map[string]any, parentObject map[
 
 	fromEmbeddings := InternalGetValueByPath(fromObject, []string{"predictions[]", "embeddings"})
 	if fromEmbeddings != nil {
-		fromEmbeddings, err = applyConverterToSliceWithRoot(fromEmbeddings.([]any), contentEmbeddingFromVertex, rootObject)
+		fromEmbeddings, err = InternalApplyConverterToSliceWithRoot(fromEmbeddings.([]any), contentEmbeddingFromVertex, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -1215,7 +1215,7 @@ func generateContentConfigToMldev(ac *InternalAPIClient, fromObject map[string]a
 
 	fromSafetySettings := InternalGetValueByPath(fromObject, []string{"safetySettings"})
 	if fromSafetySettings != nil {
-		fromSafetySettings, err = applyConverterToSliceWithRoot(fromSafetySettings.([]any), safetySettingToMldev, rootObject)
+		fromSafetySettings, err = InternalApplyConverterToSliceWithRoot(fromSafetySettings.([]any), safetySettingToMldev, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -1235,7 +1235,7 @@ func generateContentConfigToMldev(ac *InternalAPIClient, fromObject map[string]a
 			return nil, err
 		}
 
-		fromTools, err = applyConverterToSliceWithRoot(fromTools.([]any), toolToMldev, rootObject)
+		fromTools, err = InternalApplyConverterToSliceWithRoot(fromTools.([]any), toolToMldev, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -1443,7 +1443,7 @@ func generateContentConfigToVertex(ac *InternalAPIClient, fromObject map[string]
 			return nil, err
 		}
 
-		fromTools, err = applyConverterToSliceWithRoot(fromTools.([]any), toolToVertex, rootObject)
+		fromTools, err = InternalApplyConverterToSliceWithRoot(fromTools.([]any), toolToVertex, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -1553,7 +1553,7 @@ func generateContentParametersToMldev(ac *InternalAPIClient, fromObject map[stri
 			return nil, err
 		}
 
-		fromContents, err = applyConverterToSliceWithRoot(fromContents.([]any), contentToMldev, rootObject)
+		fromContents, err = InternalApplyConverterToSliceWithRoot(fromContents.([]any), contentToMldev, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -1594,7 +1594,7 @@ func generateContentParametersToVertex(ac *InternalAPIClient, fromObject map[str
 			return nil, err
 		}
 
-		fromContents, err = applyConverterToSliceWithRoot(fromContents.([]any), contentToVertex, rootObject)
+		fromContents, err = InternalApplyConverterToSliceWithRoot(fromContents.([]any), contentToVertex, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -1625,7 +1625,7 @@ func generateContentResponseFromMldev(fromObject map[string]any, parentObject ma
 
 	fromCandidates := InternalGetValueByPath(fromObject, []string{"candidates"})
 	if fromCandidates != nil {
-		fromCandidates, err = applyConverterToSliceWithRoot(fromCandidates.([]any), candidateFromMldev, rootObject)
+		fromCandidates, err = InternalApplyConverterToSliceWithRoot(fromCandidates.([]any), candidateFromMldev, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -1946,7 +1946,7 @@ func generateImagesResponseFromMldev(fromObject map[string]any, parentObject map
 
 	fromGeneratedImages := InternalGetValueByPath(fromObject, []string{"predictions"})
 	if fromGeneratedImages != nil {
-		fromGeneratedImages, err = applyConverterToSliceWithRoot(fromGeneratedImages.([]any), generatedImageFromMldev, rootObject)
+		fromGeneratedImages, err = InternalApplyConverterToSliceWithRoot(fromGeneratedImages.([]any), generatedImageFromMldev, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -1977,7 +1977,7 @@ func generateImagesResponseFromVertex(fromObject map[string]any, parentObject ma
 
 	fromGeneratedImages := InternalGetValueByPath(fromObject, []string{"predictions"})
 	if fromGeneratedImages != nil {
-		fromGeneratedImages, err = applyConverterToSliceWithRoot(fromGeneratedImages.([]any), generatedImageFromVertex, rootObject)
+		fromGeneratedImages, err = InternalApplyConverterToSliceWithRoot(fromGeneratedImages.([]any), generatedImageFromVertex, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -2068,7 +2068,7 @@ func generateVideosConfigToMldev(fromObject map[string]any, parentObject map[str
 
 	fromReferenceImages := InternalGetValueByPath(fromObject, []string{"referenceImages"})
 	if fromReferenceImages != nil {
-		fromReferenceImages, err = applyConverterToSliceWithRoot(fromReferenceImages.([]any), videoGenerationReferenceImageToMldev, rootObject)
+		fromReferenceImages, err = InternalApplyConverterToSliceWithRoot(fromReferenceImages.([]any), videoGenerationReferenceImageToMldev, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -2171,7 +2171,7 @@ func generateVideosConfigToVertex(fromObject map[string]any, parentObject map[st
 
 	fromReferenceImages := InternalGetValueByPath(fromObject, []string{"referenceImages"})
 	if fromReferenceImages != nil {
-		fromReferenceImages, err = applyConverterToSliceWithRoot(fromReferenceImages.([]any), videoGenerationReferenceImageToVertex, rootObject)
+		fromReferenceImages, err = InternalApplyConverterToSliceWithRoot(fromReferenceImages.([]any), videoGenerationReferenceImageToVertex, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -2397,7 +2397,7 @@ func generateVideosResponseFromMldev(fromObject map[string]any, parentObject map
 
 	fromGeneratedVideos := InternalGetValueByPath(fromObject, []string{"generatedSamples"})
 	if fromGeneratedVideos != nil {
-		fromGeneratedVideos, err = applyConverterToSliceWithRoot(fromGeneratedVideos.([]any), generatedVideoFromMldev, rootObject)
+		fromGeneratedVideos, err = InternalApplyConverterToSliceWithRoot(fromGeneratedVideos.([]any), generatedVideoFromMldev, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -2423,7 +2423,7 @@ func generateVideosResponseFromVertex(fromObject map[string]any, parentObject ma
 
 	fromGeneratedVideos := InternalGetValueByPath(fromObject, []string{"videos"})
 	if fromGeneratedVideos != nil {
-		fromGeneratedVideos, err = applyConverterToSliceWithRoot(fromGeneratedVideos.([]any), generatedVideoFromVertex, rootObject)
+		fromGeneratedVideos, err = InternalApplyConverterToSliceWithRoot(fromGeneratedVideos.([]any), generatedVideoFromVertex, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -3107,7 +3107,7 @@ func listModelsResponseFromMldev(fromObject map[string]any, parentObject map[str
 			return nil, err
 		}
 
-		fromModels, err = applyConverterToSliceWithRoot(fromModels.([]any), modelFromMldev, rootObject)
+		fromModels, err = InternalApplyConverterToSliceWithRoot(fromModels.([]any), modelFromMldev, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -3138,7 +3138,7 @@ func listModelsResponseFromVertex(fromObject map[string]any, parentObject map[st
 			return nil, err
 		}
 
-		fromModels, err = applyConverterToSliceWithRoot(fromModels.([]any), modelFromVertex, rootObject)
+		fromModels, err = InternalApplyConverterToSliceWithRoot(fromModels.([]any), modelFromVertex, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -3266,7 +3266,7 @@ func modelFromVertex(fromObject map[string]any, parentObject map[string]any, roo
 
 	fromEndpoints := InternalGetValueByPath(fromObject, []string{"deployedModels"})
 	if fromEndpoints != nil {
-		fromEndpoints, err = applyConverterToSliceWithRoot(fromEndpoints.([]any), endpointFromVertex, rootObject)
+		fromEndpoints, err = InternalApplyConverterToSliceWithRoot(fromEndpoints.([]any), endpointFromVertex, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -3580,7 +3580,7 @@ func recontextImageResponseFromVertex(fromObject map[string]any, parentObject ma
 
 	fromGeneratedImages := InternalGetValueByPath(fromObject, []string{"predictions"})
 	if fromGeneratedImages != nil {
-		fromGeneratedImages, err = applyConverterToSliceWithRoot(fromGeneratedImages.([]any), generatedImageFromVertex, rootObject)
+		fromGeneratedImages, err = InternalApplyConverterToSliceWithRoot(fromGeneratedImages.([]any), generatedImageFromVertex, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -3611,7 +3611,7 @@ func recontextImageSourceToVertex(fromObject map[string]any, parentObject map[st
 
 	fromProductImages := InternalGetValueByPath(fromObject, []string{"productImages"})
 	if fromProductImages != nil {
-		fromProductImages, err = applyConverterToSliceWithRoot(fromProductImages.([]any), productImageToVertex, rootObject)
+		fromProductImages, err = InternalApplyConverterToSliceWithRoot(fromProductImages.([]any), productImageToVertex, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -3829,7 +3829,7 @@ func segmentImageResponseFromVertex(fromObject map[string]any, parentObject map[
 
 	fromGeneratedMasks := InternalGetValueByPath(fromObject, []string{"predictions"})
 	if fromGeneratedMasks != nil {
-		fromGeneratedMasks, err = applyConverterToSliceWithRoot(fromGeneratedMasks.([]any), generatedImageMaskFromVertex, rootObject)
+		fromGeneratedMasks, err = InternalApplyConverterToSliceWithRoot(fromGeneratedMasks.([]any), generatedImageMaskFromVertex, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -4028,7 +4028,7 @@ func toolToVertex(fromObject map[string]any, parentObject map[string]any, rootOb
 
 	fromFunctionDeclarations := InternalGetValueByPath(fromObject, []string{"functionDeclarations"})
 	if fromFunctionDeclarations != nil {
-		fromFunctionDeclarations, err = applyConverterToSliceWithRoot(fromFunctionDeclarations.([]any), functionDeclarationToVertex, rootObject)
+		fromFunctionDeclarations, err = InternalApplyConverterToSliceWithRoot(fromFunctionDeclarations.([]any), functionDeclarationToVertex, rootObject)
 		if err != nil {
 			return nil, err
 		}
@@ -4279,7 +4279,7 @@ func upscaleImageResponseFromVertex(fromObject map[string]any, parentObject map[
 
 	fromGeneratedImages := InternalGetValueByPath(fromObject, []string{"predictions"})
 	if fromGeneratedImages != nil {
-		fromGeneratedImages, err = applyConverterToSliceWithRoot(fromGeneratedImages.([]any), generatedImageFromVertex, rootObject)
+		fromGeneratedImages, err = InternalApplyConverterToSliceWithRoot(fromGeneratedImages.([]any), generatedImageFromVertex, rootObject)
 		if err != nil {
 			return nil, err
 		}
