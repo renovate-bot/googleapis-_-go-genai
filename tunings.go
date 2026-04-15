@@ -467,27 +467,6 @@ func getTuningJobParametersToVertex(fromObject map[string]any, parentObject map[
 	return toObject, nil
 }
 
-func listTuningJobsConfigToMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-
-	fromPageSize := InternalGetValueByPath(fromObject, []string{"pageSize"})
-	if fromPageSize != nil {
-		InternalSetValueByPath(parentObject, []string{"_query", "pageSize"}, fromPageSize)
-	}
-
-	fromPageToken := InternalGetValueByPath(fromObject, []string{"pageToken"})
-	if fromPageToken != nil {
-		InternalSetValueByPath(parentObject, []string{"_query", "pageToken"}, fromPageToken)
-	}
-
-	fromFilter := InternalGetValueByPath(fromObject, []string{"filter"})
-	if fromFilter != nil {
-		InternalSetValueByPath(parentObject, []string{"_query", "filter"}, fromFilter)
-	}
-
-	return toObject, nil
-}
-
 func listTuningJobsConfigToVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -509,20 +488,6 @@ func listTuningJobsConfigToVertex(fromObject map[string]any, parentObject map[st
 	return toObject, nil
 }
 
-func listTuningJobsParametersToMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-
-	fromConfig := InternalGetValueByPath(fromObject, []string{"config"})
-	if fromConfig != nil {
-		_, err = listTuningJobsConfigToMldev(fromConfig.(map[string]any), toObject, rootObject)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return toObject, nil
-}
-
 func listTuningJobsParametersToVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -532,32 +497,6 @@ func listTuningJobsParametersToVertex(fromObject map[string]any, parentObject ma
 		if err != nil {
 			return nil, err
 		}
-	}
-
-	return toObject, nil
-}
-
-func listTuningJobsResponseFromMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-
-	fromSdkHttpResponse := InternalGetValueByPath(fromObject, []string{"sdkHttpResponse"})
-	if fromSdkHttpResponse != nil {
-		InternalSetValueByPath(toObject, []string{"sdkHttpResponse"}, fromSdkHttpResponse)
-	}
-
-	fromNextPageToken := InternalGetValueByPath(fromObject, []string{"nextPageToken"})
-	if fromNextPageToken != nil {
-		InternalSetValueByPath(toObject, []string{"nextPageToken"}, fromNextPageToken)
-	}
-
-	fromTuningJobs := InternalGetValueByPath(fromObject, []string{"tunedModels"})
-	if fromTuningJobs != nil {
-		fromTuningJobs, err = InternalApplyConverterToSliceWithRoot(fromTuningJobs.([]any), tuningJobFromMldev, rootObject)
-		if err != nil {
-			return nil, err
-		}
-
-		InternalSetValueByPath(toObject, []string{"tuningJobs"}, fromTuningJobs)
 	}
 
 	return toObject, nil
@@ -1053,8 +992,9 @@ func (m Tunings) list(ctx context.Context, config *ListTuningJobsConfig) (*ListT
 		toConverter = listTuningJobsParametersToVertex
 		fromConverter = listTuningJobsResponseFromVertex
 	} else {
-		toConverter = listTuningJobsParametersToMldev
-		fromConverter = listTuningJobsResponseFromMldev
+
+		return nil, fmt.Errorf("method List is only supported in the Vertex AI client. You can choose to use Vertex AI by setting ClientConfig.Backend to BackendVertexAI.")
+
 	}
 
 	body, err := toConverter(parameterMap, nil, parameterMap)
@@ -1071,7 +1011,7 @@ func (m Tunings) list(ctx context.Context, config *ListTuningJobsConfig) (*ListT
 	if m.apiClient.ClientConfig().Backend == BackendVertexAI {
 		path, err = InternalFormatMap("tuningJobs", urlParams)
 	} else {
-		path, err = InternalFormatMap("tunedModels", urlParams)
+		path, err = InternalFormatMap("None", urlParams)
 	}
 	if err != nil {
 		return nil, fmt.Errorf("invalid url params: %#v.\n%w", urlParams, err)
