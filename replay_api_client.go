@@ -37,6 +37,7 @@ import (
 
 // ReplayAPIClient is a client that reads responses from a replay session file.
 type replayAPIClient struct {
+	AssertRequest           bool
 	ReplayFile              *replayFile
 	ReplaysDirectory        string
 	currentInteractionIndex int
@@ -51,6 +52,7 @@ func newReplayAPIClient(t *testing.T) *replayAPIClient {
 	// GOOGLE_GENAI_REPLAYS_DIRECTORY.
 	replaysDirectory := os.Getenv("GOOGLE_GENAI_REPLAYS_DIRECTORY")
 	rac := &replayAPIClient{
+		AssertRequest:           true,
 		ReplayFile:              nil,
 		ReplaysDirectory:        replaysDirectory,
 		currentInteractionIndex: 0,
@@ -61,6 +63,14 @@ func newReplayAPIClient(t *testing.T) *replayAPIClient {
 		rac.server.Close()
 	})
 	return rac
+}
+
+// InternalReplayAPIClient is a client that reads responses from a replay session file.
+type InternalReplayAPIClient = replayAPIClient
+
+// NewInternalReplayAPIClient creates a new InternalReplayAPIClient from a replay session file.
+func NewInternalReplayAPIClient(t *testing.T) *InternalReplayAPIClient {
+	return newReplayAPIClient(t)
 }
 
 // GetBaseURL returns the URL of the mocked HTTP server.
@@ -102,7 +112,9 @@ func (rac *replayAPIClient) ServeHTTP(w http.ResponseWriter, req *http.Request) 
 	}
 	interaction := rac.ReplayFile.Interactions[rac.currentInteractionIndex]
 
-	rac.assertRequest(req, interaction.Request)
+	if rac.AssertRequest {
+		rac.assertRequest(req, interaction.Request)
+	}
 	rac.currentInteractionIndex++
 
 	// Set Content-Type header
@@ -159,6 +171,12 @@ func readFileForReplayTest[T any](path string, output *T, omitempty bool) error 
 	}
 
 	return nil
+}
+
+// InternalReadFileForReplayTest reads a replay file into a struct.
+// If omitempty is true, empty values are omitted from the struct.
+func InternalReadFileForReplayTest[T any](path string, output *T, omitempty bool) error {
+	return readFileForReplayTest[T](path, output, omitempty)
 }
 
 // In testing server, host and scheme is empty.
