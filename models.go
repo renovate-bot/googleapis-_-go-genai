@@ -1072,46 +1072,6 @@ func functionCallingConfigToMldev(fromObject map[string]any, parentObject map[st
 	return toObject, nil
 }
 
-func functionDeclarationToVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
-	toObject = make(map[string]any)
-
-	fromDescription := InternalGetValueByPath(fromObject, []string{"description"})
-	if fromDescription != nil {
-		InternalSetValueByPath(toObject, []string{"description"}, fromDescription)
-	}
-
-	fromName := InternalGetValueByPath(fromObject, []string{"name"})
-	if fromName != nil {
-		InternalSetValueByPath(toObject, []string{"name"}, fromName)
-	}
-
-	fromParameters := InternalGetValueByPath(fromObject, []string{"parameters"})
-	if fromParameters != nil {
-		InternalSetValueByPath(toObject, []string{"parameters"}, fromParameters)
-	}
-
-	fromParametersJsonSchema := InternalGetValueByPath(fromObject, []string{"parametersJsonSchema"})
-	if fromParametersJsonSchema != nil {
-		InternalSetValueByPath(toObject, []string{"parametersJsonSchema"}, fromParametersJsonSchema)
-	}
-
-	fromResponse := InternalGetValueByPath(fromObject, []string{"response"})
-	if fromResponse != nil {
-		InternalSetValueByPath(toObject, []string{"response"}, fromResponse)
-	}
-
-	fromResponseJsonSchema := InternalGetValueByPath(fromObject, []string{"responseJsonSchema"})
-	if fromResponseJsonSchema != nil {
-		InternalSetValueByPath(toObject, []string{"responseJsonSchema"}, fromResponseJsonSchema)
-	}
-
-	if InternalGetValueByPath(fromObject, []string{"behavior"}) != nil {
-		return nil, fmt.Errorf("behavior parameter is not supported in Gemini Enterprise Agent Platform (previously known as Vertex AI)")
-	}
-
-	return toObject, nil
-}
-
 func generateContentConfigToMldev(ac *InternalAPIClient, fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -4037,11 +3997,6 @@ func toolToVertex(fromObject map[string]any, parentObject map[string]any, rootOb
 
 	fromFunctionDeclarations := InternalGetValueByPath(fromObject, []string{"functionDeclarations"})
 	if fromFunctionDeclarations != nil {
-		fromFunctionDeclarations, err = InternalApplyConverterToSliceWithRoot(fromFunctionDeclarations.([]any), functionDeclarationToVertex, rootObject)
-		if err != nil {
-			return nil, err
-		}
-
 		InternalSetValueByPath(toObject, []string{"functionDeclarations"}, fromFunctionDeclarations)
 	}
 

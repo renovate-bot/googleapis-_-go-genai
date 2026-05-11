@@ -170,12 +170,13 @@ const (
 	PhishBlockThresholdBlockOnlyExtremelyHigh PhishBlockThreshold = "BLOCK_ONLY_EXTREMELY_HIGH"
 )
 
-// Specifies the function Behavior. Currently only supported by the BidiGenerateContent
-// method. This enum is not supported in Vertex AI.
+// Specifies the function Behavior. Currently only non-blocking functions are supported.
+// If not specified, the system keeps the current function call behavior. This field
+// is currently only supported by the BidiGenerateContent method.
 type Behavior string
 
 const (
-	// This value is unused.
+	// This value is unspecified.
 	BehaviorUnspecified Behavior = "UNSPECIFIED"
 	// If set, the system will wait to receive the function response before continuing the
 	// conversation.
@@ -2190,8 +2191,9 @@ type FunctionDeclaration struct {
 	// specified by the schema is the response value of the function. This field is mutually
 	// exclusive with `response`.
 	ResponseJsonSchema any `json:"responseJsonSchema,omitempty"`
-	// Optional. Specifies the function Behavior. Currently only supported by the BidiGenerateContent
-	// method. This field is not supported in Vertex AI.
+	// Optional. Specifies the function Behavior. Currently only non-blocking functions
+	// are supported. If not specified, the system keeps the current function call behavior.
+	// This field is currently only supported by the BidiGenerateContent method.
 	Behavior Behavior `json:"behavior,omitempty"`
 }
 
