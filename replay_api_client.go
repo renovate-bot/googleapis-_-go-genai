@@ -545,3 +545,13 @@ var base64StringComparator = func(x, y string) bool {
 	}
 	return bytes.Equal(xb, yb)
 }
+
+// GetTest returns the testing.T instance for the replay test.
+func (rac *replayAPIClient) GetTest() *testing.T {
+	return rac.t
+}
+
+// GetTestServer returns the httptest.Server instance for the replay test.
+func (rac *replayAPIClient) GetTestServer() *httptest.Server {
+	return rac.server
+}
