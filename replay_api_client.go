@@ -217,28 +217,16 @@ func redactRequestBody(body map[string]any) map[string]any {
 }
 
 func redactVersionNumbers(versionString string) string {
-	re := regexp.MustCompile(`(v|go)?\d+\.\d+(\.\d+)?`)
-	res := re.ReplaceAllString(versionString, "{VERSION_NUMBER}")
+	glGoRe := regexp.MustCompile(`(gl-go/)[^\s]+(?:.*)`)
+	versionString = glGoRe.ReplaceAllString(versionString, "${1}{VERSION_NUMBER}")
 
-	placeholder := "{VERSION_NUMBER}"
-	firstIndex := strings.Index(res, placeholder)
-	if firstIndex == -1 {
-		return res
-	}
+	vertexRe := regexp.MustCompile(`(vertex-genai-modules/)[^\s+]+`)
+	versionString = vertexRe.ReplaceAllString(versionString, "${1}{VERSION_NUMBER}")
 
-	searchStart := firstIndex + len(placeholder)
-	if searchStart >= len(res) {
-		return res
-	}
+	genaiRe := regexp.MustCompile(`(google-genai-sdk/)[^\s+]+`)
+	versionString = genaiRe.ReplaceAllString(versionString, "${1}{VERSION_NUMBER}")
 
-	secondIndex := strings.Index(res[searchStart:], placeholder)
-	if secondIndex != -1 {
-		realSecondIndex := searchStart + secondIndex
-		endOfPlaceholder := realSecondIndex + len(placeholder)
-		return res[:endOfPlaceholder]
-	}
-
-	return res
+	return versionString
 }
 
 func redactLanguageLabel(languageLabel string) string {

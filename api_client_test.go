@@ -1341,6 +1341,15 @@ func TestPatchHTTPOptions(t *testing.T) {
 				Headers: http.Header{"User-Agent": []string{fmt.Sprintf("google-genai-sdk/%s+vertex-genai-modules/0.20.0 gl-go/%s", version, runtime.Version())}, "X-Goog-Api-Client": []string{fmt.Sprintf("google-genai-sdk/%s+vertex-genai-modules/0.20.0 gl-go/%s", version, runtime.Version())}},
 			},
 		},
+		{
+			name: "with existing user agent",
+			options: HTTPOptions{
+				Headers: http.Header{"User-Agent": []string{"vertex-genai-modules/0.20.0", "existing-agent/1.0"}},
+			},
+			want: &HTTPOptions{
+				Headers: http.Header{"User-Agent": []string{"existing-agent/1.0", fmt.Sprintf("google-genai-sdk/%s+vertex-genai-modules/0.20.0 gl-go/%s", version, runtime.Version())}, "X-Goog-Api-Client": []string{fmt.Sprintf("google-genai-sdk/%s+vertex-genai-modules/0.20.0 gl-go/%s", version, runtime.Version())}},
+			},
+		},
 	}
 
 	for _, tt := range tests {
