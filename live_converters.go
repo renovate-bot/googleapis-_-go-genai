@@ -23,7 +23,7 @@ import (
 func audioTranscriptionConfigToMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 	if InternalGetValueByPath(fromObject, []string{"languageCodes"}) != nil {
-		return nil, fmt.Errorf("languageCodes parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("languageCodes parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	return toObject, nil
@@ -268,7 +268,7 @@ func liveClientSetupToMldev(fromObject map[string]any, parentObject map[string]a
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"explicitVadSignal"}) != nil {
-		return nil, fmt.Errorf("explicitVadSignal parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("explicitVadSignal parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	fromAvatarConfig := InternalGetValueByPath(fromObject, []string{"avatarConfig"})
@@ -529,7 +529,7 @@ func liveConnectConfigToMldev(fromObject map[string]any, parentObject map[string
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"explicitVadSignal"}) != nil {
-		return nil, fmt.Errorf("explicitVadSignal parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("explicitVadSignal parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	fromAvatarConfig := InternalGetValueByPath(fromObject, []string{"avatarConfig"})
@@ -996,7 +996,7 @@ func sessionResumptionConfigToMldev(fromObject map[string]any, parentObject map[
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"transparent"}) != nil {
-		return nil, fmt.Errorf("transparent parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("transparent parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	return toObject, nil

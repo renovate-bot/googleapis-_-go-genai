@@ -33,27 +33,27 @@ func authConfigToMldev(fromObject map[string]any, parentObject map[string]any, r
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"apiKeyConfig"}) != nil {
-		return nil, fmt.Errorf("apiKeyConfig parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("apiKeyConfig parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"authType"}) != nil {
-		return nil, fmt.Errorf("authType parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("authType parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"googleServiceAccountConfig"}) != nil {
-		return nil, fmt.Errorf("googleServiceAccountConfig parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("googleServiceAccountConfig parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"httpBasicAuthConfig"}) != nil {
-		return nil, fmt.Errorf("httpBasicAuthConfig parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("httpBasicAuthConfig parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"oauthConfig"}) != nil {
-		return nil, fmt.Errorf("oauthConfig parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("oauthConfig parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"oidcConfig"}) != nil {
-		return nil, fmt.Errorf("oidcConfig parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("oidcConfig parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	return toObject, nil
@@ -68,7 +68,7 @@ func blobToMldev(fromObject map[string]any, parentObject map[string]any, rootObj
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"displayName"}) != nil {
-		return nil, fmt.Errorf("displayName parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("displayName parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	fromMimeType := InternalGetValueByPath(fromObject, []string{"mimeType"})
@@ -297,15 +297,15 @@ func countTokensConfigToMldev(fromObject map[string]any, parentObject map[string
 	toObject = make(map[string]any)
 
 	if InternalGetValueByPath(fromObject, []string{"systemInstruction"}) != nil {
-		return nil, fmt.Errorf("systemInstruction parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("systemInstruction parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"tools"}) != nil {
-		return nil, fmt.Errorf("tools parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("tools parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"generationConfig"}) != nil {
-		return nil, fmt.Errorf("generationConfig parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("generationConfig parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	return toObject, nil
@@ -691,19 +691,19 @@ func embedContentConfigToMldev(fromObject map[string]any, parentObject map[strin
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"mimeType"}) != nil {
-		return nil, fmt.Errorf("mimeType parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("mimeType parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"autoTruncate"}) != nil {
-		return nil, fmt.Errorf("autoTruncate parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("autoTruncate parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"documentOcr"}) != nil {
-		return nil, fmt.Errorf("documentOcr parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("documentOcr parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"audioTrackExtraction"}) != nil {
-		return nil, fmt.Errorf("audioTrackExtraction parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("audioTrackExtraction parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	return toObject, nil
@@ -1007,7 +1007,7 @@ func endpointFromVertex(fromObject map[string]any, parentObject map[string]any, 
 func fileDataToMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 	if InternalGetValueByPath(fromObject, []string{"displayName"}) != nil {
-		return nil, fmt.Errorf("displayName parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("displayName parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	fromFileUri := InternalGetValueByPath(fromObject, []string{"fileUri"})
@@ -1042,11 +1042,11 @@ func functionCallToMldev(fromObject map[string]any, parentObject map[string]any,
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"partialArgs"}) != nil {
-		return nil, fmt.Errorf("partialArgs parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("partialArgs parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"willContinue"}) != nil {
-		return nil, fmt.Errorf("willContinue parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("willContinue parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	return toObject, nil
@@ -1066,7 +1066,7 @@ func functionCallingConfigToMldev(fromObject map[string]any, parentObject map[st
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"streamFunctionCallArguments"}) != nil {
-		return nil, fmt.Errorf("streamFunctionCallArguments parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("streamFunctionCallArguments parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	return toObject, nil
@@ -1166,11 +1166,11 @@ func generateContentConfigToMldev(ac *InternalAPIClient, fromObject map[string]a
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"routingConfig"}) != nil {
-		return nil, fmt.Errorf("routingConfig parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("routingConfig parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"modelSelectionConfig"}) != nil {
-		return nil, fmt.Errorf("modelSelectionConfig parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("modelSelectionConfig parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	fromSafetySettings := InternalGetValueByPath(fromObject, []string{"safetySettings"})
@@ -1214,7 +1214,7 @@ func generateContentConfigToMldev(ac *InternalAPIClient, fromObject map[string]a
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"labels"}) != nil {
-		return nil, fmt.Errorf("labels parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("labels parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	fromCachedContent := InternalGetValueByPath(fromObject, []string{"cachedContent"})
@@ -1248,7 +1248,7 @@ func generateContentConfigToMldev(ac *InternalAPIClient, fromObject map[string]a
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"audioTimestamp"}) != nil {
-		return nil, fmt.Errorf("audioTimestamp parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("audioTimestamp parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	fromThinkingConfig := InternalGetValueByPath(fromObject, []string{"thinkingConfig"})
@@ -1272,7 +1272,7 @@ func generateContentConfigToMldev(ac *InternalAPIClient, fromObject map[string]a
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"modelArmorConfig"}) != nil {
-		return nil, fmt.Errorf("modelArmorConfig parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("modelArmorConfig parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	fromServiceTier := InternalGetValueByPath(fromObject, []string{"serviceTier"})
@@ -1477,7 +1477,7 @@ func generateContentConfigToVertex(ac *InternalAPIClient, fromObject map[string]
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"enableEnhancedCivicAnswers"}) != nil {
-		return nil, fmt.Errorf("enableEnhancedCivicAnswers parameter is not supported in Gemini Enterprise Agent Platform (previously known as Vertex AI)")
+		return nil, fmt.Errorf("enableEnhancedCivicAnswers parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
 	}
 
 	fromModelArmorConfig := InternalGetValueByPath(fromObject, []string{"modelArmorConfig"})
@@ -1666,11 +1666,11 @@ func generateImagesConfigToMldev(fromObject map[string]any, parentObject map[str
 	toObject = make(map[string]any)
 
 	if InternalGetValueByPath(fromObject, []string{"outputGcsUri"}) != nil {
-		return nil, fmt.Errorf("outputGcsUri parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("outputGcsUri parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"negativePrompt"}) != nil {
-		return nil, fmt.Errorf("negativePrompt parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("negativePrompt parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	fromNumberOfImages := InternalGetValueByPath(fromObject, []string{"numberOfImages"})
@@ -1689,7 +1689,7 @@ func generateImagesConfigToMldev(fromObject map[string]any, parentObject map[str
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"seed"}) != nil {
-		return nil, fmt.Errorf("seed parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("seed parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	fromSafetyFilterLevel := InternalGetValueByPath(fromObject, []string{"safetyFilterLevel"})
@@ -1728,11 +1728,11 @@ func generateImagesConfigToMldev(fromObject map[string]any, parentObject map[str
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"addWatermark"}) != nil {
-		return nil, fmt.Errorf("addWatermark parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("addWatermark parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"labels"}) != nil {
-		return nil, fmt.Errorf("labels parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("labels parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	fromImageSize := InternalGetValueByPath(fromObject, []string{"imageSize"})
@@ -1741,7 +1741,7 @@ func generateImagesConfigToMldev(fromObject map[string]any, parentObject map[str
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"enhancePrompt"}) != nil {
-		return nil, fmt.Errorf("enhancePrompt parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("enhancePrompt parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	return toObject, nil
@@ -1967,11 +1967,11 @@ func generateVideosConfigToMldev(fromObject map[string]any, parentObject map[str
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"outputGcsUri"}) != nil {
-		return nil, fmt.Errorf("outputGcsUri parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("outputGcsUri parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"fps"}) != nil {
-		return nil, fmt.Errorf("fps parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("fps parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	fromDurationSeconds := InternalGetValueByPath(fromObject, []string{"durationSeconds"})
@@ -1980,7 +1980,7 @@ func generateVideosConfigToMldev(fromObject map[string]any, parentObject map[str
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"seed"}) != nil {
-		return nil, fmt.Errorf("seed parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("seed parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	fromAspectRatio := InternalGetValueByPath(fromObject, []string{"aspectRatio"})
@@ -1999,7 +1999,7 @@ func generateVideosConfigToMldev(fromObject map[string]any, parentObject map[str
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"pubsubTopic"}) != nil {
-		return nil, fmt.Errorf("pubsubTopic parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("pubsubTopic parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	fromNegativePrompt := InternalGetValueByPath(fromObject, []string{"negativePrompt"})
@@ -2013,7 +2013,7 @@ func generateVideosConfigToMldev(fromObject map[string]any, parentObject map[str
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"generateAudio"}) != nil {
-		return nil, fmt.Errorf("generateAudio parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("generateAudio parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	fromLastFrame := InternalGetValueByPath(fromObject, []string{"lastFrame"})
@@ -2037,15 +2037,15 @@ func generateVideosConfigToMldev(fromObject map[string]any, parentObject map[str
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"mask"}) != nil {
-		return nil, fmt.Errorf("mask parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("mask parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"compressionQuality"}) != nil {
-		return nil, fmt.Errorf("compressionQuality parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("compressionQuality parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"labels"}) != nil {
-		return nil, fmt.Errorf("labels parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("labels parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	fromWebhookConfig := InternalGetValueByPath(fromObject, []string{"webhookConfig"})
@@ -2054,7 +2054,7 @@ func generateVideosConfigToMldev(fromObject map[string]any, parentObject map[str
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"resizeMode"}) != nil {
-		return nil, fmt.Errorf("resizeMode parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("resizeMode parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	return toObject, nil
@@ -2164,7 +2164,7 @@ func generateVideosConfigToVertex(fromObject map[string]any, parentObject map[st
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"webhookConfig"}) != nil {
-		return nil, fmt.Errorf("webhookConfig parameter is not supported in Gemini Enterprise Agent Platform (previously known as Vertex AI)")
+		return nil, fmt.Errorf("webhookConfig parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
 	}
 
 	fromResizeMode := InternalGetValueByPath(fromObject, []string{"resizeMode"})
@@ -2709,7 +2709,7 @@ func generationConfigToVertex(fromObject map[string]any, parentObject map[string
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"enableEnhancedCivicAnswers"}) != nil {
-		return nil, fmt.Errorf("enableEnhancedCivicAnswers parameter is not supported in Gemini Enterprise Agent Platform (previously known as Vertex AI)")
+		return nil, fmt.Errorf("enableEnhancedCivicAnswers parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
 	}
 
 	return toObject, nil
@@ -2777,11 +2777,11 @@ func googleSearchToMldev(fromObject map[string]any, parentObject map[string]any,
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"blockingConfidence"}) != nil {
-		return nil, fmt.Errorf("blockingConfidence parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("blockingConfidence parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"excludeDomains"}) != nil {
-		return nil, fmt.Errorf("excludeDomains parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("excludeDomains parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	fromTimeRangeFilter := InternalGetValueByPath(fromObject, []string{"timeRangeFilter"})
@@ -2806,23 +2806,23 @@ func imageConfigToMldev(fromObject map[string]any, parentObject map[string]any, 
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"personGeneration"}) != nil {
-		return nil, fmt.Errorf("personGeneration parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("personGeneration parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"prominentPeople"}) != nil {
-		return nil, fmt.Errorf("prominentPeople parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("prominentPeople parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"outputMimeType"}) != nil {
-		return nil, fmt.Errorf("outputMimeType parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("outputMimeType parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"outputCompressionQuality"}) != nil {
-		return nil, fmt.Errorf("outputCompressionQuality parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("outputCompressionQuality parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"imageOutputOptions"}) != nil {
-		return nil, fmt.Errorf("imageOutputOptions parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("imageOutputOptions parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	return toObject, nil
@@ -2919,7 +2919,7 @@ func imageFromVertex(fromObject map[string]any, parentObject map[string]any, roo
 func imageToMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 	if InternalGetValueByPath(fromObject, []string{"gcsUri"}) != nil {
-		return nil, fmt.Errorf("gcsUri parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("gcsUri parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	fromImageBytes := InternalGetValueByPath(fromObject, []string{"imageBytes"})
@@ -3421,15 +3421,15 @@ func partToVertex(fromObject map[string]any, parentObject map[string]any, rootOb
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"toolCall"}) != nil {
-		return nil, fmt.Errorf("toolCall parameter is not supported in Gemini Enterprise Agent Platform (previously known as Vertex AI)")
+		return nil, fmt.Errorf("toolCall parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"toolResponse"}) != nil {
-		return nil, fmt.Errorf("toolResponse parameter is not supported in Gemini Enterprise Agent Platform (previously known as Vertex AI)")
+		return nil, fmt.Errorf("toolResponse parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"partMetadata"}) != nil {
-		return nil, fmt.Errorf("partMetadata parameter is not supported in Gemini Enterprise Agent Platform (previously known as Vertex AI)")
+		return nil, fmt.Errorf("partMetadata parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
 	}
 
 	return toObject, nil
@@ -3698,7 +3698,7 @@ func safetySettingToMldev(fromObject map[string]any, parentObject map[string]any
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"method"}) != nil {
-		return nil, fmt.Errorf("method parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("method parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	fromThreshold := InternalGetValueByPath(fromObject, []string{"threshold"})
@@ -3880,7 +3880,7 @@ func toolConfigToVertex(fromObject map[string]any, parentObject map[string]any, 
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"includeServerSideToolInvocations"}) != nil {
-		return nil, fmt.Errorf("includeServerSideToolInvocations parameter is not supported in Gemini Enterprise Agent Platform (previously known as Vertex AI)")
+		return nil, fmt.Errorf("includeServerSideToolInvocations parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
 	}
 
 	return toObject, nil
@@ -3889,7 +3889,7 @@ func toolConfigToVertex(fromObject map[string]any, parentObject map[string]any, 
 func toolToMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 	if InternalGetValueByPath(fromObject, []string{"retrieval"}) != nil {
-		return nil, fmt.Errorf("retrieval parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("retrieval parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	fromComputerUse := InternalGetValueByPath(fromObject, []string{"computerUse"})
@@ -3928,7 +3928,7 @@ func toolToMldev(fromObject map[string]any, parentObject map[string]any, rootObj
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"enterpriseWebSearch"}) != nil {
-		return nil, fmt.Errorf("enterpriseWebSearch parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("enterpriseWebSearch parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	fromFunctionDeclarations := InternalGetValueByPath(fromObject, []string{"functionDeclarations"})
@@ -3942,7 +3942,7 @@ func toolToMldev(fromObject map[string]any, parentObject map[string]any, rootObj
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"parallelAiSearch"}) != nil {
-		return nil, fmt.Errorf("parallelAiSearch parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("parallelAiSearch parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	fromUrlContext := InternalGetValueByPath(fromObject, []string{"urlContext"})
@@ -3972,7 +3972,7 @@ func toolToVertex(fromObject map[string]any, parentObject map[string]any, rootOb
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"fileSearch"}) != nil {
-		return nil, fmt.Errorf("fileSearch parameter is not supported in Gemini Enterprise Agent Platform (previously known as Vertex AI)")
+		return nil, fmt.Errorf("fileSearch parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
 	}
 
 	fromGoogleSearch := InternalGetValueByPath(fromObject, []string{"googleSearch"})
@@ -4016,7 +4016,7 @@ func toolToVertex(fromObject map[string]any, parentObject map[string]any, rootOb
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"mcpServers"}) != nil {
-		return nil, fmt.Errorf("mcpServers parameter is not supported in Gemini Enterprise Agent Platform (previously known as Vertex AI)")
+		return nil, fmt.Errorf("mcpServers parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
 	}
 
 	return toObject, nil
@@ -4727,7 +4727,7 @@ func (m Models) editImage(ctx context.Context, model string, prompt string, refe
 		fromConverter = editImageResponseFromVertex
 	} else {
 
-		return nil, fmt.Errorf("method EditImage is only supported in the Gemini Enterprise Agent Platform (previously known as Vertex AI) client. You can choose to use Gemini Enterprise Agent Platform by setting ClientConfig.Backend to BackendEnterprise.")
+		return nil, fmt.Errorf("method EditImage is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode. You can choose to use Gemini Enterprise Agent Platform by setting ClientConfig.Backend to BackendEnterprise.")
 
 	}
 
@@ -4801,7 +4801,7 @@ func (m Models) upscaleImage(ctx context.Context, model string, image *Image, up
 		fromConverter = upscaleImageResponseFromVertex
 	} else {
 
-		return nil, fmt.Errorf("method UpscaleImage is only supported in the Gemini Enterprise Agent Platform (previously known as Vertex AI) client. You can choose to use Gemini Enterprise Agent Platform by setting ClientConfig.Backend to BackendEnterprise.")
+		return nil, fmt.Errorf("method UpscaleImage is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode. You can choose to use Gemini Enterprise Agent Platform by setting ClientConfig.Backend to BackendEnterprise.")
 
 	}
 
@@ -4877,7 +4877,7 @@ func (m Models) RecontextImage(ctx context.Context, model string, source *Recont
 		fromConverter = recontextImageResponseFromVertex
 	} else {
 
-		return nil, fmt.Errorf("method RecontextImage is only supported in the Gemini Enterprise Agent Platform (previously known as Vertex AI) client. You can choose to use Gemini Enterprise Agent Platform by setting ClientConfig.Backend to BackendEnterprise.")
+		return nil, fmt.Errorf("method RecontextImage is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode. You can choose to use Gemini Enterprise Agent Platform by setting ClientConfig.Backend to BackendEnterprise.")
 
 	}
 
@@ -4961,7 +4961,7 @@ func (m Models) SegmentImage(ctx context.Context, model string, source *SegmentI
 		fromConverter = segmentImageResponseFromVertex
 	} else {
 
-		return nil, fmt.Errorf("method SegmentImage is only supported in the Gemini Enterprise Agent Platform (previously known as Vertex AI) client. You can choose to use Gemini Enterprise Agent Platform by setting ClientConfig.Backend to BackendEnterprise.")
+		return nil, fmt.Errorf("method SegmentImage is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode. You can choose to use Gemini Enterprise Agent Platform by setting ClientConfig.Backend to BackendEnterprise.")
 
 	}
 
@@ -5426,7 +5426,7 @@ func (m Models) ComputeTokens(ctx context.Context, model string, contents []*Con
 		fromConverter = computeTokensResponseFromVertex
 	} else {
 
-		return nil, fmt.Errorf("method ComputeTokens is only supported in the Gemini Enterprise Agent Platform (previously known as Vertex AI) client. You can choose to use Gemini Enterprise Agent Platform by setting ClientConfig.Backend to BackendEnterprise.")
+		return nil, fmt.Errorf("method ComputeTokens is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode. You can choose to use Gemini Enterprise Agent Platform by setting ClientConfig.Backend to BackendEnterprise.")
 
 	}
 

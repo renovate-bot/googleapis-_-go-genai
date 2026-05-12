@@ -102,15 +102,15 @@ func batchJobDestinationToVertex(fromObject map[string]any, parentObject map[str
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"fileName"}) != nil {
-		return nil, fmt.Errorf("fileName parameter is not supported in Gemini Enterprise Agent Platform (previously known as Vertex AI)")
+		return nil, fmt.Errorf("fileName parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"inlinedResponses"}) != nil {
-		return nil, fmt.Errorf("inlinedResponses parameter is not supported in Gemini Enterprise Agent Platform (previously known as Vertex AI)")
+		return nil, fmt.Errorf("inlinedResponses parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"inlinedEmbedContentResponses"}) != nil {
-		return nil, fmt.Errorf("inlinedEmbedContentResponses parameter is not supported in Gemini Enterprise Agent Platform (previously known as Vertex AI)")
+		return nil, fmt.Errorf("inlinedEmbedContentResponses parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
 	}
 
 	fromVertexDataset := InternalGetValueByPath(fromObject, []string{"vertexDataset"})
@@ -307,15 +307,15 @@ func batchJobSourceFromVertex(fromObject map[string]any, parentObject map[string
 func batchJobSourceToMldev(ac *InternalAPIClient, fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 	if InternalGetValueByPath(fromObject, []string{"format"}) != nil {
-		return nil, fmt.Errorf("format parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("format parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"gcsUri"}) != nil {
-		return nil, fmt.Errorf("gcsUri parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("gcsUri parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"bigqueryUri"}) != nil {
-		return nil, fmt.Errorf("bigqueryUri parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("bigqueryUri parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	fromFileName := InternalGetValueByPath(fromObject, []string{"fileName"})
@@ -334,7 +334,7 @@ func batchJobSourceToMldev(ac *InternalAPIClient, fromObject map[string]any, par
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"vertexDatasetName"}) != nil {
-		return nil, fmt.Errorf("vertexDatasetName parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("vertexDatasetName parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	return toObject, nil
@@ -359,11 +359,11 @@ func batchJobSourceToVertex(fromObject map[string]any, parentObject map[string]a
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"fileName"}) != nil {
-		return nil, fmt.Errorf("fileName parameter is not supported in Gemini Enterprise Agent Platform (previously known as Vertex AI)")
+		return nil, fmt.Errorf("fileName parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"inlinedRequests"}) != nil {
-		return nil, fmt.Errorf("inlinedRequests parameter is not supported in Gemini Enterprise Agent Platform (previously known as Vertex AI)")
+		return nil, fmt.Errorf("inlinedRequests parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
 	}
 
 	fromVertexDatasetName := InternalGetValueByPath(fromObject, []string{"vertexDatasetName"})
@@ -415,7 +415,7 @@ func createBatchJobConfigToMldev(fromObject map[string]any, parentObject map[str
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"dest"}) != nil {
-		return nil, fmt.Errorf("dest parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("dest parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	fromWebhookConfig := InternalGetValueByPath(fromObject, []string{"webhookConfig"})
@@ -450,7 +450,7 @@ func createBatchJobConfigToVertex(fromObject map[string]any, parentObject map[st
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"webhookConfig"}) != nil {
-		return nil, fmt.Errorf("webhookConfig parameter is not supported in Gemini Enterprise Agent Platform (previously known as Vertex AI)")
+		return nil, fmt.Errorf("webhookConfig parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
 	}
 
 	return toObject, nil
@@ -829,7 +829,7 @@ func listBatchJobsConfigToMldev(fromObject map[string]any, parentObject map[stri
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"filter"}) != nil {
-		return nil, fmt.Errorf("filter parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("filter parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	return toObject, nil
@@ -1078,7 +1078,7 @@ func (m Batches) createEmbeddings(ctx context.Context, model *string, src *Embed
 	var toConverter func(*InternalAPIClient, map[string]any, map[string]any, map[string]any) (map[string]any, error)
 	if m.apiClient.ClientConfig().Backend == BackendVertexAI {
 
-		return nil, fmt.Errorf("method CreateEmbeddings is only supported in the Gemini Developer client. You can choose to use Gemini Developer client by setting ClientConfig.Backend to BackendGeminiAPI.")
+		return nil, fmt.Errorf("method CreateEmbeddings is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode. You can choose to use Gemini Developer client by setting ClientConfig.Backend to BackendGeminiAPI.")
 
 	} else {
 		toConverter = createEmbeddingsBatchJobParametersToMldev
@@ -1475,10 +1475,10 @@ func (m Batches) All(ctx context.Context) iter.Seq2[*BatchJob, error] {
 func (b Batches) Create(ctx context.Context, model string, src *BatchJobSource, config *CreateBatchJobConfig) (*BatchJob, error) {
 	if b.apiClient.clientConfig.Backend == BackendVertexAI {
 		if len(src.InlinedRequests) > 0 {
-			return nil, fmt.Errorf("inlinedRequests parameter is not supported in Gemini Enterprise Agent Platform (previously known as Vertex AI)")
+			return nil, fmt.Errorf("inlinedRequests parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
 		}
 		if src.FileName != "" {
-			return nil, fmt.Errorf("fileName parameter is not supported in Gemini Enterprise Agent Platform (previously known as Vertex AI)")
+			return nil, fmt.Errorf("fileName parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
 		}
 		count := 0
 		if len(src.GCSURI) > 0 {
@@ -1515,7 +1515,7 @@ func (b Batches) CreateEmbeddings(ctx context.Context, model *string, src *Embed
 		log.Println("The SDK's CreateEmbeddings implementation is experimental, and may change in future versions.")
 	})
 	if b.apiClient.clientConfig.Backend == BackendVertexAI {
-		return nil, fmt.Errorf("Gemini Enterprise Agent Platform (previously known as Vertex AI) does not support batches.createEmbeddings.")
+		return nil, fmt.Errorf("The batches.createEmbeddings function is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
 	}
 	return b.createEmbeddings(ctx, model, src, config)
 }

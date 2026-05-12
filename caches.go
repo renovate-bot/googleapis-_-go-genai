@@ -93,7 +93,7 @@ func createCachedContentConfigToMldev(fromObject map[string]any, parentObject ma
 	}
 
 	if InternalGetValueByPath(fromObject, []string{"kmsKeyName"}) != nil {
-		return nil, fmt.Errorf("kmsKeyName parameter is not supported in Gemini API")
+		return nil, fmt.Errorf("kmsKeyName parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
 	return toObject, nil
