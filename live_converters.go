@@ -547,6 +547,11 @@ func liveConnectConfigToMldev(fromObject map[string]any, parentObject map[string
 		InternalSetValueByPath(parentObject, []string{"setup", "safetySettings"}, fromSafetySettings)
 	}
 
+	fromStreamTranslationConfig := InternalGetValueByPath(fromObject, []string{"streamTranslationConfig"})
+	if fromStreamTranslationConfig != nil {
+		InternalSetValueByPath(parentObject, []string{"setup", "generationConfig", "streamTranslationConfig"}, fromStreamTranslationConfig)
+	}
+
 	return toObject, nil
 }
 
@@ -686,6 +691,10 @@ func liveConnectConfigToVertex(fromObject map[string]any, parentObject map[strin
 	fromSafetySettings := InternalGetValueByPath(fromObject, []string{"safetySettings"})
 	if fromSafetySettings != nil {
 		InternalSetValueByPath(parentObject, []string{"setup", "safetySettings"}, fromSafetySettings)
+	}
+
+	if InternalGetValueByPath(fromObject, []string{"streamTranslationConfig"}) != nil {
+		return nil, fmt.Errorf("streamTranslationConfig parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
 	}
 
 	return toObject, nil

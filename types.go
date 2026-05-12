@@ -7466,6 +7466,17 @@ type LiveClientMessage struct {
 	ToolResponse *LiveClientToolResponse `json:"toolResponse,omitempty"`
 }
 
+// Config for stream translation.
+type StreamTranslationConfig struct {
+	// Optional. If true, the model will generate audio when the target language is
+	// spoken, essentially it will parrot the input. If false, we will not produce
+	// audio for the target language.
+	EchoTargetLanguage *bool `json:"echoTargetLanguage,omitempty"`
+	// Optional. The target language for translation. Supported values are BCP-47
+	// language codes (e.g. "en", "es", "fr").
+	TargetLanguageCode string `json:"targetLanguageCode,omitempty"`
+}
+
 // Session config for the API connection.
 type LiveConnectConfig struct {
 	// Optional. Used to override HTTP request options.
@@ -7540,6 +7551,8 @@ type LiveConnectConfig struct {
 	// Optional. Safety settings in the request to block unsafe content in the
 	// response.
 	SafetySettings []*SafetySetting `json:"safetySettings,omitempty"`
+	// Optional. Config for stream translation.
+	StreamTranslationConfig *StreamTranslationConfig `json:"streamTranslationConfig,omitempty"`
 }
 
 // Parameters for sending client content to the live API.
