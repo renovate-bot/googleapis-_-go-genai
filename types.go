@@ -98,6 +98,10 @@ const (
 	EnvironmentUnspecified Environment = "ENVIRONMENT_UNSPECIFIED"
 	// Operates in a web browser.
 	EnvironmentBrowser Environment = "ENVIRONMENT_BROWSER"
+	// Operates in a mobile environment.
+	EnvironmentMobile Environment = "ENVIRONMENT_MOBILE"
+	// Operates in a desktop environment.
+	EnvironmentDesktop Environment = "ENVIRONMENT_DESKTOP"
 )
 
 // Type of auth scheme. This enum is not supported in Gemini API.
@@ -1782,6 +1786,8 @@ type ComputerUse struct {
 	// 1. Using a more restricted / different action space.
 	// 2. Improving the definitions / instructions of predefined functions.
 	ExcludedPredefinedFunctions []string `json:"excludedPredefinedFunctions,omitempty"`
+	// Optional. Whether enable the prompt injection detection check on computer-use request.
+	EnablePromptInjectionDetection *bool `json:"enablePromptInjectionDetection,omitempty"`
 }
 
 // Config for authentication with API key. This data type is not supported in Gemini
