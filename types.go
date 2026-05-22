@@ -201,29 +201,6 @@ const (
 	DynamicRetrievalConfigModeDynamic DynamicRetrievalConfigMode = "MODE_DYNAMIC"
 )
 
-// Function calling mode.
-type FunctionCallingConfigMode string
-
-const (
-	// Unspecified function calling mode. This value should not be used.
-	FunctionCallingConfigModeUnspecified FunctionCallingConfigMode = "MODE_UNSPECIFIED"
-	// Default model behavior, model decides to predict either function calls or natural
-	// language response.
-	FunctionCallingConfigModeAuto FunctionCallingConfigMode = "AUTO"
-	// Model is constrained to always predicting function calls only. If "allowed_function_names"
-	// are set, the predicted function calls will be limited to any one of "allowed_function_names",
-	// else the predicted function calls will be any one of the provided "function_declarations".
-	FunctionCallingConfigModeAny FunctionCallingConfigMode = "ANY"
-	// Model will not predict any function calls. Model behavior is same as when not passing
-	// any function declarations.
-	FunctionCallingConfigModeNone FunctionCallingConfigMode = "NONE"
-	// Model is constrained to predict either function calls or natural language response.
-	// If "allowed_function_names" are set, the predicted function calls will be limited
-	// to any one of "allowed_function_names", else the predicted function calls will be
-	// any one of the provided "function_declarations".
-	FunctionCallingConfigModeValidated FunctionCallingConfigMode = "VALIDATED"
-)
-
 // The number of thoughts tokens that the model should generate.
 type ThinkingLevel string
 
@@ -331,6 +308,29 @@ const (
 	HarmBlockThresholdBlockNone HarmBlockThreshold = "BLOCK_NONE"
 	// Turn off the safety filter entirely.
 	HarmBlockThresholdOff HarmBlockThreshold = "OFF"
+)
+
+// Function calling mode.
+type FunctionCallingConfigMode string
+
+const (
+	// Unspecified function calling mode. This value should not be used.
+	FunctionCallingConfigModeUnspecified FunctionCallingConfigMode = "MODE_UNSPECIFIED"
+	// Default model behavior, model decides to predict either function calls or natural
+	// language response.
+	FunctionCallingConfigModeAuto FunctionCallingConfigMode = "AUTO"
+	// Model is constrained to always predicting function calls only. If "allowed_function_names"
+	// are set, the predicted function calls will be limited to any one of "allowed_function_names",
+	// else the predicted function calls will be any one of the provided "function_declarations".
+	FunctionCallingConfigModeAny FunctionCallingConfigMode = "ANY"
+	// Model will not predict any function calls. Model behavior is same as when not passing
+	// any function declarations.
+	FunctionCallingConfigModeNone FunctionCallingConfigMode = "NONE"
+	// Model is constrained to predict either function calls or natural language response.
+	// If "allowed_function_names" are set, the predicted function calls will be limited
+	// to any one of "allowed_function_names", else the predicted function calls will be
+	// any one of the provided "function_declarations".
+	FunctionCallingConfigModeValidated FunctionCallingConfigMode = "VALIDATED"
 )
 
 // The reason why the model stopped generating tokens.
@@ -1218,11 +1218,12 @@ type PartialArg struct {
 	WillContinue *bool `json:"willContinue,omitempty"`
 }
 
-// A function call.
+// A predicted FunctionCall returned from the model that contains a string representing
+// the FunctionDeclaration.name and a structured JSON object containing the parameters
+// and their values.
 type FunctionCall struct {
 	// Optional. The unique ID of the function call. If populated, the client to execute
-	// the
-	// `function_call` and return the response with the matching `id`.
+	// the `function_call` and return the response with the matching `id`.
 	ID string `json:"id,omitempty"`
 	// Optional. The function parameters and values in JSON object format. See FunctionDeclaration.parameters
 	// for parameter details.
@@ -2383,52 +2384,6 @@ type Tool struct {
 	MCPServers []*MCPServer `json:"mcpServers,omitempty"`
 }
 
-// An object that represents a latitude/longitude pair.
-// This is expressed as a pair of doubles to represent degrees latitude and
-// degrees longitude. Unless specified otherwise, this object must conform to the
-// <a href="https://en.wikipedia.org/wiki/World_Geodetic_System#1984_version">
-// WGS84 standard</a>. Values must be within normalized ranges.
-type LatLng struct {
-	// Optional. The latitude in degrees. It must be in the range [-90.0, +90.0].
-	Latitude *float64 `json:"latitude,omitempty"`
-	// Optional. The longitude in degrees. It must be in the range [-180.0, +180.0]
-	Longitude *float64 `json:"longitude,omitempty"`
-}
-
-// Retrieval config.
-type RetrievalConfig struct {
-	// Optional. The location of the user.
-	LatLng *LatLng `json:"latLng,omitempty"`
-	// The language code of the user.
-	LanguageCode string `json:"languageCode,omitempty"`
-}
-
-// Function calling config.
-type FunctionCallingConfig struct {
-	// Optional. Function names to call. Only set when the Mode is ANY. Function names should
-	// match [FunctionDeclaration.Name]. With mode set to ANY, model will predict a function
-	// call from the set of function names provided.
-	AllowedFunctionNames []string `json:"allowedFunctionNames,omitempty"`
-	// Optional. Function calling mode.
-	Mode FunctionCallingConfigMode `json:"mode,omitempty"`
-	// Optional. When set to true, arguments of a single function call will be streamed
-	// out in multiple parts/contents/responses. Partial parameter results will be returned
-	// in the `FunctionCall.partial_args` field. This field is not supported in Gemini API.
-	StreamFunctionCallArguments *bool `json:"streamFunctionCallArguments,omitempty"`
-}
-
-// Tool config.
-// This config is shared for all tools provided in the request.
-type ToolConfig struct {
-	// Optional. Retrieval config.
-	RetrievalConfig *RetrievalConfig `json:"retrievalConfig,omitempty"`
-	// Optional. Function calling config.
-	FunctionCallingConfig *FunctionCallingConfig `json:"functionCallingConfig,omitempty"`
-	// Optional. If true, the API response will include the server-side tool calls and responses
-	// within the `Content` message. This allows clients to observe the server's tool invocations.
-	IncludeServerSideToolInvocations *bool `json:"includeServerSideToolInvocations,omitempty"`
-}
-
 // The configuration for the replicated voice to use.
 type ReplicatedVoiceConfig struct {
 	// Optional. The mimetype of the voice sample. The only currently supported
@@ -2568,6 +2523,51 @@ type SafetySetting struct {
 	// Required. The threshold for blocking content. If the harm probability exceeds this
 	// threshold, the content will be blocked.
 	Threshold HarmBlockThreshold `json:"threshold,omitempty"`
+}
+
+// An object that represents a latitude/longitude pair. This is expressed as a pair
+// of doubles to represent degrees latitude and degrees longitude. Unless specified
+// otherwise, this object must conform to the WGS84 standard. Values must be within
+// normalized ranges.
+type LatLng struct {
+	// The latitude in degrees. It must be in the range [-90.0, +90.0].
+	Latitude *float64 `json:"latitude,omitempty"`
+	// The longitude in degrees. It must be in the range [-180.0, +180.0].
+	Longitude *float64 `json:"longitude,omitempty"`
+}
+
+// Retrieval config.
+type RetrievalConfig struct {
+	// The location of the user.
+	LatLng *LatLng `json:"latLng,omitempty"`
+	// The language code of the user.
+	LanguageCode string `json:"languageCode,omitempty"`
+}
+
+// Function calling config.
+type FunctionCallingConfig struct {
+	// Optional. Function names to call. Only set when the Mode is ANY. Function names should
+	// match [FunctionDeclaration.Name]. With mode set to ANY, model will predict a function
+	// call from the set of function names provided.
+	AllowedFunctionNames []string `json:"allowedFunctionNames,omitempty"`
+	// Optional. Function calling mode.
+	Mode FunctionCallingConfigMode `json:"mode,omitempty"`
+	// Optional. When set to true, arguments of a single function call will be streamed
+	// out in multiple parts/contents/responses. Partial parameter results will be returned
+	// in the `FunctionCall.partial_args` field. This field is not supported in Gemini API.
+	StreamFunctionCallArguments *bool `json:"streamFunctionCallArguments,omitempty"`
+}
+
+// Tool config. This config is shared for all tools provided in the request.
+type ToolConfig struct {
+	// Optional. Retrieval config.
+	RetrievalConfig *RetrievalConfig `json:"retrievalConfig,omitempty"`
+	// Optional. Function calling config.
+	FunctionCallingConfig *FunctionCallingConfig `json:"functionCallingConfig,omitempty"`
+	// Optional. If true, the API response will include the server-side tool calls and responses
+	// within the `Content` message. This allows clients to observe the server's tool interactions.
+	// This field is not supported in Vertex AI.
+	IncludeServerSideToolInvocations *bool `json:"includeServerSideToolInvocations,omitempty"`
 }
 
 // Configuration for Model Armor. Model Armor is a Google Cloud service that provides
