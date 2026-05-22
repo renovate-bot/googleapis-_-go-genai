@@ -154,6 +154,30 @@ func createTuningJobConfigToMldev(fromObject map[string]any, parentObject map[st
 		return nil, fmt.Errorf("encryptionSpec parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
 	}
 
+	if InternalGetValueByPath(fromObject, []string{"rewardConfig"}) != nil {
+		return nil, fmt.Errorf("rewardConfig parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
+	}
+
+	if InternalGetValueByPath(fromObject, []string{"compositeRewardConfig"}) != nil {
+		return nil, fmt.Errorf("compositeRewardConfig parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
+	}
+
+	if InternalGetValueByPath(fromObject, []string{"samplesPerPrompt"}) != nil {
+		return nil, fmt.Errorf("samplesPerPrompt parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
+	}
+
+	if InternalGetValueByPath(fromObject, []string{"evaluateInterval"}) != nil {
+		return nil, fmt.Errorf("evaluateInterval parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
+	}
+
+	if InternalGetValueByPath(fromObject, []string{"checkpointInterval"}) != nil {
+		return nil, fmt.Errorf("checkpointInterval parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
+	}
+
+	if InternalGetValueByPath(fromObject, []string{"maxOutputTokens"}) != nil {
+		return nil, fmt.Errorf("maxOutputTokens parameter is only supported in Gemini Enterprise Agent Platform mode, not in Gemini Developer API mode.")
+	}
+
 	return toObject, nil
 }
 
@@ -194,6 +218,16 @@ func createTuningJobConfigToVertex(fromObject map[string]any, parentObject map[s
 
 			InternalSetValueByPath(parentObject, []string{"distillationSpec"}, fromValidationDataset)
 		}
+	} else if discriminatorValidationDataset.(string) == "REINFORCEMENT_TUNING" {
+		fromValidationDataset := InternalGetValueByPath(fromObject, []string{"validationDataset"})
+		if fromValidationDataset != nil {
+			fromValidationDataset, err = tuningValidationDatasetToVertex(fromValidationDataset.(map[string]any), toObject, rootObject)
+			if err != nil {
+				return nil, err
+			}
+
+			InternalSetValueByPath(parentObject, []string{"reinforcementTuningSpec"}, fromValidationDataset)
+		}
 	}
 
 	fromTunedModelDisplayName := InternalGetValueByPath(fromObject, []string{"tunedModelDisplayName"})
@@ -225,6 +259,11 @@ func createTuningJobConfigToVertex(fromObject map[string]any, parentObject map[s
 		if fromEpochCount != nil {
 			InternalSetValueByPath(parentObject, []string{"distillationSpec", "hyperParameters", "epochCount"}, fromEpochCount)
 		}
+	} else if discriminatorEpochCount.(string) == "REINFORCEMENT_TUNING" {
+		fromEpochCount := InternalGetValueByPath(fromObject, []string{"epochCount"})
+		if fromEpochCount != nil {
+			InternalSetValueByPath(parentObject, []string{"reinforcementTuningSpec", "hyperParameters", "epochCount"}, fromEpochCount)
+		}
 	}
 
 	var discriminatorLearningRateMultiplier any = InternalGetValueByPath(rootObject, []string{"config", "method"})
@@ -245,6 +284,11 @@ func createTuningJobConfigToVertex(fromObject map[string]any, parentObject map[s
 		fromLearningRateMultiplier := InternalGetValueByPath(fromObject, []string{"learningRateMultiplier"})
 		if fromLearningRateMultiplier != nil {
 			InternalSetValueByPath(parentObject, []string{"distillationSpec", "hyperParameters", "learningRateMultiplier"}, fromLearningRateMultiplier)
+		}
+	} else if discriminatorLearningRateMultiplier.(string) == "REINFORCEMENT_TUNING" {
+		fromLearningRateMultiplier := InternalGetValueByPath(fromObject, []string{"learningRateMultiplier"})
+		if fromLearningRateMultiplier != nil {
+			InternalSetValueByPath(parentObject, []string{"reinforcementTuningSpec", "hyperParameters", "learningRateMultiplier"}, fromLearningRateMultiplier)
 		}
 	}
 
@@ -288,6 +332,11 @@ func createTuningJobConfigToVertex(fromObject map[string]any, parentObject map[s
 		if fromAdapterSize != nil {
 			InternalSetValueByPath(parentObject, []string{"distillationSpec", "hyperParameters", "adapterSize"}, fromAdapterSize)
 		}
+	} else if discriminatorAdapterSize.(string) == "REINFORCEMENT_TUNING" {
+		fromAdapterSize := InternalGetValueByPath(fromObject, []string{"adapterSize"})
+		if fromAdapterSize != nil {
+			InternalSetValueByPath(parentObject, []string{"reinforcementTuningSpec", "hyperParameters", "adapterSize"}, fromAdapterSize)
+		}
 	}
 
 	var discriminatorTuningMode any = InternalGetValueByPath(rootObject, []string{"config", "method"})
@@ -324,6 +373,11 @@ func createTuningJobConfigToVertex(fromObject map[string]any, parentObject map[s
 		fromBatchSize := InternalGetValueByPath(fromObject, []string{"batchSize"})
 		if fromBatchSize != nil {
 			InternalSetValueByPath(parentObject, []string{"distillationSpec", "hyperParameters", "batchSize"}, fromBatchSize)
+		}
+	} else if discriminatorBatchSize.(string) == "REINFORCEMENT_TUNING" {
+		fromBatchSize := InternalGetValueByPath(fromObject, []string{"batchSize"})
+		if fromBatchSize != nil {
+			InternalSetValueByPath(parentObject, []string{"reinforcementTuningSpec", "hyperParameters", "batchSize"}, fromBatchSize)
 		}
 	}
 
@@ -376,6 +430,36 @@ func createTuningJobConfigToVertex(fromObject map[string]any, parentObject map[s
 	fromEncryptionSpec := InternalGetValueByPath(fromObject, []string{"encryptionSpec"})
 	if fromEncryptionSpec != nil {
 		InternalSetValueByPath(parentObject, []string{"encryptionSpec"}, fromEncryptionSpec)
+	}
+
+	fromRewardConfig := InternalGetValueByPath(fromObject, []string{"rewardConfig"})
+	if fromRewardConfig != nil {
+		InternalSetValueByPath(parentObject, []string{"reinforcementTuningSpec", "singleRewardConfig"}, fromRewardConfig)
+	}
+
+	fromCompositeRewardConfig := InternalGetValueByPath(fromObject, []string{"compositeRewardConfig"})
+	if fromCompositeRewardConfig != nil {
+		InternalSetValueByPath(parentObject, []string{"reinforcementTuningSpec", "compositeRewardConfig"}, fromCompositeRewardConfig)
+	}
+
+	fromSamplesPerPrompt := InternalGetValueByPath(fromObject, []string{"samplesPerPrompt"})
+	if fromSamplesPerPrompt != nil {
+		InternalSetValueByPath(parentObject, []string{"reinforcementTuningSpec", "hyperParameters", "samplesPerPrompt"}, fromSamplesPerPrompt)
+	}
+
+	fromEvaluateInterval := InternalGetValueByPath(fromObject, []string{"evaluateInterval"})
+	if fromEvaluateInterval != nil {
+		InternalSetValueByPath(parentObject, []string{"reinforcementTuningSpec", "hyperParameters", "evaluateInterval"}, fromEvaluateInterval)
+	}
+
+	fromCheckpointInterval := InternalGetValueByPath(fromObject, []string{"checkpointInterval"})
+	if fromCheckpointInterval != nil {
+		InternalSetValueByPath(parentObject, []string{"reinforcementTuningSpec", "hyperParameters", "checkpointInterval"}, fromCheckpointInterval)
+	}
+
+	fromMaxOutputTokens := InternalGetValueByPath(fromObject, []string{"maxOutputTokens"})
+	if fromMaxOutputTokens != nil {
+		InternalSetValueByPath(parentObject, []string{"reinforcementTuningSpec", "hyperParameters", "maxOutputTokens"}, fromMaxOutputTokens)
 	}
 
 	return toObject, nil
@@ -833,6 +917,11 @@ func tuningDatasetToVertex(fromObject map[string]any, parentObject map[string]an
 		if fromGcsUri != nil {
 			InternalSetValueByPath(parentObject, []string{"distillationSpec", "promptDatasetUri"}, fromGcsUri)
 		}
+	} else if discriminatorGcsUri.(string) == "REINFORCEMENT_TUNING" {
+		fromGcsUri := InternalGetValueByPath(fromObject, []string{"gcsUri"})
+		if fromGcsUri != nil {
+			InternalSetValueByPath(parentObject, []string{"reinforcementTuningSpec", "trainingDatasetUri"}, fromGcsUri)
+		}
 	}
 
 	var discriminatorVertexDatasetResource any = InternalGetValueByPath(rootObject, []string{"config", "method"})
@@ -853,6 +942,11 @@ func tuningDatasetToVertex(fromObject map[string]any, parentObject map[string]an
 		fromVertexDatasetResource := InternalGetValueByPath(fromObject, []string{"vertexDatasetResource"})
 		if fromVertexDatasetResource != nil {
 			InternalSetValueByPath(parentObject, []string{"distillationSpec", "promptDatasetUri"}, fromVertexDatasetResource)
+		}
+	} else if discriminatorVertexDatasetResource.(string) == "REINFORCEMENT_TUNING" {
+		fromVertexDatasetResource := InternalGetValueByPath(fromObject, []string{"vertexDatasetResource"})
+		if fromVertexDatasetResource != nil {
+			InternalSetValueByPath(parentObject, []string{"reinforcementTuningSpec", "trainingDatasetUri"}, fromVertexDatasetResource)
 		}
 	}
 

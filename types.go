@@ -935,6 +935,8 @@ const (
 	TuningMethodPreferenceTuning TuningMethod = "PREFERENCE_TUNING"
 	// Distillation tuning.
 	TuningMethodDistillation TuningMethod = "DISTILLATION"
+	// Reinforcement tuning.
+	TuningMethodReinforcementTuning TuningMethod = "REINFORCEMENT_TUNING"
 )
 
 // State for the lifecycle of a File.
@@ -5572,12 +5574,59 @@ type TuningValidationDataset struct {
 	VertexDatasetResource string `json:"vertexDatasetResource,omitempty"`
 }
 
+// Autorater config used for evaluation.
+type AutoraterConfig struct {
+	// Optional. Number of samples for each instance in the dataset.
+	// If not specified, the default is 4. Minimum value is 1, maximum value
+	// is 32.
+	SamplingCount *int32 `json:"samplingCount,omitempty"`
+	// Optional. Default is true. Whether to flip the candidate and baseline
+	// responses. This is only applicable to the pairwise metric. If enabled, also
+	// provide PairwiseMetricSpec.candidate_response_field_name and
+	// PairwiseMetricSpec.baseline_response_field_name. When rendering
+	// PairwiseMetricSpec.metric_prompt_template, the candidate and baseline
+	// fields will be flipped for half of the samples to reduce bias.
+	FlipEnabled *bool `json:"flipEnabled,omitempty"`
+	// Optional. The fully qualified name of the publisher model or tuned autorater
+	// endpoint to use.
+	// Publisher model format:
+	// `projects/{project}/locations/{location}/publishers/{publisher}/models/{model}`
+	// Tuned model endpoint format:
+	// `projects/{project}/locations/{location}/endpoints/{endpoint}`
+	AutoraterModel string `json:"autoraterModel,omitempty"`
+	// Optional. Configuration options for model generation and outputs.
+	GenerationConfig *GenerationConfig `json:"generationConfig,omitempty"`
+}
+
+// Reinforcement tuning autorater scorer.
+type ReinforcementTuningAutoraterScorer struct {
+	// Optional. Autorater config for evaluation.
+	AutoraterConfig *AutoraterConfig `json:"autoraterConfig,omitempty"`
+}
+
+// Single reinforcement tuning reward config.
+type SingleReinforcementTuningRewardConfig struct {
+	AutoraterScorer *ReinforcementTuningAutoraterScorer `json:"autoraterScorer,omitempty"`
+}
+
+// Composite reinforcement tuning reward config weighted reward config.
+type CompositeReinforcementTuningRewardConfigWeightedRewardConfig struct {
+	RewardConfig *SingleReinforcementTuningRewardConfig `json:"rewardConfig,omitempty"`
+	// Optional. How much this single reward contributes to the total overall reward.
+	Weight *float32 `json:"weight,omitempty"`
+}
+
+// Composite reinforcement tuning reward config.
+type CompositeReinforcementTuningRewardConfig struct {
+	WeightedRewardConfigs []*CompositeReinforcementTuningRewardConfigWeightedRewardConfig `json:"weightedRewardConfigs,omitempty"`
+}
+
 // Fine-tuning job creation request - optional fields.
 type CreateTuningJobConfig struct {
 	// Optional. Used to override HTTP request options.
 	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
-	// The method to use for tuning (SUPERVISED_FINE_TUNING or PREFERENCE_TUNING or DISTILLATION).
-	// If not set, the default method (SFT) will be used.
+	// The method to use for tuning (SUPERVISED_FINE_TUNING or PREFERENCE_TUNING or DISTILLATION
+	// or REINFORCEMENT_TUNING). If not set, the default method (SFT) will be used.
 	Method TuningMethod `json:"method,omitempty"`
 	// Optional. Validation dataset for tuning. The dataset must be formatted as a JSONL
 	// file.
@@ -5633,6 +5682,24 @@ type CreateTuningJobConfig struct {
 	// options for a TuningJob. If this is set, then all resources created by the TuningJob
 	// will be encrypted with provided encryption key.
 	EncryptionSpec *EncryptionSpec `json:"encryptionSpec,omitempty"`
+	// Optional. Reward function configuration for reinforcement tuning. Reinforcement tuning
+	// only.
+	RewardConfig *SingleReinforcementTuningRewardConfig `json:"rewardConfig,omitempty"`
+	// Optional. Composite reward function configuration for reinforcement tuning. Reinforcement
+	// tuning only.
+	CompositeRewardConfig *CompositeReinforcementTuningRewardConfig `json:"compositeRewardConfig,omitempty"`
+	// Optional. Number of different responses to generate per prompt during tuning. Reinforcement
+	// tuning only.
+	SamplesPerPrompt *int32 `json:"samplesPerPrompt,omitempty"`
+	// Optional. How often at steps to evaluate the tuning job during training. Reinforcement
+	// tuning only.
+	EvaluateInterval *int32 `json:"evaluateInterval,omitempty"`
+	// Optional. How often at steps to save checkpoints during training. Reinforcement tuning
+	// only.
+	CheckpointInterval *int32 `json:"checkpointInterval,omitempty"`
+	// Optional. The maximum number of tokens to generate per prompt. Reinforcement tuning
+	// only. If empty, API will use a default value. The default value varies by model.
+	MaxOutputTokens int32 `json:"maxOutputTokens,omitempty"`
 }
 
 // A long-running operation.
