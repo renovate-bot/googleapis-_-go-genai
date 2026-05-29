@@ -52,7 +52,8 @@ const (
 	LanguagePython Language = "PYTHON"
 )
 
-// Specifies how the response should be scheduled in the conversation.
+// Specifies how the response should be scheduled in the conversation. Only applicable
+// to NON_BLOCKING function calls, is ignored otherwise. Defaults to WHEN_IDLE.
 type FunctionResponseScheduling string
 
 const (
@@ -1240,41 +1241,43 @@ type FunctionCall struct {
 	WillContinue *bool `json:"willContinue,omitempty"`
 }
 
-// Raw media bytes for function response.
-// Text should not be sent as raw bytes, use the FunctionResponse.response
-// field.
+// Raw media bytes for function response. Text should not be sent as raw bytes, use
+// the 'text' field.
 type FunctionResponseBlob struct {
 	// Required. The IANA standard MIME type of the source data.
 	MIMEType string `json:"mimeType,omitempty"`
-	// Required. Inline media bytes.
+	// Required. Raw bytes.
 	Data []byte `json:"data,omitempty"`
-	// Optional. Display name of the blob.
-	// Used to provide a label or filename to distinguish blobs.
+	// Optional. Display name of the blob. Used to provide a label or filename to distinguish
+	// blobs. This field is only returned in PromptMessage for prompt management. It is
+	// currently used in the Gemini GenerateContent calls only when server side tools (code_execution,
+	// google_search, and url_context) are enabled. This field is not supported in Gemini
+	// API.
 	DisplayName string `json:"displayName,omitempty"`
 }
 
-// URI based data for function response.
+// URI based data for function response. This data type is not supported in Gemini API.
 type FunctionResponseFileData struct {
 	// Required. URI.
 	FileURI string `json:"fileUri,omitempty"`
 	// Required. The IANA standard MIME type of the source data.
 	MIMEType string `json:"mimeType,omitempty"`
-	// Optional. Display name of the file.
-	// Used to provide a label or filename to distinguish files.
+	// Optional. Display name of the file data. Used to provide a label or filename to distinguish
+	// file datas. This field is only returned in PromptMessage for prompt management. It
+	// is currently used in the Gemini GenerateContent calls only when server side tools
+	// (code_execution, google_search, and url_context) are enabled.
 	DisplayName string `json:"displayName,omitempty"`
 }
 
-// A datatype containing media that is part of a `FunctionResponse` message.
-// A `FunctionResponsePart` consists of data which has an associated datatype. A
-// `FunctionResponsePart` can only contain one of the accepted types in
-// `FunctionResponsePart.data`.
-// A `FunctionResponsePart` must have a fixed IANA MIME type identifying the
-// type and subtype of the media if the `inline_data` field is filled with raw
-// bytes.
+// A datatype containing media that is part of a `FunctionResponse` message. A `FunctionResponsePart`
+// consists of data which has an associated datatype. A `FunctionResponsePart` can only
+// contain one of the accepted types in `FunctionResponsePart.data`. A `FunctionResponsePart`
+// must have a fixed IANA MIME type identifying the type and subtype of the media if
+// the `inline_data` field is filled with raw bytes.
 type FunctionResponsePart struct {
-	// Optional. Inline media bytes.
+	// Inline media bytes.
 	InlineData *FunctionResponseBlob `json:"inlineData,omitempty"`
-	// Optional. URI based data.
+	// URI based data. This field is not supported in Gemini API.
 	FileData *FunctionResponseFileData `json:"fileData,omitempty"`
 }
 
@@ -1298,21 +1301,24 @@ func NewFunctionResponsePartFromBytes(data []byte, mimeType string) *FunctionRes
 	}
 }
 
-// A function response.
+// The result output from a FunctionCall that contains a string representing the FunctionDeclaration.name
+// and a structured JSON object containing any output from the function is used as context
+// to the model. This should contain the result of a `FunctionCall` made based on model
+// prediction.
 type FunctionResponse struct {
 	// Optional. Signals that function call continues, and more responses will be returned,
 	// turning the function call into a generator. Is only applicable to NON_BLOCKING function
-	// calls (see FunctionDeclaration.behavior for details), ignored otherwise. If false,
-	// the default, future responses will not be considered. Is only applicable to NON_BLOCKING
-	// function calls, is ignored otherwise. If set to false, future responses will not
-	// be considered. It is allowed to return empty `response` with `will_continue=False`
-	// to signal that the function call is finished.
+	// calls, is ignored otherwise. If set to false, future responses will not be considered.
+	// It is allowed to return empty `response` with `will_continue=False` to signal that
+	// the function call is finished. This may still trigger the model generation. To avoid
+	// triggering the generation and finish the function call, additionally set `scheduling`
+	// to `SILENT`. This field is not supported in Vertex AI.
 	WillContinue *bool `json:"willContinue,omitempty"`
 	// Optional. Specifies how the response should be scheduled in the conversation. Only
 	// applicable to NON_BLOCKING function calls, is ignored otherwise. Defaults to WHEN_IDLE.
 	Scheduling FunctionResponseScheduling `json:"scheduling,omitempty"`
-	// Optional. List of parts that constitute a function response. Each part may
-	// have a different IANA MIME type.
+	// Optional. Ordered `Parts` that constitute a function response. Parts may have different
+	// IANA MIME types.
 	Parts []*FunctionResponsePart `json:"parts,omitempty"`
 	// Optional. The ID of the function call this response is for. Populated by the client
 	// to match the corresponding function call `id`.
