@@ -3179,6 +3179,19 @@ func maskReferenceConfigToVertex(fromObject map[string]any, parentObject map[str
 	return toObject, nil
 }
 
+func mcpServerToVertex(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
+	toObject = make(map[string]any)
+	if InternalGetValueByPath(fromObject, []string{"name"}) != nil {
+		return nil, fmt.Errorf("name parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
+	}
+
+	if InternalGetValueByPath(fromObject, []string{"streamableHttpTransport"}) != nil {
+		return nil, fmt.Errorf("streamableHttpTransport parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
+	}
+
+	return toObject, nil
+}
+
 func modelFromMldev(fromObject map[string]any, parentObject map[string]any, rootObject map[string]any) (toObject map[string]any, err error) {
 	toObject = make(map[string]any)
 
@@ -4065,8 +4078,14 @@ func toolToVertex(fromObject map[string]any, parentObject map[string]any, rootOb
 		InternalSetValueByPath(toObject, []string{"urlContext"}, fromUrlContext)
 	}
 
-	if InternalGetValueByPath(fromObject, []string{"mcpServers"}) != nil {
-		return nil, fmt.Errorf("mcpServers parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.")
+	fromMcpServers := InternalGetValueByPath(fromObject, []string{"mcpServers"})
+	if fromMcpServers != nil {
+		fromMcpServers, err = InternalApplyConverterToSliceWithRoot(fromMcpServers.([]any), mcpServerToVertex, rootObject)
+		if err != nil {
+			return nil, err
+		}
+
+		InternalSetValueByPath(toObject, []string{"mcpServers"}, fromMcpServers)
 	}
 
 	return toObject, nil
