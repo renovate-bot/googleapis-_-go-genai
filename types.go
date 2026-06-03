@@ -926,6 +926,44 @@ const (
 	ImageResizeModePad ImageResizeMode = "PAD"
 )
 
+// Defines how to parse sample response.
+type ResponseParseType string
+
+const (
+	// Default value. This value is unused.
+	ResponseParseTypeUnspecified ResponseParseType = "RESPONSE_PARSE_TYPE_UNSPECIFIED"
+	// Use the sample response as is.
+	ResponseParseTypeIdentity ResponseParseType = "IDENTITY"
+	// Use regex to extract the important part of sample response.
+	ResponseParseTypeRegexExtract ResponseParseType = "REGEX_EXTRACT"
+)
+
+// Match operation to use for evaluation.
+type MatchOperation string
+
+const (
+	// Default value. This value is unused.
+	MatchOperationUnspecified MatchOperation = "MATCH_OPERATION_UNSPECIFIED"
+	// Equivalent to GoogleSQL `REGEX_CONTAINS(target, expression)`.
+	MatchOperationRegexContains MatchOperation = "REGEX_CONTAINS"
+	// `expression` is a substring of target.
+	MatchOperationPartialMatch MatchOperation = "PARTIAL_MATCH"
+	// `expression` is an exact match of target.
+	MatchOperationExactMatch MatchOperation = "EXACT_MATCH"
+)
+
+// Represents how much to think for the tuning job.
+type ReinforcementTuningThinkingLevel string
+
+const (
+	// Unspecified thinking level.
+	ReinforcementTuningThinkingLevelUnspecified ReinforcementTuningThinkingLevel = "REINFORCEMENT_TUNING_THINKING_LEVEL_UNSPECIFIED"
+	// Little to no thinking.
+	ReinforcementTuningThinkingLevelMinimal ReinforcementTuningThinkingLevel = "MINIMAL"
+	// High thinking level.
+	ReinforcementTuningThinkingLevelHigh ReinforcementTuningThinkingLevel = "HIGH"
+)
+
 // Enum representing the tuning method.
 type TuningMethod string
 
@@ -4795,6 +4833,195 @@ type DistillationSpec struct {
 	TuningMode TuningMode `json:"tuningMode,omitempty"`
 }
 
+// Autorater config used for evaluation.
+type AutoraterConfig struct {
+	// Optional. Number of samples for each instance in the dataset.
+	// If not specified, the default is 4. Minimum value is 1, maximum value
+	// is 32.
+	SamplingCount *int32 `json:"samplingCount,omitempty"`
+	// Optional. Default is true. Whether to flip the candidate and baseline
+	// responses. This is only applicable to the pairwise metric. If enabled, also
+	// provide PairwiseMetricSpec.candidate_response_field_name and
+	// PairwiseMetricSpec.baseline_response_field_name. When rendering
+	// PairwiseMetricSpec.metric_prompt_template, the candidate and baseline
+	// fields will be flipped for half of the samples to reduce bias.
+	FlipEnabled *bool `json:"flipEnabled,omitempty"`
+	// Optional. The fully qualified name of the publisher model or tuned autorater
+	// endpoint to use.
+	// Publisher model format:
+	// `projects/{project}/locations/{location}/publishers/{publisher}/models/{model}`
+	// Tuned model endpoint format:
+	// `projects/{project}/locations/{location}/endpoints/{endpoint}`
+	AutoraterModel string `json:"autoraterModel,omitempty"`
+	// Optional. Configuration options for model generation and outputs.
+	GenerationConfig *GenerationConfig `json:"generationConfig,omitempty"`
+}
+
+// Defines how to parse sample response for reinforcement tuning.
+type ReinforcementTuningParseResponseConfig struct {
+	// Optional. Defines how to parse sample response.
+	ParseType ResponseParseType `json:"parseType,omitempty"`
+	// Optional. Defines the regex to extract the important part of sample response. This
+	// field is only used when `parse_type` is `REGEX_EXTRACT`.
+	RegexExtractExpression string `json:"regexExtractExpression,omitempty"`
+}
+
+// Scores responses by directly converting parsed autorater response to float reward
+// (reward is clipped to be within [-1, 1]).
+type ReinforcementTuningAutoraterScorerParsedResponseConversionScorer struct {
+}
+
+// Scores autorater responses by using exact string match reward scorer.
+type ReinforcementTuningAutoraterScorerExactMatchScorer struct {
+	// Optional. Assigns this reward score if parsed response string equals the expression.
+	CorrectAnswerReward *float32 `json:"correctAnswerReward,omitempty"`
+	// Optional. Assigns this reward score if parsed reward value does not equal the expression.
+	WrongAnswerReward *float32 `json:"wrongAnswerReward,omitempty"`
+	// Optional. The string expression to match against. Supports substitution in the format
+	// of `references.reference` (wrapped in double curly braces) before matching. No regex
+	// support.
+	Expression string `json:"expression,omitempty"`
+}
+
+// Reinforcement tuning autorater scorer.
+type ReinforcementTuningAutoraterScorer struct {
+	// Optional. Autorater config for evaluation.
+	AutoraterConfig *AutoraterConfig `json:"autoraterConfig,omitempty"`
+	// Optional. Allows substituting `prompt`, `response`, `system_instruction` and `references.reference`
+	// (each wrapped in double curly braces) into the autorater prompt.
+	AutoraterPrompt string `json:"autoraterPrompt,omitempty"`
+	// Optional. Parses autorater returned response.
+	AutoraterResponseParseConfig *ReinforcementTuningParseResponseConfig `json:"autoraterResponseParseConfig,omitempty"`
+	// Optional. Scores autorater responses by directly converting parsed autorater response
+	// to float reward.
+	ParsedResponseConversionScorer *ReinforcementTuningAutoraterScorerParsedResponseConversionScorer `json:"parsedResponseConversionScorer,omitempty"`
+	// Optional. Scores autorater responses by using exact string match reward scorer.
+	ExactMatchScorer *ReinforcementTuningAutoraterScorerExactMatchScorer `json:"exactMatchScorer,omitempty"`
+}
+
+// Scores parsed responses for code execution use cases.
+type ReinforcementTuningCodeExecutionRewardScorer struct {
+	// Optional. Example python code snippet which assigns reward of 1 to answer matching
+	// user provided reference answer in per prompt references map.
+	PythonCodeSnippet string `json:"pythonCodeSnippet,omitempty"`
+}
+
+// Evaluates parsed response using match type against expression.
+type ReinforcementTuningStringMatchRewardScorerStringMatchExpression struct {
+	// Optional. Match operation to use for evaluation.
+	MatchOperation MatchOperation `json:"matchOperation,omitempty"`
+	// Optional. String or regular expression to match against. Customer can also provide
+	// a references map (key/value pairs) whose value will be substituted into the expression
+	// by referencing `references.key_name` (wrapped in double curly braces).
+	Expression string `json:"expression,omitempty"`
+}
+
+// Converts parsed responses to JSON format, finds the first-level matching key, then
+// performs StringMatchExpression on the value.
+type ReinforcementTuningStringMatchRewardScorerJsonMatchExpression struct {
+	// Optional. Json key name to find the value to match against.
+	KeyName string `json:"keyName,omitempty"`
+	// Optional. String match expression to match against the value of json key.
+	ValueStringMatchExpression *ReinforcementTuningStringMatchRewardScorerStringMatchExpression `json:"valueStringMatchExpression,omitempty"`
+}
+
+// Scores parsed responses for string matching use cases.
+type ReinforcementTuningStringMatchRewardScorer struct {
+	// Optional. Wrong answer reward is returned if evaluator evaluates to `false`. All
+	// wrong answers get the same reward.
+	WrongAnswerReward *float32 `json:"wrongAnswerReward,omitempty"`
+	// Optional. Correct answer reward is returned if evaluator evaluates to `true`. All
+	// correct answers get the same reward.
+	CorrectAnswerReward *float32 `json:"correctAnswerReward,omitempty"`
+	// Optional. Uses string match expression to evaluate parsed response.
+	StringMatchExpression *ReinforcementTuningStringMatchRewardScorerStringMatchExpression `json:"stringMatchExpression,omitempty"`
+	// Optional. Uses json match expression to evaluate parsed response.
+	JsonMatchExpression *ReinforcementTuningStringMatchRewardScorerJsonMatchExpression `json:"jsonMatchExpression,omitempty"`
+}
+
+// Scores parsed responses by calling a Cloud Run service.
+type ReinforcementTuningCloudRunRewardScorer struct {
+	// Optional. URI of the Cloud Run service that will be used to compute the reward. The
+	// Vertex AI Secure Fine Tuning Service Agent (`service-PROJECT_NUMBER@gcp-sa-vertex-tune.iam.gserviceaccount.com`,
+	// where `PROJECT_NUMBER` is the numeric project number) must be granted the permission
+	// (e.g. by granting `roles/run.invoker` in IAM) to invoke the Cloud Run service.
+	CloudRunURI string `json:"cloudRunUri,omitempty"`
+}
+
+// Single reinforcement tuning reward config.
+type SingleReinforcementTuningRewardConfig struct {
+	// Scores parsed responses for autorater use cases by using a model to compute the reward.
+	AutoraterScorer *ReinforcementTuningAutoraterScorer `json:"autoraterScorer,omitempty"`
+	// Optional. A unique reward name used to identify each single reinforcement tuning
+	// reward.
+	RewardName string `json:"rewardName,omitempty"`
+	// Optional. Defines how to parse sample response.
+	ParseResponseConfig *ReinforcementTuningParseResponseConfig `json:"parseResponseConfig,omitempty"`
+	// Optional. Scores parsed responses for code execution use cases.
+	CodeExecutionRewardScorer *ReinforcementTuningCodeExecutionRewardScorer `json:"codeExecutionRewardScorer,omitempty"`
+	// Optional. Scores parsed responses for simple string matching use cases against reference
+	// answer without writing python code.
+	StringMatchRewardScorer *ReinforcementTuningStringMatchRewardScorer `json:"stringMatchRewardScorer,omitempty"`
+	// Optional. Scores parsed responses by calling a Cloud Run service.
+	CloudRunRewardScorer *ReinforcementTuningCloudRunRewardScorer `json:"cloudRunRewardScorer,omitempty"`
+}
+
+// Composite reinforcement tuning reward config weighted reward config.
+type CompositeReinforcementTuningRewardConfigWeightedRewardConfig struct {
+	RewardConfig *SingleReinforcementTuningRewardConfig `json:"rewardConfig,omitempty"`
+	// Optional. How much this single reward contributes to the total overall reward.
+	Weight *float32 `json:"weight,omitempty"`
+}
+
+// Composite reinforcement tuning reward config.
+type CompositeReinforcementTuningRewardConfig struct {
+	WeightedRewardConfigs []*CompositeReinforcementTuningRewardConfigWeightedRewardConfig `json:"weightedRewardConfigs,omitempty"`
+}
+
+// Hyperparameters for Reinforcement Tuning.
+type ReinforcementTuningHyperParameters struct {
+	// Optional. Number of training epochs for the tuning job.
+	EpochCount int64 `json:"epochCount,omitempty,string"`
+	// Optional. Learning rate multiplier for Reinforcement Learning.
+	LearningRateMultiplier float32 `json:"learningRateMultiplier,omitempty"`
+	// Optional. Adapter size for Reinforcement Tuning.
+	AdapterSize AdapterSize `json:"adapterSize,omitempty"`
+	// Optional. Number of different responses to generate per prompt during tuning.
+	SamplesPerPrompt int32 `json:"samplesPerPrompt,omitempty"`
+	// Optional. Batch size for the tuning job. How many prompts to process at a train step.
+	// If not set, the batch size will be determined automatically.
+	BatchSize int32 `json:"batchSize,omitempty"`
+	// Optional. How often (in steps) to evaluate the tuning job during training. If not
+	// set, evaluation will run per epoch.
+	EvaluateInterval int32 `json:"evaluateInterval,omitempty"`
+	// Optional. How often (in steps) to save checkpoints during training. If not set, one
+	// checkpoint per epoch will be saved.
+	CheckpointInterval int32 `json:"checkpointInterval,omitempty"`
+	// Optional. The maximum number of tokens to generate per prompt. If not set, defaults
+	// to 32768.
+	MaxOutputTokens int32 `json:"maxOutputTokens,omitempty"`
+	// Optional. Indicates the maximum thinking depth. Use with earlier models shall result
+	// in error.
+	ThinkingLevel ReinforcementTuningThinkingLevel `json:"thinkingLevel,omitempty"`
+}
+
+// Reinforcement tuning spec for tuning.
+type ReinforcementTuningSpec struct {
+	CompositeRewardConfig *CompositeReinforcementTuningRewardConfig `json:"compositeRewardConfig,omitempty"`
+	// Optional. Cloud Storage path to file containing training dataset for tuning. The
+	// dataset must be formatted as a JSONL file.
+	TrainingDatasetURI string `json:"trainingDatasetUri,omitempty"`
+	// Optional. Cloud Storage path to file containing validation dataset for tuning. The
+	// dataset must be formatted as a JSONL file. If no validation dataset is provided,
+	// by default the API splits 25% of the training dataset or 50 examples, whichever is
+	// larger, as the validation dataset.
+	ValidationDatasetURI string `json:"validationDatasetUri,omitempty"`
+	// Optional. Additional hyper-parameters to use during tuning.
+	HyperParameters *ReinforcementTuningHyperParameters `json:"hyperParameters,omitempty"`
+	// Optional. Single reward function configuration for reinforcement tuning.
+	SingleRewardConfig *SingleReinforcementTuningRewardConfig `json:"singleRewardConfig,omitempty"`
+}
+
 // The `Status` type defines a logical error model that is suitable for different programming
 // environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc).
 // Each `Status` message contains three pieces of data: error code, error message, and
@@ -5393,6 +5620,8 @@ type TuningJob struct {
 	PreferenceOptimizationSpec *PreferenceOptimizationSpec `json:"preferenceOptimizationSpec,omitempty"`
 	// Tuning Spec for Distillation.
 	DistillationSpec *DistillationSpec `json:"distillationSpec,omitempty"`
+
+	ReinforcementTuningSpec *ReinforcementTuningSpec `json:"reinforcementTuningSpec,omitempty"`
 	// Output only. The tuning data statistics associated with this TuningJob.
 	TuningDataStats *TuningDataStats `json:"tuningDataStats,omitempty"`
 	// Customer-managed encryption key options for a TuningJob. If this is set, then all
@@ -5581,53 +5810,6 @@ type TuningValidationDataset struct {
 	VertexDatasetResource string `json:"vertexDatasetResource,omitempty"`
 }
 
-// Autorater config used for evaluation.
-type AutoraterConfig struct {
-	// Optional. Number of samples for each instance in the dataset.
-	// If not specified, the default is 4. Minimum value is 1, maximum value
-	// is 32.
-	SamplingCount *int32 `json:"samplingCount,omitempty"`
-	// Optional. Default is true. Whether to flip the candidate and baseline
-	// responses. This is only applicable to the pairwise metric. If enabled, also
-	// provide PairwiseMetricSpec.candidate_response_field_name and
-	// PairwiseMetricSpec.baseline_response_field_name. When rendering
-	// PairwiseMetricSpec.metric_prompt_template, the candidate and baseline
-	// fields will be flipped for half of the samples to reduce bias.
-	FlipEnabled *bool `json:"flipEnabled,omitempty"`
-	// Optional. The fully qualified name of the publisher model or tuned autorater
-	// endpoint to use.
-	// Publisher model format:
-	// `projects/{project}/locations/{location}/publishers/{publisher}/models/{model}`
-	// Tuned model endpoint format:
-	// `projects/{project}/locations/{location}/endpoints/{endpoint}`
-	AutoraterModel string `json:"autoraterModel,omitempty"`
-	// Optional. Configuration options for model generation and outputs.
-	GenerationConfig *GenerationConfig `json:"generationConfig,omitempty"`
-}
-
-// Reinforcement tuning autorater scorer.
-type ReinforcementTuningAutoraterScorer struct {
-	// Optional. Autorater config for evaluation.
-	AutoraterConfig *AutoraterConfig `json:"autoraterConfig,omitempty"`
-}
-
-// Single reinforcement tuning reward config.
-type SingleReinforcementTuningRewardConfig struct {
-	AutoraterScorer *ReinforcementTuningAutoraterScorer `json:"autoraterScorer,omitempty"`
-}
-
-// Composite reinforcement tuning reward config weighted reward config.
-type CompositeReinforcementTuningRewardConfigWeightedRewardConfig struct {
-	RewardConfig *SingleReinforcementTuningRewardConfig `json:"rewardConfig,omitempty"`
-	// Optional. How much this single reward contributes to the total overall reward.
-	Weight *float32 `json:"weight,omitempty"`
-}
-
-// Composite reinforcement tuning reward config.
-type CompositeReinforcementTuningRewardConfig struct {
-	WeightedRewardConfigs []*CompositeReinforcementTuningRewardConfigWeightedRewardConfig `json:"weightedRewardConfigs,omitempty"`
-}
-
 // Fine-tuning job creation request - optional fields.
 type CreateTuningJobConfig struct {
 	// Optional. Used to override HTTP request options.
@@ -5707,6 +5889,14 @@ type CreateTuningJobConfig struct {
 	// Optional. The maximum number of tokens to generate per prompt. Reinforcement tuning
 	// only. If empty, API will use a default value. The default value varies by model.
 	MaxOutputTokens int32 `json:"maxOutputTokens,omitempty"`
+	// Optional. Indicates the maximum thinking depth. Use with earlier models shall result
+	// in error. Reinforcement tuning only.
+	ThinkingLevel ReinforcementTuningThinkingLevel `json:"thinkingLevel,omitempty"`
+	// Optional. Cloud Storage path to file containing validation dataset for tuning. The
+	// dataset must be formatted as a JSONL file. If no validation dataset is provided,
+	// by default the API splits 25% of the training dataset or 50 examples, whichever is
+	// larger, as the validation dataset. Reinforcement tuning only.
+	ValidationDatasetURI string `json:"validationDatasetUri,omitempty"`
 }
 
 // A long-running operation.
@@ -5727,6 +5917,48 @@ type TuningOperation struct {
 	Done bool `json:"done,omitempty"`
 	// Optional. The error result of the operation in case of failure or cancellation.
 	Error map[string]any `json:"error,omitempty"`
+}
+
+// User-facing format for Gemini Reinforcement Tuning examples on Vertex.
+type ReinforcementTuningExample struct {
+	// Optional. Multi-turn contents that represents the Prompt.
+	Contents []*Content `json:"contents,omitempty"`
+	// Optional. References for the given prompt. The key is the name of the reference,
+	// and the value is the reference itself.
+	References map[string]string `json:"references,omitempty"`
+	// Optional. Corresponds to `system_instruction` in user-facing GenerateContentRequest.
+	SystemInstruction *Content `json:"systemInstruction,omitempty"`
+}
+
+// Optional parameters for tunings.validate_reward.
+type ValidateRewardConfig struct {
+	// Optional. Used to override HTTP request options.
+	HTTPOptions *HTTPOptions `json:"httpOptions,omitempty"`
+}
+
+// The reward info for a reward function.
+type ReinforcementTuningRewardInfo struct {
+	// Optional. Output only. The calculated reward for the reward function.
+	Reward float32 `json:"reward,omitempty"`
+	// Optional. Output only. The user-requested auxiliary info for the reward function.
+	UserRequestedAuxInfo string `json:"userRequestedAuxInfo,omitempty"`
+}
+
+// Response for the validate_reward method.
+// Contains the computed reward for a reinforcement tuning reward
+// configuration.
+type ValidateRewardResponse struct {
+	// Optional. Used to retain the full HTTP response.
+	SDKHTTPResponse *HTTPResponse `json:"sdkHttpResponse,omitempty"`
+	// Optional. Output only. The overall weighted reward. For a `CompositeReinforcementTuningRewardConfig`,
+	// this is the weighted average of all rewards. For a `SingleReinforcementTuningRewardConfig`,
+	// this will be the value of the single reward.
+	OverallReward float32 `json:"overallReward,omitempty"`
+	// Optional. Output only. In case of an error, this field will be populated with a detailed
+	// error message to help with debugging.
+	Error string `json:"error,omitempty"`
+	// Optional. A map from reward name to reward info.
+	RewardInfoDetails map[string]*ReinforcementTuningRewardInfo `json:"rewardInfoDetails,omitempty"`
 }
 
 // Optional configuration for cached content creation.
