@@ -1889,9 +1889,10 @@ type GoogleMaps struct {
 	// Optional. The authentication config to access the API. Only API key is supported.
 	// This field is not supported in Gemini API.
 	AuthConfig *AuthConfig `json:"authConfig,omitempty"`
-	// Optional. Whether to return a widget context token in the GroundingMetadata of the
-	// response. Developers can use the widget context token to render a Google Maps widget
-	// with geospatial context related to the places that the model references in the response.
+	// Optional. Deprecated. The Google Maps contextual widget behavior in Grounding with
+	// Google Maps is being deprecated; this field is planned for removal and no longer
+	// has any effect once removed. Optional. Whether to return a widget context token in
+	// the GroundingMetadata of the response.
 	EnableWidget *bool `json:"enableWidget,omitempty"`
 }
 
