@@ -468,20 +468,22 @@ const (
 	TrafficTypeProvisionedThroughput TrafficType = "PROVISIONED_THROUGHPUT"
 )
 
-// Server content modalities.
-type Modality string
+// The modality that this token count applies to.
+type MediaModality string
 
 const (
-	// The modality is unspecified.
-	ModalityUnspecified Modality = "MODALITY_UNSPECIFIED"
-	// Indicates the model should return text
-	ModalityText Modality = "TEXT"
-	// Indicates the model should return images.
-	ModalityImage Modality = "IMAGE"
-	// Indicates the model should return audio.
-	ModalityAudio Modality = "AUDIO"
-	// Indicates the model should return video.
-	ModalityVideo Modality = "VIDEO"
+	// When a modality is not specified, it is treated as `TEXT`.
+	MediaModalityUnspecified MediaModality = "MODALITY_UNSPECIFIED"
+	// The `Part` contains plain text.
+	MediaModalityText MediaModality = "TEXT"
+	// The `Part` contains an image.
+	MediaModalityImage MediaModality = "IMAGE"
+	// The `Part` contains a video.
+	MediaModalityVideo MediaModality = "VIDEO"
+	// The `Part` contains audio.
+	MediaModalityAudio MediaModality = "AUDIO"
+	// The `Part` contains a document, such as a PDF.
+	MediaModalityDocument MediaModality = "DOCUMENT"
 )
 
 // The stage of the underlying model. This enum is not supported in Vertex AI.
@@ -519,6 +521,22 @@ const (
 	MediaResolutionMedium MediaResolution = "MEDIA_RESOLUTION_MEDIUM"
 	// Media resolution set to high (zoomed reframing with 256 tokens).
 	MediaResolutionHigh MediaResolution = "MEDIA_RESOLUTION_HIGH"
+)
+
+// Server content modalities.
+type Modality string
+
+const (
+	// The modality is unspecified.
+	ModalityUnspecified Modality = "MODALITY_UNSPECIFIED"
+	// Indicates the model should return text
+	ModalityText Modality = "TEXT"
+	// Indicates the model should return images.
+	ModalityImage Modality = "IMAGE"
+	// Indicates the model should return audio.
+	ModalityAudio Modality = "AUDIO"
+	// Indicates the model should return video.
+	ModalityVideo Modality = "VIDEO"
 )
 
 // Tuning mode. This enum is not supported in Gemini API.
@@ -700,6 +718,20 @@ const (
 	DocumentStateFailed DocumentState = "STATE_FAILED"
 )
 
+// Pricing and performance service tier.
+type ServiceTier string
+
+const (
+	// Default service tier, which is standard.
+	ServiceTierUnspecified ServiceTier = "unspecified"
+	// Flex service tier.
+	ServiceTierFlex ServiceTier = "flex"
+	// Standard service tier.
+	ServiceTierStandard ServiceTier = "standard"
+	// Priority service tier.
+	ServiceTierPriority ServiceTier = "priority"
+)
+
 // The tokenization quality used for given media.
 type PartMediaResolutionLevel string
 
@@ -744,20 +776,6 @@ const (
 	// then the resource name for a Model would be
 	// "https://aiplatform.googleapis.com/publishers/google/models/gemini-3-pro-preview
 	ResourceScopeCollection ResourceScope = "COLLECTION"
-)
-
-// Pricing and performance service tier.
-type ServiceTier string
-
-const (
-	// Default service tier, which is standard.
-	ServiceTierUnspecified ServiceTier = "unspecified"
-	// Flex service tier.
-	ServiceTierFlex ServiceTier = "flex"
-	// Standard service tier.
-	ServiceTierStandard ServiceTier = "standard"
-	// Priority service tier.
-	ServiceTierPriority ServiceTier = "priority"
 )
 
 // Options for feature selection preference.
@@ -1058,24 +1076,6 @@ const (
 	TurnCompleteReasonGeneratedOther TurnCompleteReason = "GENERATED_OTHER"
 	// Max regeneration attempts reached.
 	TurnCompleteReasonMaxRegenerationReached TurnCompleteReason = "MAX_REGENERATION_REACHED"
-)
-
-// Server content modalities.
-type MediaModality string
-
-const (
-	// The modality is unspecified.
-	MediaModalityUnspecified MediaModality = "MODALITY_UNSPECIFIED"
-	// Plain text.
-	MediaModalityText MediaModality = "TEXT"
-	// Images.
-	MediaModalityImage MediaModality = "IMAGE"
-	// Video.
-	MediaModalityVideo MediaModality = "VIDEO"
-	// Audio.
-	MediaModalityAudio MediaModality = "AUDIO"
-	// Document, e.g. PDF.
-	MediaModalityDocument MediaModality = "DOCUMENT"
 )
 
 // The type of the VAD signal.
@@ -3330,9 +3330,13 @@ type GenerateContentResponsePromptFeedback struct {
 	SafetyRatings []*SafetyRating `json:"safetyRatings,omitempty"`
 }
 
-// Represents token counting info for a single modality.
+// Represents a breakdown of token usage by modality. This message is used in CountTokensResponse
+// and GenerateContentResponse.UsageMetadata to provide a detailed view of how many
+// tokens are used by each modality (e.g., text, image, video) in a request. This is
+// particularly useful for multimodal models, allowing you to track and manage token
+// consumption for billing and quota purposes.
 type ModalityTokenCount struct {
-	// Optional. The modality associated with this token count.
+	// The modality that this token count applies to.
 	Modality MediaModality `json:"modality,omitempty"`
 	// The number of tokens counted for this modality.
 	TokenCount int32 `json:"tokenCount,omitempty"`
@@ -7504,32 +7508,38 @@ type LiveServerToolCallCancellation struct {
 
 // Usage metadata about response(s).
 type UsageMetadata struct {
-	// Optional. Number of tokens in the prompt. When `cached_content` is set, this is still
-	// the total effective prompt size meaning this includes the number of tokens in the
-	// cached content.
+	// The total number of tokens in the prompt. This includes any text, images, or other
+	// media provided in the request. When `cached_content` is set, this also includes the
+	// number of tokens in the cached content.
 	PromptTokenCount int32 `json:"promptTokenCount,omitempty"`
-	// Optional. Number of tokens in the cached part of the prompt (the cached content).
+	// Output only. The number of tokens in the cached content that was used for this request.
 	CachedContentTokenCount int32 `json:"cachedContentTokenCount,omitempty"`
 	// Optional. Total number of tokens across all the generated response candidates.
 	ResponseTokenCount int32 `json:"responseTokenCount,omitempty"`
-	// Optional. Number of tokens present in tool-use prompt(s).
+	// Output only. The number of tokens in the results from tool executions, which are
+	// provided back to the model as input, if applicable.
 	ToolUsePromptTokenCount int32 `json:"toolUsePromptTokenCount,omitempty"`
-	// Optional. Number of tokens of thoughts for thinking models.
+	// Output only. The number of tokens that were part of the model's generated "thoughts"
+	// output, if applicable.
 	ThoughtsTokenCount int32 `json:"thoughtsTokenCount,omitempty"`
-	// Optional. Total token count for prompt, response candidates, and tool-use prompts(if
-	// present).
+	// The total number of tokens for the entire request. This is the sum of `prompt_token_count`,
+	// `candidates_token_count`, `tool_use_prompt_token_count`, and `thoughts_token_count`.
 	TotalTokenCount int32 `json:"totalTokenCount,omitempty"`
-	// Optional. List of modalities that were processed in the request input.
+	// Output only. A detailed breakdown of the token count for each modality in the prompt.
 	PromptTokensDetails []*ModalityTokenCount `json:"promptTokensDetails,omitempty"`
-	// Optional. List of modalities that were processed in the cache input.
+	// Output only. A detailed breakdown of the token count for each modality in the cached
+	// content.
 	CacheTokensDetails []*ModalityTokenCount `json:"cacheTokensDetails,omitempty"`
 	// Optional. List of modalities that were returned in the response.
 	ResponseTokensDetails []*ModalityTokenCount `json:"responseTokensDetails,omitempty"`
-	// Optional. List of modalities that were processed in the tool-use prompt.
+	// Output only. A detailed breakdown by modality of the token counts from the results
+	// of tool executions, which are provided back to the model as input.
 	ToolUsePromptTokensDetails []*ModalityTokenCount `json:"toolUsePromptTokensDetails,omitempty"`
-	// Optional. Traffic type. This shows whether a request consumes Pay-As-You-Go
-	// or Provisioned Throughput quota.
+	// Output only. The traffic type for this request. This field is not supported in Gemini
+	// API.
 	TrafficType TrafficType `json:"trafficType,omitempty"`
+	// Output only. Service tier of the request. This field is not supported in Vertex AI.
+	ServiceTier ServiceTier `json:"serviceTier,omitempty"`
 }
 
 // Server will not be able to service client soon.
