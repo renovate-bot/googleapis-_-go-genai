@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.60.0](https://github.com/googleapis/go-genai/compare/v1.59.0...v1.60.0) (2026-06-04)
+
+
+### Features
+
+* Add ServiceTier to UsageMetadata ([74b1290](https://github.com/googleapis/go-genai/commit/74b1290a5c5cfef6ad8e8263ffc6aed8b4c4d865))
+
 ## [1.59.0](https://github.com/googleapis/go-genai/compare/v1.58.0...v1.59.0) (2026-06-03)
 
 
