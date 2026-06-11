@@ -1106,7 +1106,8 @@ const (
 type StartSensitivity string
 
 const (
-	// The default is START_SENSITIVITY_LOW.
+	// The default is START_SENSITIVITY_LOW for Gemini Enterprise Agent Platform and START_SENSITIVITY_HIGH
+	// for Gemini Live.
 	StartSensitivityUnspecified StartSensitivity = "START_SENSITIVITY_UNSPECIFIED"
 	// Automatic detection will detect the start of speech more often.
 	StartSensitivityHigh StartSensitivity = "START_SENSITIVITY_HIGH"
@@ -1118,7 +1119,8 @@ const (
 type EndSensitivity string
 
 const (
-	// The default is END_SENSITIVITY_LOW.
+	// The default is END_SENSITIVITY_LOW for Gemini Enterprise Agent Platform and END_SENSITIVITY_HIGH
+	// for Gemini Live.
 	EndSensitivityUnspecified EndSensitivity = "END_SENSITIVITY_UNSPECIFIED"
 	// Automatic detection ends speech more often.
 	EndSensitivityHigh EndSensitivity = "END_SENSITIVITY_HIGH"
